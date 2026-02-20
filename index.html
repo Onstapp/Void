@@ -69,7 +69,8 @@
         body.light-theme .post,
         body.light-theme .edit-profile-form,
         body.light-theme .drawing-modal,
-        body.light-theme .avatar-drawing-modal {
+        body.light-theme .avatar-drawing-modal,
+        body.light-theme .hashtag-modal {
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
@@ -183,6 +184,10 @@
             color: #888;
             background: rgba(0, 0, 0, 0.02);
             border: 1px dashed rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .hashtag-info {
+            color: #666;
         }
 
         body.light-theme ::placeholder {
@@ -381,6 +386,37 @@
 
         .profile-avatar:hover .avatar-overlay {
             opacity: 1;
+        }
+
+        .avatar-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            justify-content: center;
+        }
+
+        .avatar-action-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .avatar-action-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        .avatar-action-btn.delete {
+            color: #ff6b6b;
+            border-color: rgba(255,68,68,0.3);
+        }
+
+        .avatar-action-btn.delete:hover {
+            background: rgba(255,68,68,0.2);
         }
 
         .profile-info {
@@ -641,47 +677,125 @@
             transform: translateY(-2px);
         }
 
-        .drawing-canvas-container {
+        /* Рисование - квадратный формат */
+        .drawing-container {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 1rem;
             margin-bottom: 1rem;
+            display: none;
+        }
+
+        .drawing-canvas-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: white;
             border-radius: 20px;
             overflow: hidden;
-            background: rgba(0,0,0,0.2);
-            display: none;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .drawing-canvas {
             width: 100%;
-            height: 200px;
+            height: 100%;
+            display: block;
             background: white;
             cursor: crosshair;
             touch-action: none;
         }
 
-        .drawing-controls {
+        .drawing-tools {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        .drawing-control-btn {
+        .color-palette {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .color-btn.active {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .brush-size-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .brush-size-btn {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
             color: white;
             padding: 0.4rem 1rem;
             border-radius: 30px;
             cursor: pointer;
-            font-size: 0.8rem;
             transition: all 0.2s;
+            font-size: 0.9rem;
         }
 
-        .drawing-control-btn:hover {
+        .brush-size-btn:hover {
             background: rgba(102, 126, 234, 0.3);
         }
 
-        .drawing-control-btn.active {
+        .brush-size-btn.active {
             background: #667eea;
             color: white;
+        }
+
+        .brush-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            display: inline-block;
+        }
+
+        .drawing-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        .drawing-action-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .drawing-action-btn.clear {
+            background: rgba(255,68,68,0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255,68,68,0.3);
+        }
+
+        .drawing-action-btn.clear:hover {
+            background: rgba(255,68,68,0.3);
         }
 
         .post-btn {
@@ -817,6 +931,7 @@
             color: #667eea;
             cursor: pointer;
             transition: color 0.2s;
+            font-weight: 500;
         }
 
         .hashtag:hover {
@@ -837,11 +952,11 @@
 
         .post-drawing {
             width: 100%;
-            max-height: 300px;
-            object-fit: contain;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
             border-radius: 20px;
             margin-bottom: 1rem;
-            background: rgba(255,255,255,0.9);
+            background: white;
             image-rendering: pixelated;
         }
 
@@ -1078,6 +1193,56 @@
             transform: scale(1.1);
         }
 
+        /* Кнопка обновления */
+        .refresh-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .refresh-btn {
+            background: rgba(102, 126, 234, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            padding: 0.7rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .refresh-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(102, 126, 234, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .refresh-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
         /* Нижняя навигация */
         .bottom-nav {
             position: fixed;
@@ -1121,9 +1286,8 @@
             background: rgba(102, 126, 234, 0.15);
         }
 
-        /* Модальные окна для рисования */
-        .drawing-modal,
-        .avatar-drawing-modal {
+        /* Модальные окна */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -1138,76 +1302,175 @@
             padding: 1rem;
         }
 
-        .drawing-modal-content,
-        .avatar-drawing-modal-content {
+        .modal-content {
             background: #111;
             border-radius: 30px;
             padding: 1.5rem;
             max-width: 500px;
             width: 100%;
             border: 1px solid rgba(255,255,255,0.1);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .drawing-modal h3,
-        .avatar-drawing-modal h3 {
+        .modal h3 {
             margin-bottom: 1rem;
             color: #667eea;
             font-size: 1.2rem;
         }
 
-        .drawing-canvas-large {
+        /* Модальное окно для рисования аватара */
+        .avatar-drawing-content {
+            max-width: 450px;
+        }
+
+        .avatar-drawing-canvas-wrapper {
             width: 100%;
-            height: 300px;
+            aspect-ratio: 1 / 1;
             background: white;
             border-radius: 20px;
+            overflow: hidden;
             margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .avatar-drawing-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: white;
             cursor: crosshair;
             touch-action: none;
         }
 
-        .drawing-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
+        .avatar-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1rem;
+            border: 3px solid #667eea;
         }
 
-        .drawing-action-btn {
-            flex: 1;
-            padding: 0.8rem;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-align: center;
-            border: none;
+        .avatar-preview canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .drawing-action-btn.save {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        /* Модальное окно для хештегов */
+        .hashtag-modal .modal-content {
+            max-width: 400px;
         }
 
-        .drawing-action-btn.cancel {
+        .hashtag-info {
             background: rgba(255,255,255,0.05);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .drawing-action-btn.clear {
-            background: rgba(255,255,255,0.05);
-            color: #ff6b6b;
-            border: 1px solid rgba(255,68,68,0.3);
-        }
-
-        /* Пустое состояние */
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #888;
-            background: rgba(255,255,255,0.02);
             border-radius: 20px;
-            border: 1px dashed rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .hashtag-name {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .hashtag-count {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .hashtag-label {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .hashtag-posts {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .hashtag-post-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hashtag-post-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+        }
+
+        .hashtag-post-author {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .hashtag-post-content {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Модальное окно для просмотра чужого профиля */
+        .profile-modal-content {
+            max-width: 400px;
+        }
+
+        .profile-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-modal-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .profile-modal-info {
+            flex: 1;
+        }
+
+        .profile-modal-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-modal-username {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .profile-modal-bio {
+            color: #b0b0b0;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .profile-modal-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
         }
 
         /* Адаптация */
@@ -1235,6 +1498,11 @@
             
             .nav-item span:first-child {
                 font-size: 1.2rem;
+            }
+
+            .color-btn {
+                width: 35px;
+                height: 35px;
             }
         }
 
@@ -1274,7 +1542,7 @@
 
     <!-- Основной контент -->
     <div class="container" id="mainContent">
-        <!-- Профиль (виден только при активной вкладке "Профиль") -->
+        <!-- Профиль -->
         <div class="profile-section" id="profileSection" style="display: none;">
             <div class="profile-header">
                 <div class="profile-avatar" id="profileAvatar" onclick="openAvatarDrawing()">
@@ -1300,6 +1568,10 @@
                     </div>
                 </div>
             </div>
+            <div class="avatar-actions">
+                <button class="avatar-action-btn" id="newAvatarBtn">🆕 Новая</button>
+                <button class="avatar-action-btn delete" id="deleteAvatarBtn">🗑️ Удалить</button>
+            </div>
             <button class="edit-profile-btn" id="editProfileBtn">Редактировать профиль</button>
         </div>
 
@@ -1315,7 +1587,7 @@
             </div>
         </div>
 
-        <!-- Создание поста (видно только в профиле) -->
+        <!-- Создание поста -->
         <div class="create-post" id="createPostSection" style="display: none;">
             <textarea id="postContent" placeholder="Что у вас нового?"></textarea>
             <div class="post-tools">
@@ -1323,26 +1595,48 @@
                 <button class="tool-btn" id="hashtagBtn"># Хештег</button>
                 <button class="tool-btn" id="drawingBtn">✏️ Рисунок</button>
             </div>
-            <div class="drawing-canvas-container" id="drawingCanvasContainer">
-                <canvas id="drawingCanvas" class="drawing-canvas" width="500" height="200"></canvas>
-                <div class="drawing-controls">
-                    <button class="drawing-control-btn" id="clearDrawingBtn">Очистить</button>
-                    <button class="drawing-control-btn" id="blackColorBtn" style="background: #000; color: white;">●</button>
-                    <button class="drawing-control-btn" id="redColorBtn" style="background: #ff4444; color: white;">●</button>
-                    <button class="drawing-control-btn" id="blueColorBtn" style="background: #667eea; color: white;">●</button>
-                    <button class="drawing-control-btn" id="greenColorBtn" style="background: #44ff44; color: white;">●</button>
-                    <button class="drawing-control-btn" id="smallBrushBtn">●</button>
-                    <button class="drawing-control-btn" id="mediumBrushBtn">●●</button>
-                    <button class="drawing-control-btn" id="largeBrushBtn">●●●</button>
+            
+            <!-- Контейнер для рисования -->
+            <div class="drawing-container" id="drawingContainer">
+                <div class="drawing-canvas-wrapper">
+                    <canvas id="postDrawingCanvas" class="drawing-canvas" width="400" height="400"></canvas>
+                </div>
+                
+                <div class="drawing-tools">
+                    <div class="color-palette">
+                        <button class="color-btn" style="background: #000000;" data-color="#000000"></button>
+                        <button class="color-btn" style="background: #ff4444;" data-color="#ff4444"></button>
+                        <button class="color-btn" style="background: #ff8800;" data-color="#ff8800"></button>
+                        <button class="color-btn" style="background: #ffdd44;" data-color="#ffdd44"></button>
+                        <button class="color-btn" style="background: #44ff44;" data-color="#44ff44"></button>
+                        <button class="color-btn" style="background: #44ddff;" data-color="#44ddff"></button>
+                        <button class="color-btn" style="background: #667eea;" data-color="#667eea"></button>
+                        <button class="color-btn" style="background: #aa44ff;" data-color="#aa44ff"></button>
+                        <button class="color-btn" style="background: #ff44aa;" data-color="#ff44aa"></button>
+                        <button class="color-btn" style="background: #ffffff;" data-color="#ffffff"></button>
+                    </div>
+                    
+                    <div class="brush-size-control">
+                        <span style="color: #888;">Толщина:</span>
+                        <button class="brush-size-btn" data-size="2">Мелкий</button>
+                        <button class="brush-size-btn active" data-size="5">Средний</button>
+                        <button class="brush-size-btn" data-size="10">Крупный</button>
+                        <div class="brush-preview" id="brushPreview" style="background: #000000;"></div>
+                    </div>
+                    
+                    <div class="drawing-actions">
+                        <button class="drawing-action-btn clear" id="clearPostDrawingBtn">Очистить</button>
+                    </div>
                 </div>
             </div>
+            
             <button class="post-btn" id="createPostBtn">Опубликовать</button>
         </div>
 
         <!-- Лента постов -->
         <div id="feedSection">
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-                <button class="tool-btn" id="refreshFeedBtn" style="padding: 0.5rem 1rem;">🔄 Обновить ленту</button>
+            <div class="refresh-container">
+                <button class="refresh-btn" id="refreshFeedBtn">Обновить</button>
             </div>
             <div id="postsFeed"></div>
         </div>
@@ -1361,40 +1655,76 @@
     </div>
 
     <!-- Модальное окно для рисования аватара -->
-    <div class="avatar-drawing-modal" id="avatarDrawingModal">
-        <div class="avatar-drawing-modal-content">
+    <div class="modal" id="avatarDrawingModal">
+        <div class="modal-content avatar-drawing-content">
             <h3>Нарисуйте аватар</h3>
-            <canvas id="avatarDrawingCanvas" class="drawing-canvas-large" width="400" height="300"></canvas>
-            <div class="drawing-controls">
-                <button class="drawing-control-btn" id="avatarClearBtn">Очистить</button>
-                <button class="drawing-control-btn" id="avatarBlackBtn" style="background: #000; color: white;">●</button>
-                <button class="drawing-control-btn" id="avatarRedBtn" style="background: #ff4444; color: white;">●</button>
-                <button class="drawing-control-btn" id="avatarBlueBtn" style="background: #667eea; color: white;">●</button>
-                <button class="drawing-control-btn" id="avatarGreenBtn" style="background: #44ff44; color: white;">●</button>
-                <button class="drawing-control-btn" id="avatarSmallBtn">●</button>
-                <button class="drawing-control-btn" id="avatarMediumBtn">●●</button>
-                <button class="drawing-control-btn" id="avatarLargeBtn">●●●</button>
+            
+            <div class="avatar-preview" id="avatarPreview">
+                <canvas width="90" height="90"></canvas>
             </div>
+            
+            <div class="avatar-drawing-canvas-wrapper">
+                <canvas id="avatarDrawingCanvas" class="avatar-drawing-canvas" width="400" height="400"></canvas>
+            </div>
+            
+            <div class="color-palette" style="margin-bottom: 1rem;">
+                <button class="color-btn" style="background: #000000;" data-avatar-color="#000000"></button>
+                <button class="color-btn" style="background: #ff4444;" data-avatar-color="#ff4444"></button>
+                <button class="color-btn" style="background: #ff8800;" data-avatar-color="#ff8800"></button>
+                <button class="color-btn" style="background: #ffdd44;" data-avatar-color="#ffdd44"></button>
+                <button class="color-btn" style="background: #44ff44;" data-avatar-color="#44ff44"></button>
+                <button class="color-btn" style="background: #44ddff;" data-avatar-color="#44ddff"></button>
+                <button class="color-btn" style="background: #667eea;" data-avatar-color="#667eea"></button>
+                <button class="color-btn" style="background: #aa44ff;" data-avatar-color="#aa44ff"></button>
+                <button class="color-btn" style="background: #ff44aa;" data-avatar-color="#ff44aa"></button>
+                <button class="color-btn" style="background: #ffffff;" data-avatar-color="#ffffff"></button>
+            </div>
+            
+            <div class="brush-size-control" style="margin-bottom: 1rem;">
+                <span style="color: #888;">Толщина:</span>
+                <button class="brush-size-btn" data-avatar-size="2">Мелкий</button>
+                <button class="brush-size-btn active" data-avatar-size="5">Средний</button>
+                <button class="brush-size-btn" data-avatar-size="10">Крупный</button>
+            </div>
+            
             <div class="drawing-actions">
                 <button class="drawing-action-btn save" id="saveAvatarBtn">Сохранить</button>
-                <button class="drawing-action-btn cancel" id="cancelAvatarBtn">Отмена</button>
                 <button class="drawing-action-btn clear" id="clearAvatarBtn">Очистить</button>
+                <button class="drawing-action-btn cancel" id="cancelAvatarBtn">Отмена</button>
             </div>
         </div>
     </div>
 
+    <!-- Модальное окно для хештегов -->
+    <div class="modal hashtag-modal" id="hashtagModal">
+        <div class="modal-content">
+            <h3 id="hashtagModalTitle">#хештег</h3>
+            <div class="hashtag-info">
+                <div class="hashtag-name" id="hashtagName"></div>
+                <div class="hashtag-count" id="hashtagCount">0</div>
+                <div class="hashtag-label">постов с этим тегом</div>
+            </div>
+            <div class="hashtag-posts" id="hashtagPostsList"></div>
+            <button class="drawing-action-btn cancel" style="width: 100%;" id="closeHashtagBtn">Закрыть</button>
+        </div>
+    </div>
+
     <!-- Модальное окно для просмотра чужого профиля -->
-    <div class="avatar-drawing-modal" id="userProfileModal" style="display: none;">
-        <div class="avatar-drawing-modal-content">
+    <div class="modal" id="userProfileModal">
+        <div class="modal-content profile-modal-content">
             <h3 id="otherProfileName">Профиль пользователя</h3>
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                <div class="profile-avatar" id="otherProfileAvatar" style="width: 70px; height: 70px; font-size: 2rem;"></div>
-                <div>
-                    <div id="otherProfileUsername" style="font-size: 1.2rem; font-weight: 600;"></div>
-                    <div id="otherProfileBio" style="color: #888; margin-top: 0.3rem;"></div>
+            
+            <div class="profile-modal-header">
+                <div class="profile-modal-avatar" id="otherProfileAvatar"></div>
+                <div class="profile-modal-info">
+                    <div class="profile-modal-name" id="otherProfileDisplayName"></div>
+                    <div class="profile-modal-username" id="otherProfileUsername"></div>
                 </div>
             </div>
-            <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;">
+            
+            <div class="profile-modal-bio" id="otherProfileBio"></div>
+            
+            <div class="profile-modal-stats">
                 <div class="stat">
                     <div class="stat-value" id="otherFollowersCount">0</div>
                     <div class="stat-label">подписчики</div>
@@ -1408,6 +1738,7 @@
                     <div class="stat-label">посты</div>
                 </div>
             </div>
+            
             <div style="display: flex; gap: 0.5rem;">
                 <button class="drawing-action-btn save" id="followFromProfileBtn">Подписаться</button>
                 <button class="drawing-action-btn cancel" id="closeProfileBtn">Закрыть</button>
@@ -1426,6 +1757,7 @@
         let drafts = JSON.parse(localStorage.getItem('void_drafts')) || [];
         let currentUser = null;
         let viewingUser = null;
+        let currentHashtag = null;
 
         // Сохранение
         function saveUsers() { localStorage.setItem('void_users', JSON.stringify(users)); }
@@ -1646,7 +1978,7 @@
                 if (post.hashtags) {
                     post.hashtags.forEach(tag => {
                         const regex = new RegExp(`#${tag}`, 'g');
-                        contentWithLinks = contentWithLinks.replace(regex, `<span class="hashtag" onclick="searchByHashtag('${tag}')">#${tag}</span>`);
+                        contentWithLinks = contentWithLinks.replace(regex, `<span class="hashtag" onclick="openHashtagModal('${tag}')">#${tag}</span>`);
                     });
                 }
                 if (post.mentions) {
@@ -1754,7 +2086,7 @@
                 if (post.hashtags) {
                     post.hashtags.forEach(tag => {
                         const regex = new RegExp(`#${tag}`, 'g');
-                        contentWithLinks = contentWithLinks.replace(regex, `<span class="hashtag" onclick="searchByHashtag('${tag}')">#${tag}</span>`);
+                        contentWithLinks = contentWithLinks.replace(regex, `<span class="hashtag" onclick="openHashtagModal('${tag}')">#${tag}</span>`);
                     });
                 }
                 if (post.mentions) {
@@ -1919,17 +2251,11 @@
             
             savePostLikes();
             
-            // Не обновляем всю ленту, только меняем класс у кнопки
-            const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
-            if (activeNav === 'profile') {
-                updateUserPosts();
-            } else {
-                // Находим конкретную кнопку и обновляем её
-                const likeBtn = event.currentTarget;
-                const count = postLikes.filter(l => l.postId === postId).length;
-                likeBtn.innerHTML = `❤️ ${count}`;
-                likeBtn.classList.toggle('liked', !existing);
-            }
+            // Находим конкретную кнопку и обновляем её
+            const likeBtn = event.currentTarget;
+            const count = postLikes.filter(l => l.postId === postId).length;
+            likeBtn.innerHTML = `❤️ ${count}`;
+            likeBtn.classList.toggle('liked', !existing);
         };
 
         window.toggleFollow = function(userId) {
@@ -1981,8 +2307,43 @@
             }
         };
 
-        window.searchByHashtag = function(tag) {
-            showNotification(`Поиск по тегу #${tag}`);
+        // Функция для открытия модального окна с хештегом
+        window.openHashtagModal = function(tag) {
+            currentHashtag = tag;
+            const hashtagPosts = posts.filter(p => p.hashtags && p.hashtags.includes(tag));
+            
+            document.getElementById('hashtagName').textContent = '#' + tag;
+            document.getElementById('hashtagCount').textContent = hashtagPosts.length;
+            
+            const postsList = document.getElementById('hashtagPostsList');
+            if (hashtagPosts.length === 0) {
+                postsList.innerHTML = '<div class="empty-state">Нет постов с этим тегом</div>';
+            } else {
+                postsList.innerHTML = hashtagPosts.map(post => {
+                    const author = users.find(u => u.id === post.authorId);
+                    return `
+                        <div class="hashtag-post-item" onclick="goToPost('${post.id}')">
+                            <div class="hashtag-post-author">${author.name}</div>
+                            <div class="hashtag-post-content">${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            document.getElementById('hashtagModal').style.display = 'flex';
+        };
+
+        window.goToPost = function(postId) {
+            document.getElementById('hashtagModal').style.display = 'none';
+            document.querySelector('[data-nav="feed"]').click();
+            setTimeout(() => {
+                const post = document.querySelector(`[onclick*="'${postId}'"]`).closest('.post');
+                if (post) {
+                    post.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    post.style.transform = 'scale(1.02)';
+                    setTimeout(() => post.style.transform = '', 500);
+                }
+            }, 100);
         };
 
         window.openUserProfile = function(username) {
@@ -1991,7 +2352,8 @@
             
             viewingUser = user;
             
-            document.getElementById('otherProfileName').textContent = user.name;
+            document.getElementById('otherProfileName').textContent = 'Профиль пользователя';
+            document.getElementById('otherProfileDisplayName').textContent = user.name;
             document.getElementById('otherProfileUsername').textContent = formatUsername(user.username);
             document.getElementById('otherProfileBio').textContent = user.bio || 'Нет информации';
             
@@ -2021,12 +2383,12 @@
         };
 
         // Рисование аватара
+        let avatarCanvas, avatarCtx, avatarDrawing = false, avatarColor = '#000000', avatarBrushSize = 5;
+
         window.openAvatarDrawing = function() {
             document.getElementById('avatarDrawingModal').style.display = 'flex';
-            initAvatarCanvas();
+            setTimeout(initAvatarCanvas, 100);
         };
-
-        let avatarCanvas, avatarCtx, avatarDrawing = false, avatarColor = '#000000', avatarBrushSize = 5;
 
         function initAvatarCanvas() {
             avatarCanvas = document.getElementById('avatarDrawingCanvas');
@@ -2064,6 +2426,9 @@
             avatarCtx.stroke();
             avatarCtx.beginPath();
             avatarCtx.moveTo(pos.x, pos.y);
+            
+            // Обновляем превью
+            updateAvatarPreview();
         }
 
         function stopAvatarDrawing() {
@@ -2094,14 +2459,22 @@
             if (avatarCtx) {
                 avatarCtx.fillStyle = '#ffffff';
                 avatarCtx.fillRect(0, 0, avatarCanvas.width, avatarCanvas.height);
+                updateAvatarPreview();
             }
+        }
+
+        function updateAvatarPreview() {
+            const previewCanvas = document.querySelector('#avatarPreview canvas');
+            const previewCtx = previewCanvas.getContext('2d');
+            previewCtx.clearRect(0, 0, 90, 90);
+            previewCtx.drawImage(avatarCanvas, 0, 0, 400, 400, 0, 0, 90, 90);
         }
 
         // Рисование для поста
         let postCanvas, postCtx, postDrawing = false, postColor = '#000000', postBrushSize = 5;
 
         function initPostCanvas() {
-            postCanvas = document.getElementById('drawingCanvas');
+            postCanvas = document.getElementById('postDrawingCanvas');
             if (!postCanvas) return;
             
             postCtx = postCanvas.getContext('2d');
@@ -2171,6 +2544,15 @@
             }
         }
 
+        function updateBrushPreview() {
+            const preview = document.getElementById('brushPreview');
+            if (preview) {
+                preview.style.background = postColor;
+                preview.style.width = postBrushSize * 2 + 'px';
+                preview.style.height = postBrushSize * 2 + 'px';
+            }
+        }
+
         // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Void загружен');
@@ -2194,26 +2576,19 @@
             const drawingBtn = document.getElementById('drawingBtn');
             const refreshFeedBtn = document.getElementById('refreshFeedBtn');
             const navItems = document.querySelectorAll('.nav-item');
-            const clearDrawingBtn = document.getElementById('clearDrawingBtn');
-            const blackColorBtn = document.getElementById('blackColorBtn');
-            const redColorBtn = document.getElementById('redColorBtn');
-            const blueColorBtn = document.getElementById('blueColorBtn');
-            const greenColorBtn = document.getElementById('greenColorBtn');
-            const smallBrushBtn = document.getElementById('smallBrushBtn');
-            const mediumBrushBtn = document.getElementById('mediumBrushBtn');
-            const largeBrushBtn = document.getElementById('largeBrushBtn');
+            const clearPostDrawingBtn = document.getElementById('clearPostDrawingBtn');
+            const newAvatarBtn = document.getElementById('newAvatarBtn');
+            const deleteAvatarBtn = document.getElementById('deleteAvatarBtn');
             
             // Элементы для рисования аватара
             const saveAvatarBtn = document.getElementById('saveAvatarBtn');
             const cancelAvatarBtn = document.getElementById('cancelAvatarBtn');
             const clearAvatarBtn = document.getElementById('clearAvatarBtn');
-            const avatarBlackBtn = document.getElementById('avatarBlackBtn');
-            const avatarRedBtn = document.getElementById('avatarRedBtn');
-            const avatarBlueBtn = document.getElementById('avatarBlueBtn');
-            const avatarGreenBtn = document.getElementById('avatarGreenBtn');
-            const avatarSmallBtn = document.getElementById('avatarSmallBtn');
-            const avatarMediumBtn = document.getElementById('avatarMediumBtn');
-            const avatarLargeBtn = document.getElementById('avatarLargeBtn');
+            
+            // Элементы для хештегов
+            const closeHashtagBtn = document.getElementById('closeHashtagBtn');
+            
+            // Элементы для профиля
             const closeProfileBtn = document.getElementById('closeProfileBtn');
             const followFromProfileBtn = document.getElementById('followFromProfileBtn');
 
@@ -2249,135 +2624,85 @@
                 };
             }
 
+            // Управление аватаркой
+            if (newAvatarBtn) {
+                newAvatarBtn.onclick = openAvatarDrawing;
+            }
+
+            if (deleteAvatarBtn) {
+                deleteAvatarBtn.onclick = function() {
+                    if (confirm('Удалить аватар?')) {
+                        currentUser.avatar = null;
+                        const userIndex = users.findIndex(u => u.id === currentUser.id);
+                        if (userIndex !== -1) {
+                            users[userIndex].avatar = null;
+                            saveUsers();
+                        }
+                        updateUI();
+                        showNotification('Аватар удален');
+                    }
+                };
+            }
+
             // Рисование для поста
             if (drawingBtn) {
                 drawingBtn.onclick = function() {
-                    const container = document.getElementById('drawingCanvasContainer');
+                    const container = document.getElementById('drawingContainer');
                     if (container.style.display === 'none' || container.style.display === '') {
                         container.style.display = 'block';
-                        setTimeout(() => initPostCanvas(), 100);
+                        setTimeout(() => {
+                            initPostCanvas();
+                            // Устанавливаем цвета по умолчанию
+                            document.querySelector('.color-btn[data-color="#000000"]').classList.add('active');
+                        }, 100);
                     } else {
                         container.style.display = 'none';
                     }
                 };
             }
 
-            if (clearDrawingBtn) {
-                clearDrawingBtn.onclick = clearPostCanvas;
+            // Цвета для рисования поста
+            document.querySelectorAll('.color-btn[data-color]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    postColor = this.dataset.color;
+                    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateBrushPreview();
+                });
+            });
+
+            // Размер кисти для поста
+            document.querySelectorAll('.brush-size-btn[data-size]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    postBrushSize = parseInt(this.dataset.size);
+                    document.querySelectorAll('.brush-size-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateBrushPreview();
+                });
+            });
+
+            // Очистка рисунка поста
+            if (clearPostDrawingBtn) {
+                clearPostDrawingBtn.onclick = clearPostCanvas;
             }
 
-            if (blackColorBtn) {
-                blackColorBtn.onclick = function() {
-                    postColor = '#000000';
-                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+            // Цвета для аватара
+            document.querySelectorAll('[data-avatar-color]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    avatarColor = this.dataset.avatarColor;
+                    document.querySelectorAll('[data-avatar-color]').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-                };
-            }
+                });
+            });
 
-            if (redColorBtn) {
-                redColorBtn.onclick = function() {
-                    postColor = '#ff4444';
-                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+            // Размер кисти для аватара
+            document.querySelectorAll('[data-avatar-size]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    avatarBrushSize = parseInt(this.dataset.avatarSize);
+                    document.querySelectorAll('[data-avatar-size]').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-                };
-            }
-
-            if (blueColorBtn) {
-                blueColorBtn.onclick = function() {
-                    postColor = '#667eea';
-                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (greenColorBtn) {
-                greenColorBtn.onclick = function() {
-                    postColor = '#44ff44';
-                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (smallBrushBtn) {
-                smallBrushBtn.onclick = function() {
-                    postBrushSize = 2;
-                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (mediumBrushBtn) {
-                mediumBrushBtn.onclick = function() {
-                    postBrushSize = 5;
-                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (largeBrushBtn) {
-                largeBrushBtn.onclick = function() {
-                    postBrushSize = 10;
-                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            // Рисование аватара
-            if (avatarBlackBtn) {
-                avatarBlackBtn.onclick = function() {
-                    avatarColor = '#000000';
-                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (avatarRedBtn) {
-                avatarRedBtn.onclick = function() {
-                    avatarColor = '#ff4444';
-                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (avatarBlueBtn) {
-                avatarBlueBtn.onclick = function() {
-                    avatarColor = '#667eea';
-                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (avatarGreenBtn) {
-                avatarGreenBtn.onclick = function() {
-                    avatarColor = '#44ff44';
-                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (avatarSmallBtn) {
-                avatarSmallBtn.onclick = function() {
-                    avatarBrushSize = 2;
-                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (avatarMediumBtn) {
-                avatarMediumBtn.onclick = function() {
-                    avatarBrushSize = 5;
-                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
-
-            if (avatarLargeBtn) {
-                avatarLargeBtn.onclick = function() {
-                    avatarBrushSize = 10;
-                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                };
-            }
+                });
+            });
 
             if (clearAvatarBtn) {
                 clearAvatarBtn.onclick = clearAvatarCanvas;
@@ -2385,7 +2710,23 @@
 
             if (saveAvatarBtn) {
                 saveAvatarBtn.onclick = function() {
-                    const drawingData = avatarCanvas.toDataURL('image/png');
+                    // Создаем квадратное изображение для аватара
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = 200;
+                    tempCanvas.height = 200;
+                    const tempCtx = tempCanvas.getContext('2d');
+                    
+                    // Рисуем белый фон
+                    tempCtx.fillStyle = '#ffffff';
+                    tempCtx.fillRect(0, 0, 200, 200);
+                    
+                    // Рисуем содержимое с основного canvas, обрезая по центру
+                    const size = Math.min(avatarCanvas.width, avatarCanvas.height);
+                    const sourceX = (avatarCanvas.width - size) / 2;
+                    const sourceY = (avatarCanvas.height - size) / 2;
+                    tempCtx.drawImage(avatarCanvas, sourceX, sourceY, size, size, 0, 0, 200, 200);
+                    
+                    const drawingData = tempCanvas.toDataURL('image/png');
                     currentUser.avatar = drawingData;
                     
                     const userIndex = users.findIndex(u => u.id === currentUser.id);
@@ -2406,7 +2747,13 @@
                 };
             }
 
-            // Закрытие профиля другого пользователя
+            // Закрытие модальных окон
+            if (closeHashtagBtn) {
+                closeHashtagBtn.onclick = function() {
+                    document.getElementById('hashtagModal').style.display = 'none';
+                };
+            }
+
             if (closeProfileBtn) {
                 closeProfileBtn.onclick = function() {
                     document.getElementById('userProfileModal').style.display = 'none';
@@ -2439,6 +2786,15 @@
                     }
                 };
             }
+
+            // Закрытие модальных окон по клику вне
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
 
             // Сохранение черновика
             if (saveDraftBtn) {
@@ -2487,11 +2843,29 @@
                     
                     let drawingData = null;
                     if (postCanvas) {
-                        drawingData = postCanvas.toDataURL('image/png');
-                        // Проверяем, не пустой ли рисунок (белый фон)
+                        // Проверяем, не пустой ли рисунок
                         const imageData = postCtx.getImageData(0, 0, postCanvas.width, postCanvas.height).data;
-                        const isBlank = imageData.every(pixel => pixel === 255);
-                        if (isBlank) drawingData = null;
+                        const isBlank = imageData.every((pixel, index) => {
+                            // Проверяем каждый четвертый пиксель (альфа-канал)
+                            return (index + 1) % 4 === 0 ? pixel === 255 : true;
+                        });
+                        
+                        if (!isBlank) {
+                            // Создаем квадратное изображение
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = 400;
+                            tempCanvas.height = 400;
+                            const tempCtx = tempCanvas.getContext('2d');
+                            
+                            // Рисуем белый фон
+                            tempCtx.fillStyle = '#ffffff';
+                            tempCtx.fillRect(0, 0, 400, 400);
+                            
+                            // Рисуем содержимое с основного canvas
+                            tempCtx.drawImage(postCanvas, 0, 0);
+                            
+                            drawingData = tempCanvas.toDataURL('image/png');
+                        }
                     }
                     
                     if (!content && !drawingData) {
@@ -2516,7 +2890,7 @@
                     savePosts();
                     
                     document.getElementById('postContent').value = '';
-                    document.getElementById('drawingCanvasContainer').style.display = 'none';
+                    document.getElementById('drawingContainer').style.display = 'none';
                     clearPostCanvas();
                     
                     updateUserPosts();
