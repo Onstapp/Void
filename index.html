@@ -70,7 +70,8 @@
         body.light-theme .edit-profile-form,
         body.light-theme .drawing-modal,
         body.light-theme .avatar-drawing-modal,
-        body.light-theme .hashtag-modal {
+        body.light-theme .hashtag-modal,
+        body.light-theme .user-posts-modal {
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
@@ -188,6 +189,21 @@
 
         body.light-theme .hashtag-info {
             color: #666;
+        }
+
+        body.light-theme .avatar-action-btn {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #555;
+        }
+
+        body.light-theme .avatar-action-btn.delete {
+            color: #ff4757;
+            border-color: rgba(255,68,68,0.3);
+        }
+
+        body.light-theme .avatar-action-btn.delete:hover {
+            background: rgba(255,68,68,0.1);
         }
 
         body.light-theme ::placeholder {
@@ -393,6 +409,7 @@
             gap: 0.5rem;
             margin-top: 0.5rem;
             justify-content: center;
+            display: none;
         }
 
         .avatar-action-btn {
@@ -739,9 +756,16 @@
 
         .brush-size-control {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem;
+        }
+
+        .brush-size-buttons {
+            display: flex;
+            gap: 0.5rem;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .brush-size-btn {
@@ -1325,12 +1349,12 @@
         }
 
         .avatar-drawing-canvas-wrapper {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background: white;
-            border-radius: 20px;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
             overflow: hidden;
-            margin-bottom: 1rem;
+            border: 3px solid #667eea;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
@@ -1343,19 +1367,11 @@
             touch-action: none;
         }
 
-        .avatar-preview {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin: 0 auto 1rem;
-            border: 3px solid #667eea;
-        }
-
-        .avatar-preview canvas {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .avatar-preview-text {
+            text-align: center;
+            color: #888;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
         }
 
         /* Модальное окно для хештегов */
@@ -1422,7 +1438,7 @@
 
         /* Модальное окно для просмотра чужого профиля */
         .profile-modal-content {
-            max-width: 400px;
+            max-width: 500px;
         }
 
         .profile-modal-header {
@@ -1471,6 +1487,40 @@
             gap: 2rem;
             margin-bottom: 1.5rem;
             justify-content: center;
+        }
+
+        .profile-posts-section {
+            margin-top: 1.5rem;
+        }
+
+        .profile-posts-section h4 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .profile-posts-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .profile-post-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-post-content {
+            color: #e0e0e0;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-post-stats {
+            display: flex;
+            gap: 1rem;
+            color: #888;
+            font-size: 0.8rem;
         }
 
         /* Адаптация */
@@ -1562,15 +1612,15 @@
                             <div class="stat-label">подписки</div>
                         </div>
                         <div class="stat">
-                            <div class="stat-value" id="postsCount">0</div>
-                            <div class="stat-label">посты</div>
+                            <div class="stat-value" id="totalLikesCount">0</div>
+                            <div class="stat-label">лайки</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="avatar-actions">
-                <button class="avatar-action-btn" id="newAvatarBtn">🆕 Новая</button>
-                <button class="avatar-action-btn delete" id="deleteAvatarBtn">🗑️ Удалить</button>
+            <div class="avatar-actions" id="avatarActions">
+                <button class="avatar-action-btn" id="newAvatarBtn">Новая</button>
+                <button class="avatar-action-btn delete" id="deleteAvatarBtn">Удалить</button>
             </div>
             <button class="edit-profile-btn" id="editProfileBtn">Редактировать профиль</button>
         </div>
@@ -1591,7 +1641,6 @@
         <div class="create-post" id="createPostSection" style="display: none;">
             <textarea id="postContent" placeholder="Что у вас нового?"></textarea>
             <div class="post-tools">
-                <button class="tool-btn" id="saveDraftBtn">📝 Черновик</button>
                 <button class="tool-btn" id="hashtagBtn"># Хештег</button>
                 <button class="tool-btn" id="drawingBtn">✏️ Рисунок</button>
             </div>
@@ -1618,9 +1667,11 @@
                     
                     <div class="brush-size-control">
                         <span style="color: #888;">Толщина:</span>
-                        <button class="brush-size-btn" data-size="2">Мелкий</button>
-                        <button class="brush-size-btn active" data-size="5">Средний</button>
-                        <button class="brush-size-btn" data-size="10">Крупный</button>
+                        <div class="brush-size-buttons">
+                            <button class="brush-size-btn" data-size="2">Мелкий</button>
+                            <button class="brush-size-btn active" data-size="5">Средний</button>
+                            <button class="brush-size-btn" data-size="10">Крупный</button>
+                        </div>
                         <div class="brush-preview" id="brushPreview" style="background: #000000;"></div>
                     </div>
                     
@@ -1659,12 +1710,10 @@
         <div class="modal-content avatar-drawing-content">
             <h3>Нарисуйте аватар</h3>
             
-            <div class="avatar-preview" id="avatarPreview">
-                <canvas width="90" height="90"></canvas>
-            </div>
+            <div class="avatar-preview-text">Рисуйте в круге</div>
             
             <div class="avatar-drawing-canvas-wrapper">
-                <canvas id="avatarDrawingCanvas" class="avatar-drawing-canvas" width="400" height="400"></canvas>
+                <canvas id="avatarDrawingCanvas" class="avatar-drawing-canvas" width="200" height="200"></canvas>
             </div>
             
             <div class="color-palette" style="margin-bottom: 1rem;">
@@ -1682,9 +1731,11 @@
             
             <div class="brush-size-control" style="margin-bottom: 1rem;">
                 <span style="color: #888;">Толщина:</span>
-                <button class="brush-size-btn" data-avatar-size="2">Мелкий</button>
-                <button class="brush-size-btn active" data-avatar-size="5">Средний</button>
-                <button class="brush-size-btn" data-avatar-size="10">Крупный</button>
+                <div class="brush-size-buttons">
+                    <button class="brush-size-btn" data-avatar-size="2">Мелкий</button>
+                    <button class="brush-size-btn active" data-avatar-size="5">Средний</button>
+                    <button class="brush-size-btn" data-avatar-size="10">Крупный</button>
+                </div>
             </div>
             
             <div class="drawing-actions">
@@ -1734,12 +1785,17 @@
                     <div class="stat-label">подписки</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="otherPostsCount">0</div>
-                    <div class="stat-label">посты</div>
+                    <div class="stat-value" id="otherTotalLikesCount">0</div>
+                    <div class="stat-label">лайки</div>
                 </div>
             </div>
             
-            <div style="display: flex; gap: 0.5rem;">
+            <div class="profile-posts-section">
+                <h4>Посты пользователя</h4>
+                <div class="profile-posts-list" id="otherUserPosts"></div>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                 <button class="drawing-action-btn save" id="followFromProfileBtn">Подписаться</button>
                 <button class="drawing-action-btn cancel" id="closeProfileBtn">Закрыть</button>
             </div>
@@ -1754,7 +1810,6 @@
         let commentLikes = JSON.parse(localStorage.getItem('void_commentLikes')) || [];
         let postLikes = JSON.parse(localStorage.getItem('void_postLikes')) || [];
         let subscriptions = JSON.parse(localStorage.getItem('void_subscriptions')) || [];
-        let drafts = JSON.parse(localStorage.getItem('void_drafts')) || [];
         let currentUser = null;
         let viewingUser = null;
         let currentHashtag = null;
@@ -1766,7 +1821,6 @@
         function saveCommentLikes() { localStorage.setItem('void_commentLikes', JSON.stringify(commentLikes)); }
         function savePostLikes() { localStorage.setItem('void_postLikes', JSON.stringify(postLikes)); }
         function saveSubscriptions() { localStorage.setItem('void_subscriptions', JSON.stringify(subscriptions)); }
-        function saveDrafts() { localStorage.setItem('void_drafts', JSON.stringify(drafts)); }
 
         // Создаем демо-пользователей
         if (users.length === 0) {
@@ -1889,6 +1943,15 @@
             return (text.match(/@[a-zA-Z0-9_]+/g) || []).map(mention => mention.substring(1));
         }
 
+        function getTotalLikes(userId) {
+            const userPosts = posts.filter(p => p.authorId === userId);
+            let total = 0;
+            userPosts.forEach(post => {
+                total += postLikes.filter(l => l.postId === post.id).length;
+            });
+            return total;
+        }
+
         function showNotification(message) {
             const toast = document.createElement('div');
             toast.className = 'notification-toast';
@@ -1926,14 +1989,13 @@
             document.getElementById('editUsername').value = currentUser.username;
             document.getElementById('editBio').value = currentUser.bio || '';
 
-            const userPosts = posts.filter(p => p.authorId === currentUser.id);
-            document.getElementById('postsCount').textContent = userPosts.length;
-
             const followers = subscriptions.filter(s => s.followingId === currentUser.id).length;
             const following = subscriptions.filter(s => s.followerId === currentUser.id).length;
+            const totalLikes = getTotalLikes(currentUser.id);
             
             document.getElementById('followersCount').textContent = followers;
             document.getElementById('followingCount').textContent = following;
+            document.getElementById('totalLikesCount').textContent = totalLikes;
 
             // Обновляем ленту
             updateFeed();
@@ -2256,6 +2318,13 @@
             const count = postLikes.filter(l => l.postId === postId).length;
             likeBtn.innerHTML = `❤️ ${count}`;
             likeBtn.classList.toggle('liked', !existing);
+            
+            // Обновляем общее количество лайков в профиле, если это наш пост
+            const post = posts.find(p => p.id === postId);
+            if (post && post.authorId === currentUser.id) {
+                const totalLikes = getTotalLikes(currentUser.id);
+                document.getElementById('totalLikesCount').textContent = totalLikes;
+            }
         };
 
         window.toggleFollow = function(userId) {
@@ -2281,6 +2350,10 @@
             } else {
                 updateFeed();
             }
+            
+            // Обновляем счетчики в профиле
+            const followers = subscriptions.filter(s => s.followingId === currentUser.id).length;
+            document.getElementById('followersCount').textContent = followers;
         };
 
         window.deletePost = function(postId) {
@@ -2370,11 +2443,32 @@
             
             const followers = subscriptions.filter(s => s.followingId === user.id).length;
             const following = subscriptions.filter(s => s.followerId === user.id).length;
-            const postsCount = posts.filter(p => p.authorId === user.id).length;
+            const totalLikes = getTotalLikes(user.id);
             
             document.getElementById('otherFollowersCount').textContent = followers;
             document.getElementById('otherFollowingCount').textContent = following;
-            document.getElementById('otherPostsCount').textContent = postsCount;
+            document.getElementById('otherTotalLikesCount').textContent = totalLikes;
+            
+            // Показываем посты пользователя
+            const userPosts = posts.filter(p => p.authorId === user.id).sort((a, b) => b.timestamp - a.timestamp);
+            const postsList = document.getElementById('otherUserPosts');
+            
+            if (userPosts.length === 0) {
+                postsList.innerHTML = '<div class="empty-state">У пользователя пока нет постов</div>';
+            } else {
+                postsList.innerHTML = userPosts.map(post => {
+                    const postLikesCount = postLikes.filter(l => l.postId === post.id).length;
+                    return `
+                        <div class="profile-post-item" onclick="goToPost('${post.id}')">
+                            <div class="profile-post-content">${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</div>
+                            <div class="profile-post-stats">
+                                <span>❤️ ${postLikesCount}</span>
+                                <span>💬 ${comments.filter(c => c.postId === post.id).length}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
             
             const isFollowing = subscriptions.some(s => s.followerId === currentUser.id && s.followingId === user.id);
             document.getElementById('followFromProfileBtn').textContent = isFollowing ? '✓ Отписался' : '+ Подписаться';
@@ -2426,9 +2520,6 @@
             avatarCtx.stroke();
             avatarCtx.beginPath();
             avatarCtx.moveTo(pos.x, pos.y);
-            
-            // Обновляем превью
-            updateAvatarPreview();
         }
 
         function stopAvatarDrawing() {
@@ -2459,15 +2550,7 @@
             if (avatarCtx) {
                 avatarCtx.fillStyle = '#ffffff';
                 avatarCtx.fillRect(0, 0, avatarCanvas.width, avatarCanvas.height);
-                updateAvatarPreview();
             }
-        }
-
-        function updateAvatarPreview() {
-            const previewCanvas = document.querySelector('#avatarPreview canvas');
-            const previewCtx = previewCanvas.getContext('2d');
-            previewCtx.clearRect(0, 0, 90, 90);
-            previewCtx.drawImage(avatarCanvas, 0, 0, 400, 400, 0, 0, 90, 90);
         }
 
         // Рисование для поста
@@ -2571,7 +2654,6 @@
             const editProfileBtn = document.getElementById('editProfileBtn');
             const cancelEditBtn = document.getElementById('cancelEditBtn');
             const saveProfileBtn = document.getElementById('saveProfileBtn');
-            const saveDraftBtn = document.getElementById('saveDraftBtn');
             const hashtagBtn = document.getElementById('hashtagBtn');
             const drawingBtn = document.getElementById('drawingBtn');
             const refreshFeedBtn = document.getElementById('refreshFeedBtn');
@@ -2624,7 +2706,29 @@
                 };
             }
 
-            // Управление аватаркой
+            // Управление аватаркой - показываем только в режиме редактирования
+            if (editProfileBtn) {
+                editProfileBtn.onclick = function() {
+                    document.getElementById('profileSection').style.display = 'none';
+                    document.getElementById('createPostSection').style.display = 'none';
+                    document.getElementById('editProfileForm').style.display = 'block';
+                    document.getElementById('avatarActions').style.display = 'flex';
+                    
+                    document.getElementById('editName').value = currentUser.name;
+                    document.getElementById('editUsername').value = currentUser.username;
+                    document.getElementById('editBio').value = currentUser.bio || '';
+                };
+            }
+
+            if (cancelEditBtn) {
+                cancelEditBtn.onclick = function() {
+                    document.getElementById('editProfileForm').style.display = 'none';
+                    document.getElementById('profileSection').style.display = 'block';
+                    document.getElementById('createPostSection').style.display = 'block';
+                    document.getElementById('avatarActions').style.display = 'none';
+                };
+            }
+
             if (newAvatarBtn) {
                 newAvatarBtn.onclick = openAvatarDrawing;
             }
@@ -2710,34 +2814,29 @@
 
             if (saveAvatarBtn) {
                 saveAvatarBtn.onclick = function() {
-                    // Создаем квадратное изображение для аватара
-                    const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = 200;
-                    tempCanvas.height = 200;
-                    const tempCtx = tempCanvas.getContext('2d');
+                    const drawingData = avatarCanvas.toDataURL('image/png');
                     
-                    // Рисуем белый фон
-                    tempCtx.fillStyle = '#ffffff';
-                    tempCtx.fillRect(0, 0, 200, 200);
+                    // Проверяем, не пустой ли рисунок
+                    const imageData = avatarCtx.getImageData(0, 0, avatarCanvas.width, avatarCanvas.height).data;
+                    const isBlank = imageData.every((pixel, index) => {
+                        return (index + 1) % 4 === 0 ? pixel === 255 : true;
+                    });
                     
-                    // Рисуем содержимое с основного canvas, обрезая по центру
-                    const size = Math.min(avatarCanvas.width, avatarCanvas.height);
-                    const sourceX = (avatarCanvas.width - size) / 2;
-                    const sourceY = (avatarCanvas.height - size) / 2;
-                    tempCtx.drawImage(avatarCanvas, sourceX, sourceY, size, size, 0, 0, 200, 200);
-                    
-                    const drawingData = tempCanvas.toDataURL('image/png');
-                    currentUser.avatar = drawingData;
-                    
-                    const userIndex = users.findIndex(u => u.id === currentUser.id);
-                    if (userIndex !== -1) {
-                        users[userIndex].avatar = drawingData;
-                        saveUsers();
+                    if (!isBlank) {
+                        currentUser.avatar = drawingData;
+                        
+                        const userIndex = users.findIndex(u => u.id === currentUser.id);
+                        if (userIndex !== -1) {
+                            users[userIndex].avatar = drawingData;
+                            saveUsers();
+                        }
+                        
+                        document.getElementById('avatarDrawingModal').style.display = 'none';
+                        updateUI();
+                        showNotification('Аватар сохранен');
+                    } else {
+                        showNotification('Нарисуйте что-нибудь');
                     }
-                    
-                    document.getElementById('avatarDrawingModal').style.display = 'none';
-                    updateUI();
-                    showNotification('Аватар сохранен');
                 };
             }
 
@@ -2796,27 +2895,6 @@
                 });
             });
 
-            // Сохранение черновика
-            if (saveDraftBtn) {
-                saveDraftBtn.onclick = function() {
-                    const content = document.getElementById('postContent').value.trim();
-                    if (!content) {
-                        alert('Введите текст для черновика');
-                        return;
-                    }
-                    
-                    drafts.push({
-                        id: Date.now().toString(),
-                        userId: currentUser.id,
-                        content: content,
-                        timestamp: Date.now()
-                    });
-                    
-                    saveDrafts();
-                    showNotification('Черновик сохранен');
-                };
-            }
-
             // Добавление хештега
             if (hashtagBtn) {
                 hashtagBtn.onclick = function() {
@@ -2846,25 +2924,11 @@
                         // Проверяем, не пустой ли рисунок
                         const imageData = postCtx.getImageData(0, 0, postCanvas.width, postCanvas.height).data;
                         const isBlank = imageData.every((pixel, index) => {
-                            // Проверяем каждый четвертый пиксель (альфа-канал)
                             return (index + 1) % 4 === 0 ? pixel === 255 : true;
                         });
                         
                         if (!isBlank) {
-                            // Создаем квадратное изображение
-                            const tempCanvas = document.createElement('canvas');
-                            tempCanvas.width = 400;
-                            tempCanvas.height = 400;
-                            const tempCtx = tempCanvas.getContext('2d');
-                            
-                            // Рисуем белый фон
-                            tempCtx.fillStyle = '#ffffff';
-                            tempCtx.fillRect(0, 0, 400, 400);
-                            
-                            // Рисуем содержимое с основного canvas
-                            tempCtx.drawImage(postCanvas, 0, 0);
-                            
-                            drawingData = tempCanvas.toDataURL('image/png');
+                            drawingData = postCanvas.toDataURL('image/png');
                         }
                     }
                     
@@ -2900,26 +2964,6 @@
             }
 
             // Редактирование профиля
-            if (editProfileBtn) {
-                editProfileBtn.onclick = function() {
-                    document.getElementById('profileSection').style.display = 'none';
-                    document.getElementById('createPostSection').style.display = 'none';
-                    document.getElementById('editProfileForm').style.display = 'block';
-                    
-                    document.getElementById('editName').value = currentUser.name;
-                    document.getElementById('editUsername').value = currentUser.username;
-                    document.getElementById('editBio').value = currentUser.bio || '';
-                };
-            }
-
-            if (cancelEditBtn) {
-                cancelEditBtn.onclick = function() {
-                    document.getElementById('editProfileForm').style.display = 'none';
-                    document.getElementById('profileSection').style.display = 'block';
-                    document.getElementById('createPostSection').style.display = 'block';
-                };
-            }
-
             if (saveProfileBtn) {
                 saveProfileBtn.onclick = function() {
                     const newName = document.getElementById('editName').value.trim();
@@ -2955,6 +2999,7 @@
                     document.getElementById('editProfileForm').style.display = 'none';
                     document.getElementById('profileSection').style.display = 'block';
                     document.getElementById('createPostSection').style.display = 'block';
+                    document.getElementById('avatarActions').style.display = 'none';
                     updateUI();
                     showNotification('Профиль обновлен');
                 };
