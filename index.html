@@ -41,7 +41,7 @@
             50% { opacity: 0.8; transform: scale(1.1); }
         }
 
-        /* Светлая тема - ИСПРАВЛЕНО */
+        /* Светлая тема */
         body.light-theme {
             background: linear-gradient(135deg, #f0f2f5 0%, #e0e5ec 100%);
             color: #1a1a1a;
@@ -68,9 +68,8 @@
         body.light-theme .create-post,
         body.light-theme .post,
         body.light-theme .edit-profile-form,
-        body.light-theme .saved-posts-section,
-        body.light-theme .drafts-section,
-        body.light-theme .search-modal {
+        body.light-theme .drawing-modal,
+        body.light-theme .avatar-drawing-modal {
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
@@ -85,8 +84,7 @@
         body.light-theme .profile-username,
         body.light-theme .post-username,
         body.light-theme .post-time,
-        body.light-theme .stat-label,
-        body.light-theme .comment-time {
+        body.light-theme .stat-label {
             color: #666;
         }
 
@@ -94,7 +92,6 @@
             background: rgba(0, 0, 0, 0.05);
         }
 
-        /* ИСПРАВЛЕНО: текст постов в светлой теме */
         body.light-theme .post-content {
             color: #1a1a1a;
         }
@@ -112,8 +109,7 @@
         body.light-theme .create-post textarea,
         body.light-theme .edit-profile-form input,
         body.light-theme .edit-profile-form textarea,
-        body.light-theme .add-comment input,
-        body.light-theme .search-input {
+        body.light-theme .add-comment input {
             background: rgba(0, 0, 0, 0.03);
             border: 1px solid rgba(0, 0, 0, 0.1);
             color: #333;
@@ -122,14 +118,12 @@
         body.light-theme .create-post textarea:focus,
         body.light-theme .edit-profile-form input:focus,
         body.light-theme .edit-profile-form textarea:focus,
-        body.light-theme .add-comment input:focus,
-        body.light-theme .search-input:focus {
+        body.light-theme .add-comment input:focus {
             border-color: #667eea;
             background: rgba(255, 255, 255, 0.9);
         }
 
         body.light-theme .tool-btn,
-        body.light-theme .reaction-btn,
         body.light-theme .follow-btn,
         body.light-theme .comment-like-btn {
             background: rgba(0, 0, 0, 0.03);
@@ -138,18 +132,11 @@
         }
 
         body.light-theme .tool-btn:hover,
-        body.light-theme .reaction-btn:hover,
         body.light-theme .follow-btn:hover,
         body.light-theme .comment-like-btn:hover {
             background: rgba(102, 126, 234, 0.1);
         }
 
-        body.light-theme .reaction-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        /* ИСПРАВЛЕНО: лайки с сине-фиолетовым градиентом */
         body.light-theme .post-like-btn {
             background: rgba(0, 0, 0, 0.03);
             border: 1px solid rgba(0, 0, 0, 0.1);
@@ -159,13 +146,6 @@
         body.light-theme .post-like-btn.liked {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            border-color: transparent;
-        }
-
-        body.light-theme .reaction-picker {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         body.light-theme .comment-content {
@@ -199,44 +179,10 @@
             background: rgba(102, 126, 234, 0.1);
         }
 
-        body.light-theme .search-modal {
-            background: rgba(255, 255, 255, 0.98);
-        }
-
-        body.light-theme .search-item {
-            background: rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            color: #333;
-        }
-
-        body.light-theme .search-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-color: #667eea;
-        }
-
-        body.light-theme .close-search {
-            color: #333;
-        }
-
         body.light-theme .empty-state {
             color: #888;
             background: rgba(0, 0, 0, 0.02);
             border: 1px dashed rgba(0, 0, 0, 0.1);
-        }
-
-        body.light-theme .draft-item {
-            background: rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            color: #333;
-        }
-
-        body.light-theme .draft-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-color: #667eea;
-        }
-
-        body.light-theme .draft-time {
-            color: #888;
         }
 
         body.light-theme ::placeholder {
@@ -396,34 +342,23 @@
         .profile-avatar {
             width: 90px;
             height: 90px;
-            background: linear-gradient(135deg, #667eea, #764ba2, #667eea);
-            background-size: 200% 200%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
-            animation: avatarPulse 4s ease infinite, gradientMove 6s ease infinite;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             background-size: cover;
             background-position: center;
+            transition: all 0.3s ease;
         }
 
-        @keyframes gradientMove {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        @keyframes avatarPulse {
-            0%, 100% { box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5); }
-            50% { box-shadow: 0 20px 50px rgba(102, 126, 234, 0.8); }
-        }
-
-        .profile-avatar.has-image {
-            animation: none;
+        .profile-avatar.drawn-avatar {
+            background: none;
         }
 
         .profile-avatar .avatar-overlay {
@@ -446,10 +381,6 @@
 
         .profile-avatar:hover .avatar-overlay {
             opacity: 1;
-        }
-
-        .avatar-input {
-            display: none;
         }
 
         .profile-info {
@@ -475,6 +406,12 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .profile-username:hover {
+            color: #667eea;
         }
 
         .verified-badge {
@@ -704,47 +641,47 @@
             transform: translateY(-2px);
         }
 
-        .image-preview {
-            position: relative;
+        .drawing-canvas-container {
             margin-bottom: 1rem;
-            display: none;
             border-radius: 20px;
             overflow: hidden;
-            animation: scaleIn 0.3s ease;
+            background: rgba(0,0,0,0.2);
+            display: none;
         }
 
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .image-preview img {
+        .drawing-canvas {
             width: 100%;
-            max-height: 200px;
-            object-fit: cover;
+            height: 200px;
+            background: white;
+            cursor: crosshair;
+            touch-action: none;
         }
 
-        .remove-image {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
+        .drawing-controls {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
-        .remove-image:hover {
-            background: rgba(255, 68, 68, 0.8);
-            transform: rotate(90deg);
+        .drawing-control-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .drawing-control-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        .drawing-control-btn.active {
+            background: #667eea;
+            color: white;
         }
 
         .post-btn {
@@ -793,42 +730,28 @@
             padding: 1.2rem;
             margin-bottom: 1.2rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: slideUp 0.5s ease;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
         .post:hover {
-            transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
-            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
         }
 
-        .post::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .post:hover::after {
-            left: 100%;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .post-header {
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
+            cursor: pointer;
         }
 
         .post-avatar {
@@ -843,11 +766,15 @@
             font-weight: bold;
             background-size: cover;
             background-position: center;
-            transition: transform 0.3s ease;
+            transition: transform 0.2s;
+        }
+
+        .post-avatar.drawn-avatar {
+            background: none;
         }
 
         .post-avatar:hover {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.05);
         }
 
         .post-author-info {
@@ -908,34 +835,30 @@
             text-decoration: underline;
         }
 
-        .post-image {
+        .post-drawing {
             width: 100%;
             max-height: 300px;
             object-fit: contain;
             border-radius: 20px;
             margin-bottom: 1rem;
-            background: rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
-        }
-
-        .post-image:hover {
-            transform: scale(1.02);
+            background: rgba(255,255,255,0.9);
+            image-rendering: pixelated;
         }
 
         .delete-btn {
             color: #ff6b6b;
             cursor: pointer;
             font-size: 1.2rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             margin-left: 0.5rem;
         }
 
         .delete-btn:hover {
-            transform: scale(1.2) rotate(90deg);
+            transform: scale(1.2);
             color: #ff4757;
         }
 
-        /* Лайки постов - ИСПРАВЛЕНО на сине-фиолетовый */
+        /* Лайки */
         .post-like-btn {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -946,95 +869,18 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             color: #888;
         }
 
         .post-like-btn:hover {
             background: rgba(102, 126, 234, 0.2);
             border-color: #667eea;
-            transform: translateY(-2px);
         }
 
         .post-like-btn.liked {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            border-color: transparent;
-            animation: heartBeat 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes heartBeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        .reactions-container {
-            display: flex;
-            gap: 0.5rem;
-            margin: 1rem 0;
-            flex-wrap: wrap;
-        }
-
-        .reaction-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px;
-            padding: 0.4rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .reaction-btn:hover {
-            background: rgba(102, 126, 234, 0.3);
-            transform: translateY(-2px) scale(1.05);
-        }
-
-        .reaction-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-color: transparent;
-            animation: bounce 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .reaction-picker {
-            display: flex;
-            gap: 0.3rem;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 60px;
-            padding: 0.3rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 0.5rem 0;
-            animation: slideDown 0.3s ease;
-        }
-
-        .reaction-emoji {
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.3rem;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .reaction-emoji:hover {
-            background: rgba(255,255,255,0.1);
-            transform: scale(1.2);
         }
 
         .post-actions {
@@ -1052,13 +898,12 @@
             cursor: pointer;
             padding: 0.3rem 0;
             display: inline-block;
-            transition: all 0.3s ease;
+            transition: color 0.2s;
             font-size: 0.95rem;
         }
 
         .comment-toggle:hover {
             color: #667eea;
-            transform: translateX(5px);
         }
 
         .follow-btn {
@@ -1070,20 +915,17 @@
             cursor: pointer;
             font-size: 0.85rem;
             margin-left: auto;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
 
         .follow-btn:hover {
             background: #667eea;
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .follow-btn.following {
             background: rgba(102, 126, 234, 0.2);
             color: #888;
-            border-color: rgba(255,255,255,0.1);
         }
 
         /* Комментарии */
@@ -1092,19 +934,18 @@
             padding-top: 1rem;
             border-top: 1px solid rgba(255,255,255,0.1);
             display: none;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.2s;
         }
 
         .comment {
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1rem;
-            animation: slideRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            animation: slideRight 0.2s;
         }
 
         @keyframes slideRight {
-            from { opacity: 0; transform: translateX(-20px); }
+            from { opacity: 0; transform: translateX(-10px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
@@ -1120,6 +961,11 @@
             flex-shrink: 0;
             background-size: cover;
             background-position: center;
+            cursor: pointer;
+        }
+
+        .comment-avatar.drawn-avatar {
+            background: none;
         }
 
         .comment-content {
@@ -1127,11 +973,6 @@
             background: rgba(255,255,255,0.05);
             padding: 0.6rem 1rem;
             border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .comment-content:hover {
-            background: rgba(255,255,255,0.1);
         }
 
         .comment-header {
@@ -1145,6 +986,11 @@
             font-weight: 600;
             font-size: 0.85rem;
             color: white;
+            cursor: pointer;
+        }
+
+        .comment-author:hover {
+            color: #667eea;
         }
 
         .comment-text {
@@ -1169,31 +1015,29 @@
             display: flex;
             align-items: center;
             gap: 0.2rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             color: #888;
         }
 
         .comment-like-btn:hover {
             background: rgba(102, 126, 234, 0.2);
-            border-color: #667eea;
         }
 
         .comment-like-btn.liked {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            border-color: transparent;
         }
 
         .comment-delete-btn {
             color: #ff6b6b;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.2s;
             margin-left: 0.3rem;
         }
 
         .comment-delete-btn:hover {
-            transform: scale(1.2) rotate(90deg);
+            transform: scale(1.2);
         }
 
         .add-comment {
@@ -1209,14 +1053,13 @@
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 30px;
             color: white;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             font-size: 0.95rem;
         }
 
         .add-comment input:focus {
             outline: none;
             border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
         }
 
         .comment-submit {
@@ -1228,70 +1071,14 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 1.2rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
 
         .comment-submit:hover {
-            transform: scale(1.1) rotate(360deg);
+            transform: scale(1.1);
         }
 
-        /* Сохраненные посты и черновики */
-        .saved-posts-section,
-        .drafts-section {
-            background: rgba(17, 17, 17, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 1.5rem;
-            margin-top: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .saved-posts-section h3,
-        .drafts-section h3 {
-            margin-bottom: 1rem;
-            color: #667eea;
-            font-size: 1.2rem;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #888;
-            background: rgba(255,255,255,0.02);
-            border-radius: 20px;
-            border: 1px dashed rgba(255,255,255,0.1);
-        }
-
-        .draft-item {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 1rem;
-            margin-bottom: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .draft-item:hover {
-            background: rgba(102, 126, 234, 0.2);
-            transform: translateX(5px);
-            border-color: #667eea;
-        }
-
-        .draft-content {
-            font-size: 0.95rem;
-            margin-bottom: 0.3rem;
-            color: #e0e0e0;
-        }
-
-        .draft-time {
-            color: #888;
-            font-size: 0.7rem;
-        }
-
-        /* Нижняя навигация - 5 кнопок */
+        /* Нижняя навигация */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -1304,7 +1091,6 @@
             padding: 0.5rem 0.2rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 99;
-            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .nav-item {
@@ -1316,7 +1102,7 @@
             cursor: pointer;
             padding: 0.3rem 0.3rem;
             border-radius: 12px;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             flex: 1;
             max-width: 70px;
         }
@@ -1324,15 +1110,10 @@
         .nav-item span:first-child {
             font-size: 1.3rem;
             margin-bottom: 0.1rem;
-            transition: all 0.3s ease;
         }
 
         .nav-item:hover {
             color: #667eea;
-        }
-
-        .nav-item:hover span:first-child {
-            transform: translateY(-2px);
         }
 
         .nav-item.active {
@@ -1340,128 +1121,93 @@
             background: rgba(102, 126, 234, 0.15);
         }
 
-        .nav-item.active span:first-child {
-            animation: bounce 0.3s;
-        }
-
-        /* Поиск - красивое появление */
-        .search-modal {
+        /* Модальные окна для рисования */
+        .drawing-modal,
+        .avatar-drawing-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.98);
+            background: rgba(0,0,0,0.95);
             backdrop-filter: blur(20px);
             z-index: 1000;
             display: none;
-            animation: searchAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes searchAppear {
-            0% { opacity: 0; transform: scale(1.1) translateY(20px); backdrop-filter: blur(0); }
-            100% { opacity: 1; transform: scale(1) translateY(0); backdrop-filter: blur(20px); }
-        }
-
-        .search-content {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 1rem;
-        }
-
-        .search-header {
-            display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            animation: searchHeaderAppear 0.5s 0.1s both;
-        }
-
-        @keyframes searchHeaderAppear {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .search-input {
-            flex: 1;
+            justify-content: center;
             padding: 1rem;
-            background: rgba(255,255,255,0.05);
+        }
+
+        .drawing-modal-content,
+        .avatar-drawing-modal-content {
+            background: #111;
+            border-radius: 30px;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50px;
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s ease;
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+        .drawing-modal h3,
+        .avatar-drawing-modal h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+            font-size: 1.2rem;
         }
 
-        .close-search {
-            color: white;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .close-search:hover {
-            transform: rotate(90deg);
-        }
-
-        .search-results {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            animation: searchResultsAppear 0.5s 0.2s both;
-        }
-
-        @keyframes searchResultsAppear {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .search-item {
-            padding: 1rem;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
+        .drawing-canvas-large {
+            width: 100%;
+            height: 300px;
+            background: white;
             border-radius: 20px;
+            margin-bottom: 1rem;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .drawing-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .drawing-action-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 30px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            color: #e0e0e0;
-            animation: searchItemAppear 0.3s;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+            border: none;
         }
 
-        @keyframes searchItemAppear {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .search-item:hover {
-            background: rgba(102, 126, 234, 0.2);
-            transform: translateX(5px);
-            border-color: #667eea;
-        }
-
-        /* Уведомления */
-        .notification-toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
+        .drawing-action-btn.save {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            animation: slideUpToast 0.4s forwards;
         }
 
-        @keyframes slideUpToast {
-            to { transform: translateX(-50%) translateY(0); }
+        .drawing-action-btn.cancel {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .drawing-action-btn.clear {
+            background: rgba(255,255,255,0.05);
+            color: #ff6b6b;
+            border: 1px solid rgba(255,68,68,0.3);
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            border: 1px dashed rgba(255,255,255,0.1);
         }
 
         /* Адаптация */
@@ -1481,12 +1227,6 @@
             
             .post-time {
                 font-size: 0.65rem;
-            }
-
-            .reaction-emoji {
-                width: 38px;
-                height: 38px;
-                font-size: 1.2rem;
             }
 
             .nav-item {
@@ -1537,20 +1277,19 @@
         <!-- Профиль (виден только при активной вкладке "Профиль") -->
         <div class="profile-section" id="profileSection" style="display: none;">
             <div class="profile-header">
-                <div class="profile-avatar" id="profileAvatar" onclick="triggerAvatarUpload()">
-                    <div class="avatar-overlay">📷</div>
+                <div class="profile-avatar" id="profileAvatar" onclick="openAvatarDrawing()">
+                    <div class="avatar-overlay">✏️</div>
                 </div>
-                <input type="file" id="avatarUpload" class="avatar-input" accept="image/*" onchange="updateAvatar(this)">
                 <div class="profile-info">
                     <div class="profile-name" id="profileName"></div>
                     <div class="profile-username" id="profileUsername"></div>
                     <div class="profile-bio" id="profileBio"></div>
                     <div class="profile-stats">
-                        <div class="stat" onclick="showFollowers()">
+                        <div class="stat">
                             <div class="stat-value" id="followersCount">0</div>
                             <div class="stat-label">подписчики</div>
                         </div>
-                        <div class="stat" onclick="showFollowing()">
+                        <div class="stat">
                             <div class="stat-value" id="followingCount">0</div>
                             <div class="stat-label">подписки</div>
                         </div>
@@ -1578,17 +1317,25 @@
 
         <!-- Создание поста (видно только в профиле) -->
         <div class="create-post" id="createPostSection" style="display: none;">
-            <textarea id="postContent" placeholder="Что у вас нового? (можно оставить пустым если есть фото)"></textarea>
+            <textarea id="postContent" placeholder="Что у вас нового?"></textarea>
             <div class="post-tools">
-                <button class="tool-btn" id="imageUploadBtn">🖼️ Фото</button>
                 <button class="tool-btn" id="saveDraftBtn">📝 Черновик</button>
                 <button class="tool-btn" id="hashtagBtn"># Хештег</button>
+                <button class="tool-btn" id="drawingBtn">✏️ Рисунок</button>
             </div>
-            <div class="image-preview" id="imagePreview">
-                <img id="previewImg" src="" alt="Preview">
-                <button class="remove-image" id="removeImageBtn">✕</button>
+            <div class="drawing-canvas-container" id="drawingCanvasContainer">
+                <canvas id="drawingCanvas" class="drawing-canvas" width="500" height="200"></canvas>
+                <div class="drawing-controls">
+                    <button class="drawing-control-btn" id="clearDrawingBtn">Очистить</button>
+                    <button class="drawing-control-btn" id="blackColorBtn" style="background: #000; color: white;">●</button>
+                    <button class="drawing-control-btn" id="redColorBtn" style="background: #ff4444; color: white;">●</button>
+                    <button class="drawing-control-btn" id="blueColorBtn" style="background: #667eea; color: white;">●</button>
+                    <button class="drawing-control-btn" id="greenColorBtn" style="background: #44ff44; color: white;">●</button>
+                    <button class="drawing-control-btn" id="smallBrushBtn">●</button>
+                    <button class="drawing-control-btn" id="mediumBrushBtn">●●</button>
+                    <button class="drawing-control-btn" id="largeBrushBtn">●●●</button>
+                </div>
             </div>
-            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
             <button class="post-btn" id="createPostBtn">Опубликовать</button>
         </div>
 
@@ -1599,37 +1346,13 @@
             </div>
             <div id="postsFeed"></div>
         </div>
-
-        <!-- Сохраненные посты -->
-        <div class="saved-posts-section" id="savedPostsSection" style="display: none;">
-            <h3>Сохраненное</h3>
-            <div id="savedPostsList"></div>
-        </div>
-
-        <!-- Черновики -->
-        <div class="drafts-section" id="draftsSection" style="display: none;">
-            <h3>Черновики</h3>
-            <div id="draftsList"></div>
-        </div>
     </div>
 
-    <!-- Нижняя навигация - 5 кнопок -->
+    <!-- Нижняя навигация -->
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-item active" data-nav="feed">
             <span>🏠</span>
             <span>Лента</span>
-        </div>
-        <div class="nav-item" data-nav="search">
-            <span>🔍</span>
-            <span>Поиск</span>
-        </div>
-        <div class="nav-item" data-nav="saved">
-            <span>🔖</span>
-            <span>Сохран.</span>
-        </div>
-        <div class="nav-item" data-nav="drafts">
-            <span>📝</span>
-            <span>Чернов.</span>
         </div>
         <div class="nav-item" data-nav="profile">
             <span>👤</span>
@@ -1637,14 +1360,58 @@
         </div>
     </div>
 
-    <!-- Поиск -->
-    <div class="search-modal" id="searchModal">
-        <div class="search-content">
-            <div class="search-header">
-                <input type="text" class="search-input" id="searchInput" placeholder="Поиск по хештегам или пользователям...">
-                <span class="close-search" id="closeSearch">✕</span>
+    <!-- Модальное окно для рисования аватара -->
+    <div class="avatar-drawing-modal" id="avatarDrawingModal">
+        <div class="avatar-drawing-modal-content">
+            <h3>Нарисуйте аватар</h3>
+            <canvas id="avatarDrawingCanvas" class="drawing-canvas-large" width="400" height="300"></canvas>
+            <div class="drawing-controls">
+                <button class="drawing-control-btn" id="avatarClearBtn">Очистить</button>
+                <button class="drawing-control-btn" id="avatarBlackBtn" style="background: #000; color: white;">●</button>
+                <button class="drawing-control-btn" id="avatarRedBtn" style="background: #ff4444; color: white;">●</button>
+                <button class="drawing-control-btn" id="avatarBlueBtn" style="background: #667eea; color: white;">●</button>
+                <button class="drawing-control-btn" id="avatarGreenBtn" style="background: #44ff44; color: white;">●</button>
+                <button class="drawing-control-btn" id="avatarSmallBtn">●</button>
+                <button class="drawing-control-btn" id="avatarMediumBtn">●●</button>
+                <button class="drawing-control-btn" id="avatarLargeBtn">●●●</button>
             </div>
-            <div class="search-results" id="searchResults"></div>
+            <div class="drawing-actions">
+                <button class="drawing-action-btn save" id="saveAvatarBtn">Сохранить</button>
+                <button class="drawing-action-btn cancel" id="cancelAvatarBtn">Отмена</button>
+                <button class="drawing-action-btn clear" id="clearAvatarBtn">Очистить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для просмотра чужого профиля -->
+    <div class="avatar-drawing-modal" id="userProfileModal" style="display: none;">
+        <div class="avatar-drawing-modal-content">
+            <h3 id="otherProfileName">Профиль пользователя</h3>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div class="profile-avatar" id="otherProfileAvatar" style="width: 70px; height: 70px; font-size: 2rem;"></div>
+                <div>
+                    <div id="otherProfileUsername" style="font-size: 1.2rem; font-weight: 600;"></div>
+                    <div id="otherProfileBio" style="color: #888; margin-top: 0.3rem;"></div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;">
+                <div class="stat">
+                    <div class="stat-value" id="otherFollowersCount">0</div>
+                    <div class="stat-label">подписчики</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="otherFollowingCount">0</div>
+                    <div class="stat-label">подписки</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="otherPostsCount">0</div>
+                    <div class="stat-label">посты</div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="drawing-action-btn save" id="followFromProfileBtn">Подписаться</button>
+                <button class="drawing-action-btn cancel" id="closeProfileBtn">Закрыть</button>
+            </div>
         </div>
     </div>
 
@@ -1656,14 +1423,9 @@
         let commentLikes = JSON.parse(localStorage.getItem('void_commentLikes')) || [];
         let postLikes = JSON.parse(localStorage.getItem('void_postLikes')) || [];
         let subscriptions = JSON.parse(localStorage.getItem('void_subscriptions')) || [];
-        let reactions = JSON.parse(localStorage.getItem('void_reactions')) || [];
-        let savedPosts = JSON.parse(localStorage.getItem('void_savedPosts')) || [];
         let drafts = JSON.parse(localStorage.getItem('void_drafts')) || [];
-        let notifications = JSON.parse(localStorage.getItem('void_notifications')) || [];
         let currentUser = null;
-
-        // Реакции
-        const availableReactions = ['❤️', '🔥', '😂', '😱', '😢', '👍', '😎', '👻', '😡', '💩', '💀', '🤡'];
+        let viewingUser = null;
 
         // Сохранение
         function saveUsers() { localStorage.setItem('void_users', JSON.stringify(users)); }
@@ -1672,46 +1434,50 @@
         function saveCommentLikes() { localStorage.setItem('void_commentLikes', JSON.stringify(commentLikes)); }
         function savePostLikes() { localStorage.setItem('void_postLikes', JSON.stringify(postLikes)); }
         function saveSubscriptions() { localStorage.setItem('void_subscriptions', JSON.stringify(subscriptions)); }
-        function saveReactions() { localStorage.setItem('void_reactions', JSON.stringify(reactions)); }
-        function saveSavedPosts() { localStorage.setItem('void_savedPosts', JSON.stringify(savedPosts)); }
         function saveDrafts() { localStorage.setItem('void_drafts', JSON.stringify(drafts)); }
-        function saveNotifications() { localStorage.setItem('void_notifications', JSON.stringify(notifications)); }
 
-        // Создаем демо-пользователя
+        // Создаем демо-пользователей
         if (users.length === 0) {
-            users.push({
-                id: 'demo1',
-                name: 'Демо',
-                username: 'demo',
-                bio: 'Создатель Void ✨',
-                theme: 'dark',
-                verified: true
-            });
+            users.push(
+                {
+                    id: 'demo1',
+                    name: 'Демо',
+                    username: 'demo',
+                    bio: 'Создатель Void ✨',
+                    theme: 'dark',
+                    verified: true,
+                    avatar: null
+                },
+                {
+                    id: 'user1',
+                    name: 'Анна',
+                    username: 'anna',
+                    bio: 'Дизайнер и художник 🎨',
+                    verified: false,
+                    avatar: null
+                },
+                {
+                    id: 'user2',
+                    name: 'Максим',
+                    username: 'max',
+                    bio: 'Разработчик из Void 💻',
+                    verified: false,
+                    avatar: null
+                },
+                {
+                    id: 'user3',
+                    name: 'Елена',
+                    username: 'elena',
+                    bio: 'Фотограф и путешественница 📸',
+                    verified: false,
+                    avatar: null
+                }
+            );
             saveUsers();
         }
 
         // Создаем тестовые посты
         if (posts.length === 0) {
-            // Посты от разных пользователей
-            const users_list = [
-                { id: 'user1', name: 'Анна', username: 'anna' },
-                { id: 'user2', name: 'Максим', username: 'max' },
-                { id: 'user3', name: 'Елена', username: 'elena' }
-            ];
-            
-            users_list.forEach(u => {
-                if (!users.find(user => user.id === u.id)) {
-                    users.push({
-                        id: u.id,
-                        name: u.name,
-                        username: u.username,
-                        bio: `Привет, я ${u.name}!`,
-                        verified: false
-                    });
-                }
-            });
-            saveUsers();
-
             posts.push(
                 { 
                     id: '101', 
@@ -1719,6 +1485,7 @@
                     content: 'Всем привет! 👋 Добро пожаловать в Void! #привет #void', 
                     hashtags: ['привет', 'void'],
                     mentions: [],
+                    drawing: null,
                     timestamp: Date.now() - 3600000 
                 },
                 { 
@@ -1727,6 +1494,7 @@
                     content: 'Сегодня отличная погода! ☀️ #погода #лето', 
                     hashtags: ['погода', 'лето'],
                     mentions: [],
+                    drawing: null,
                     timestamp: Date.now() - 7200000 
                 },
                 { 
@@ -1735,6 +1503,7 @@
                     content: 'Новый проект запущен! 🚀 #работа #проект', 
                     hashtags: ['работа', 'проект'],
                     mentions: [],
+                    drawing: null,
                     timestamp: Date.now() - 10800000 
                 },
                 { 
@@ -1743,15 +1512,8 @@
                     content: 'Мои новые фотографии уже в профиле 📸 #фото #творчество', 
                     hashtags: ['фото', 'творчество'],
                     mentions: [],
+                    drawing: null,
                     timestamp: Date.now() - 14400000 
-                },
-                { 
-                    id: '105', 
-                    authorId: 'demo1', 
-                    content: 'Нажми на 💬 чтобы открыть комментарии @demo', 
-                    hashtags: [],
-                    mentions: ['demo'],
-                    timestamp: Date.now() - 18000000 
                 }
             );
             savePosts();
@@ -1778,6 +1540,10 @@
             return users.find(u => u.username.toLowerCase() === username.toLowerCase());
         }
 
+        function findUserById(id) {
+            return users.find(u => u.id === id);
+        }
+
         function isValidUsername(username) {
             const regex = /^[a-zA-Z0-9_]{5,50}$/;
             return regex.test(username);
@@ -1791,7 +1557,7 @@
             return (text.match(/@[a-zA-Z0-9_]+/g) || []).map(mention => mention.substring(1));
         }
 
-        function showNotification(message, type = 'info') {
+        function showNotification(message) {
             const toast = document.createElement('div');
             toast.className = 'notification-toast';
             toast.textContent = message;
@@ -1800,7 +1566,7 @@
             setTimeout(() => {
                 toast.style.transform = 'translateX(-50%) translateY(100px)';
                 setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            }, 2000);
         }
 
         function updateUI() {
@@ -1810,11 +1576,11 @@
             const avatarEl = document.getElementById('profileAvatar');
             if (currentUser.avatar) {
                 avatarEl.style.backgroundImage = `url('${currentUser.avatar}')`;
-                avatarEl.classList.add('has-image');
+                avatarEl.classList.add('drawn-avatar');
                 avatarEl.textContent = '';
             } else {
                 avatarEl.style.backgroundImage = '';
-                avatarEl.classList.remove('has-image');
+                avatarEl.classList.remove('drawn-avatar');
                 avatarEl.textContent = getInitials(currentUser.name);
             }
 
@@ -1837,13 +1603,11 @@
             document.getElementById('followersCount').textContent = followers;
             document.getElementById('followingCount').textContent = following;
 
-            // Обновляем ленту (перемешанную)
-            updateFeed(true);
-            updateSavedPosts();
-            updateDrafts();
+            // Обновляем ленту
+            updateFeed();
         }
 
-        function updateFeed(shuffle = true) {
+        function updateFeed() {
             const feed = document.getElementById('postsFeed');
             
             if (posts.length === 0) {
@@ -1853,27 +1617,16 @@
 
             feed.innerHTML = '';
 
-            // Перемешиваем посты для ленты
-            let feedPosts = [...posts];
-            if (shuffle) {
-                for (let i = feedPosts.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [feedPosts[i], feedPosts[j]] = [feedPosts[j], feedPosts[i]];
-                }
-            }
+            // Сортируем посты по времени (новые сверху)
+            const sortedPosts = [...posts].sort((a, b) => b.timestamp - a.timestamp);
 
-            feedPosts.forEach(post => {
+            sortedPosts.forEach(post => {
                 const author = users.find(u => u.id === post.authorId);
                 if (!author) return;
 
                 const postComments = comments.filter(c => c.postId === post.id);
-                const postReactions = reactions.filter(r => r.postId === post.id);
                 const postLikesCount = postLikes.filter(l => l.postId === post.id).length;
                 const userLikedPost = currentUser && postLikes.some(l => l.postId === post.id && l.userId === currentUser.id);
-                const isSaved = currentUser && savedPosts.some(s => s.postId === post.id && s.userId === currentUser.id);
-                
-                const reactionCounts = {};
-                postReactions.forEach(r => reactionCounts[r.emoji] = (reactionCounts[r.emoji] || 0) + 1);
 
                 const isFollowing = currentUser ? subscriptions.some(s => 
                     s.followerId === currentUser.id && s.followingId === author.id
@@ -1882,46 +1635,10 @@
                 const postDiv = document.createElement('div');
                 postDiv.className = 'post';
                 
-                // Формируем HTML для реакций
-                let reactionsHTML = '';
-                if (Object.keys(reactionCounts).length > 0) {
-                    reactionsHTML = '<div class="reactions-container">' + 
-                        Object.entries(reactionCounts).map(([emoji, count]) => {
-                            const isActive = currentUser && postReactions.some(r => r.userId === currentUser.id && r.emoji === emoji);
-                            return `<span class="reaction-btn ${isActive ? 'active' : ''}" onclick="toggleReaction('${post.id}', '${emoji}')">${emoji} ${count}</span>`;
-                        }).join('') +
-                    '</div>';
-                }
-
-                // Формируем HTML для пикера реакций
-                let reactionPickerHTML = '';
-                if (currentUser && author.id !== currentUser.id) {
-                    reactionPickerHTML = `
-                        <div style="margin: 0.5rem 0;">
-                            <span class="reaction-btn" onclick="toggleReactionPicker('${post.id}')">➕ Добавить реакцию</span>
-                            <div class="reaction-picker" id="picker-${post.id}" style="display: none;">
-                                ${availableReactions.map(emoji => 
-                                    `<span class="reaction-emoji" onclick="addReaction('${post.id}', '${emoji}')">${emoji}</span>`
-                                ).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Формируем HTML для кнопки подписки
-                let followButton = '';
-                if (currentUser && author.id !== currentUser.id) {
-                    followButton = `
-                        <button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${author.id}')">
-                            ${isFollowing ? '✓ Отписался' : '+ Подписаться'}
-                        </button>
-                    `;
-                }
-
                 // Формируем HTML для изображения
-                let postImageHTML = '';
-                if (post.image && post.image !== '' && post.image !== 'null' && post.image !== 'undefined') {
-                    postImageHTML = `<img src="${post.image}" class="post-image" loading="lazy">`;
+                let postDrawingHTML = '';
+                if (post.drawing) {
+                    postDrawingHTML = `<img src="${post.drawing}" class="post-drawing" loading="lazy">`;
                 }
 
                 // Формируем HTML для хештегов
@@ -1935,7 +1652,7 @@
                 if (post.mentions) {
                     post.mentions.forEach(mention => {
                         const regex = new RegExp(`@${mention}`, 'g');
-                        contentWithLinks = contentWithLinks.replace(regex, `<span class="mention" onclick="showUserProfile('${mention}')">@${mention}</span>`);
+                        contentWithLinks = contentWithLinks.replace(regex, `<span class="mention" onclick="openUserProfile('${mention}')">@${mention}</span>`);
                     });
                 }
 
@@ -1948,10 +1665,10 @@
                     
                     return `
                         <div class="comment">
-                            <div class="comment-avatar ${commentAuthor?.avatar ? 'has-image' : ''}" ${commentAuthor?.avatar ? `style="background-image: url('${commentAuthor.avatar}')"` : ''}>${!commentAuthor?.avatar ? getInitials(commentAuthor?.name || '?') : ''}</div>
+                            <div class="comment-avatar ${commentAuthor?.avatar ? 'drawn-avatar' : ''}" ${commentAuthor?.avatar ? `style="background-image: url('${commentAuthor.avatar}')"` : ''} onclick="openUserProfile('${commentAuthor.username}')">${!commentAuthor?.avatar ? getInitials(commentAuthor?.name || '?') : ''}</div>
                             <div class="comment-content">
                                 <div class="comment-header">
-                                    <span class="comment-author">${commentAuthor?.name || 'Пользователь'}</span>
+                                    <span class="comment-author" onclick="openUserProfile('${commentAuthor.username}')">${commentAuthor?.name || 'Пользователь'}</span>
                                     ${isCommentAuthor ? `<span class="comment-delete-btn" onclick="deleteComment('${c.id}')">✕</span>` : ''}
                                 </div>
                                 <div class="comment-text">${c.text}</div>
@@ -1966,26 +1683,27 @@
                 }).join('');
 
                 postDiv.innerHTML = `
-                    <div class="post-header">
-                        <div class="post-avatar ${author.avatar ? 'has-image' : ''}" ${author.avatar ? `style="background-image: url('${author.avatar}')"` : ''}>${!author.avatar ? getInitials(author.name) : ''}</div>
+                    <div class="post-header" onclick="openUserProfile('${author.username}')">
+                        <div class="post-avatar ${author.avatar ? 'drawn-avatar' : ''}" ${author.avatar ? `style="background-image: url('${author.avatar}')"` : ''}>${!author.avatar ? getInitials(author.name) : ''}</div>
                         <div class="post-author-info">
                             <div class="post-author">${author.name} ${author.verified ? '<span class="verified-badge">✓</span>' : ''}</div>
                             <div class="post-username">${formatUsername(author.username)}</div>
                         </div>
                         <div class="post-time">${formatDate(post.timestamp)}</div>
-                        <span class="delete-btn" onclick="toggleSavePost('${post.id}')" style="color: ${isSaved ? '#667eea' : '#888'};">${isSaved ? '🔖' : '🔖'}</span>
                         ${author.id === currentUser?.id ? '<span class="delete-btn" onclick="deletePost(\'' + post.id + '\')">✕</span>' : ''}
                     </div>
                     <div class="post-content">${contentWithLinks.replace(/\n/g, '<br>')}</div>
-                    ${postImageHTML}
-                    ${reactionsHTML}
-                    ${reactionPickerHTML}
+                    ${postDrawingHTML}
                     <div class="post-actions">
                         <span class="post-like-btn ${userLikedPost ? 'liked' : ''}" onclick="togglePostLike('${post.id}')">
                             ❤️ ${postLikesCount}
                         </span>
                         <span class="comment-toggle" onclick="toggleComments('${post.id}')">💬 ${postComments.length}</span>
-                        ${followButton}
+                        ${author.id !== currentUser?.id ? `
+                            <button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${author.id}')">
+                                ${isFollowing ? '✓ Отписался' : '+ Подписаться'}
+                            </button>
+                        ` : ''}
                     </div>
                     <div class="comments-section" id="comments-${post.id}">
                         ${commentsHTML}
@@ -2003,12 +1721,11 @@
         }
 
         function updateUserPosts() {
-            // Обновляем только посты текущего пользователя в профиле
             const feed = document.getElementById('postsFeed');
             
             if (!currentUser) return;
             
-            const userPosts = posts.filter(p => p.authorId === currentUser.id);
+            const userPosts = posts.filter(p => p.authorId === currentUser.id).sort((a, b) => b.timestamp - a.timestamp);
             
             if (userPosts.length === 0) {
                 feed.innerHTML = '<div class="empty-state">У вас пока нет постов</div>';
@@ -2017,39 +1734,34 @@
 
             feed.innerHTML = '';
 
-            const sortedPosts = [...userPosts].sort((a, b) => b.timestamp - a.timestamp);
-
-            sortedPosts.forEach(post => {
-                const author = users.find(u => u.id === post.authorId);
-                if (!author) return;
-
+            userPosts.forEach(post => {
+                const author = currentUser;
                 const postComments = comments.filter(c => c.postId === post.id);
-                const postReactions = reactions.filter(r => r.postId === post.id);
                 const postLikesCount = postLikes.filter(l => l.postId === post.id).length;
                 const userLikedPost = currentUser && postLikes.some(l => l.postId === post.id && l.userId === currentUser.id);
-                const isSaved = currentUser && savedPosts.some(s => s.postId === post.id && s.userId === currentUser.id);
-                
-                const reactionCounts = {};
-                postReactions.forEach(r => reactionCounts[r.emoji] = (reactionCounts[r.emoji] || 0) + 1);
 
                 const postDiv = document.createElement('div');
                 postDiv.className = 'post';
                 
-                // Формируем HTML для реакций
-                let reactionsHTML = '';
-                if (Object.keys(reactionCounts).length > 0) {
-                    reactionsHTML = '<div class="reactions-container">' + 
-                        Object.entries(reactionCounts).map(([emoji, count]) => {
-                            const isActive = currentUser && postReactions.some(r => r.userId === currentUser.id && r.emoji === emoji);
-                            return `<span class="reaction-btn ${isActive ? 'active' : ''}" onclick="toggleReaction('${post.id}', '${emoji}')">${emoji} ${count}</span>`;
-                        }).join('') +
-                    '</div>';
+                // Формируем HTML для изображения
+                let postDrawingHTML = '';
+                if (post.drawing) {
+                    postDrawingHTML = `<img src="${post.drawing}" class="post-drawing" loading="lazy">`;
                 }
 
-                // Формируем HTML для изображения
-                let postImageHTML = '';
-                if (post.image && post.image !== '' && post.image !== 'null' && post.image !== 'undefined') {
-                    postImageHTML = `<img src="${post.image}" class="post-image" loading="lazy">`;
+                // Формируем HTML для хештегов
+                let contentWithLinks = post.content;
+                if (post.hashtags) {
+                    post.hashtags.forEach(tag => {
+                        const regex = new RegExp(`#${tag}`, 'g');
+                        contentWithLinks = contentWithLinks.replace(regex, `<span class="hashtag" onclick="searchByHashtag('${tag}')">#${tag}</span>`);
+                    });
+                }
+                if (post.mentions) {
+                    post.mentions.forEach(mention => {
+                        const regex = new RegExp(`@${mention}`, 'g');
+                        contentWithLinks = contentWithLinks.replace(regex, `<span class="mention" onclick="openUserProfile('${mention}')">@${mention}</span>`);
+                    });
                 }
 
                 // Формируем HTML для комментариев
@@ -2061,10 +1773,10 @@
                     
                     return `
                         <div class="comment">
-                            <div class="comment-avatar ${commentAuthor?.avatar ? 'has-image' : ''}" ${commentAuthor?.avatar ? `style="background-image: url('${commentAuthor.avatar}')"` : ''}>${!commentAuthor?.avatar ? getInitials(commentAuthor?.name || '?') : ''}</div>
+                            <div class="comment-avatar ${commentAuthor?.avatar ? 'drawn-avatar' : ''}" ${commentAuthor?.avatar ? `style="background-image: url('${commentAuthor.avatar}')"` : ''} onclick="openUserProfile('${commentAuthor.username}')">${!commentAuthor?.avatar ? getInitials(commentAuthor?.name || '?') : ''}</div>
                             <div class="comment-content">
                                 <div class="comment-header">
-                                    <span class="comment-author">${commentAuthor?.name || 'Пользователь'}</span>
+                                    <span class="comment-author" onclick="openUserProfile('${commentAuthor.username}')">${commentAuthor?.name || 'Пользователь'}</span>
                                     ${isCommentAuthor ? `<span class="comment-delete-btn" onclick="deleteComment('${c.id}')">✕</span>` : ''}
                                 </div>
                                 <div class="comment-text">${c.text}</div>
@@ -2080,18 +1792,16 @@
 
                 postDiv.innerHTML = `
                     <div class="post-header">
-                        <div class="post-avatar ${author.avatar ? 'has-image' : ''}" ${author.avatar ? `style="background-image: url('${author.avatar}')"` : ''}>${!author.avatar ? getInitials(author.name) : ''}</div>
+                        <div class="post-avatar ${author.avatar ? 'drawn-avatar' : ''}" ${author.avatar ? `style="background-image: url('${author.avatar}')"` : ''}>${!author.avatar ? getInitials(author.name) : ''}</div>
                         <div class="post-author-info">
                             <div class="post-author">${author.name} ${author.verified ? '<span class="verified-badge">✓</span>' : ''}</div>
                             <div class="post-username">${formatUsername(author.username)}</div>
                         </div>
                         <div class="post-time">${formatDate(post.timestamp)}</div>
-                        <span class="delete-btn" onclick="toggleSavePost('${post.id}')" style="color: ${isSaved ? '#667eea' : '#888'};">${isSaved ? '🔖' : '🔖'}</span>
                         <span class="delete-btn" onclick="deletePost('${post.id}')">✕</span>
                     </div>
-                    <div class="post-content">${post.content.replace(/\n/g, '<br>')}</div>
-                    ${postImageHTML}
-                    ${reactionsHTML}
+                    <div class="post-content">${contentWithLinks.replace(/\n/g, '<br>')}</div>
+                    ${postDrawingHTML}
                     <div class="post-actions">
                         <span class="post-like-btn ${userLikedPost ? 'liked' : ''}" onclick="togglePostLike('${post.id}')">
                             ❤️ ${postLikesCount}
@@ -2111,63 +1821,6 @@
 
                 feed.appendChild(postDiv);
             });
-        }
-
-        function updateSavedPosts() {
-            const list = document.getElementById('savedPostsList');
-            const userSaved = savedPosts.filter(s => s.userId === currentUser?.id);
-            
-            if (userSaved.length === 0) {
-                list.innerHTML = '<div class="empty-state">Нет сохраненных постов</div>';
-                return;
-            }
-
-            list.innerHTML = userSaved.map(s => {
-                const post = posts.find(p => p.id === s.postId);
-                if (!post) return '';
-                const author = users.find(u => u.id === post.authorId);
-                return `
-                    <div class="post" style="margin-bottom: 1rem; cursor: pointer;" onclick="showPost('${post.id}')">
-                        <div class="post-header">
-                            <div class="post-avatar">${getInitials(author.name)}</div>
-                            <div class="post-author-info">
-                                <div class="post-author">${author.name}</div>
-                                <div class="post-username">${formatUsername(author.username)}</div>
-                            </div>
-                        </div>
-                        <div class="post-content">${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateDrafts() {
-            const list = document.getElementById('draftsList');
-            const userDrafts = drafts.filter(d => d.userId === currentUser?.id);
-            
-            if (userDrafts.length === 0) {
-                list.innerHTML = '<div class="empty-state">Нет черновиков</div>';
-                return;
-            }
-
-            list.innerHTML = userDrafts.map(d => `
-                <div class="draft-item" onclick="loadDraft('${d.id}')">
-                    <div class="draft-content">${d.content.substring(0, 100)}${d.content.length > 100 ? '...' : ''}</div>
-                    <div class="draft-time">${formatDate(d.timestamp)}</div>
-                </div>
-            `).join('');
-        }
-
-        function loadDraft(draftId) {
-            const draft = drafts.find(d => d.id === draftId);
-            if (draft) {
-                document.getElementById('postContent').value = draft.content;
-                drafts = drafts.filter(d => d.id !== draftId);
-                saveDrafts();
-                updateDrafts();
-                document.querySelector('[data-nav="profile"]').click();
-                showNotification('Черновик загружен');
-            }
         }
 
         // Глобальные функции
@@ -2198,14 +1851,12 @@
             saveComments();
             input.value = '';
             
-            // Обновляем нужную секцию в зависимости от текущей вкладки
             const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
             if (activeNav === 'profile') {
                 updateUserPosts();
             } else {
                 updateFeed();
             }
-            showNotification('Комментарий добавлен');
         };
 
         window.deleteComment = function(commentId) {
@@ -2221,7 +1872,6 @@
                 } else {
                     updateFeed();
                 }
-                showNotification('Комментарий удален');
             }
         };
 
@@ -2265,144 +1915,20 @@
                     userId: currentUser.id,
                     timestamp: Date.now()
                 });
-                
-                const post = posts.find(p => p.id === postId);
-                if (post && post.authorId !== currentUser.id) {
-                    notifications.push({
-                        id: Date.now().toString(),
-                        userId: post.authorId,
-                        type: 'like',
-                        actorId: currentUser.id,
-                        postId: postId,
-                        read: false,
-                        timestamp: Date.now()
-                    });
-                    saveNotifications();
-                }
             }
             
             savePostLikes();
             
+            // Не обновляем всю ленту, только меняем класс у кнопки
             const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
             if (activeNav === 'profile') {
                 updateUserPosts();
             } else {
-                updateFeed();
-            }
-        };
-
-        window.toggleSavePost = function(postId) {
-            if (!currentUser) return;
-            
-            const existing = savedPosts.find(s => s.postId === postId && s.userId === currentUser.id);
-            
-            if (existing) {
-                savedPosts = savedPosts.filter(s => s.id !== existing.id);
-                showNotification('Пост удален из сохраненных');
-            } else {
-                savedPosts.push({
-                    id: Date.now().toString(),
-                    postId: postId,
-                    userId: currentUser.id,
-                    timestamp: Date.now()
-                });
-                showNotification('Пост сохранен');
-            }
-            
-            saveSavedPosts();
-            
-            const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
-            if (activeNav === 'profile') {
-                updateUserPosts();
-            } else {
-                updateFeed();
-            }
-            updateSavedPosts();
-        };
-
-        window.toggleReactionPicker = function(postId) {
-            const picker = document.getElementById(`picker-${postId}`);
-            if (picker.style.display === 'flex') {
-                picker.style.display = 'none';
-            } else {
-                picker.style.display = 'flex';
-            }
-        };
-
-        window.toggleReaction = function(postId, emoji) {
-            if (!currentUser) return;
-            
-            const existing = reactions.find(r => r.postId === postId && r.userId === currentUser.id);
-            
-            if (existing) {
-                if (existing.emoji === emoji) {
-                    reactions = reactions.filter(r => r.id !== existing.id);
-                } else {
-                    reactions = reactions.filter(r => r.id !== existing.id);
-                    reactions.push({
-                        id: Date.now().toString(),
-                        postId: postId,
-                        userId: currentUser.id,
-                        emoji: emoji,
-                        timestamp: Date.now()
-                    });
-                }
-            } else {
-                reactions.push({
-                    id: Date.now().toString(),
-                    postId: postId,
-                    userId: currentUser.id,
-                    emoji: emoji,
-                    timestamp: Date.now()
-                });
-            }
-            
-            saveReactions();
-            
-            const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
-            if (activeNav === 'profile') {
-                updateUserPosts();
-            } else {
-                updateFeed();
-            }
-        };
-
-        window.addReaction = function(postId, emoji) {
-            if (!currentUser) return;
-            
-            const existing = reactions.find(r => r.postId === postId && r.userId === currentUser.id);
-            
-            if (existing) {
-                if (existing.emoji === emoji) {
-                    reactions = reactions.filter(r => r.id !== existing.id);
-                } else {
-                    reactions = reactions.filter(r => r.id !== existing.id);
-                    reactions.push({
-                        id: Date.now().toString(),
-                        postId: postId,
-                        userId: currentUser.id,
-                        emoji: emoji,
-                        timestamp: Date.now()
-                    });
-                }
-            } else {
-                reactions.push({
-                    id: Date.now().toString(),
-                    postId: postId,
-                    userId: currentUser.id,
-                    emoji: emoji,
-                    timestamp: Date.now()
-                });
-            }
-            
-            saveReactions();
-            document.getElementById(`picker-${postId}`).style.display = 'none';
-            
-            const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
-            if (activeNav === 'profile') {
-                updateUserPosts();
-            } else {
-                updateFeed();
+                // Находим конкретную кнопку и обновляем её
+                const likeBtn = event.currentTarget;
+                const count = postLikes.filter(l => l.postId === postId).length;
+                likeBtn.innerHTML = `❤️ ${count}`;
+                likeBtn.classList.toggle('liked', !existing);
             }
         };
 
@@ -2418,40 +1944,31 @@
                     followerId: currentUser.id,
                     followingId: userId
                 });
-                
-                notifications.push({
-                    id: Date.now().toString(),
-                    userId: userId,
-                    type: 'follow',
-                    actorId: currentUser.id,
-                    read: false,
-                    timestamp: Date.now()
-                });
-                saveNotifications();
-                
                 showNotification('Вы подписались');
             }
             
             saveSubscriptions();
-            updateUI();
+            
+            const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
+            if (activeNav === 'profile') {
+                updateUserPosts();
+            } else {
+                updateFeed();
+            }
         };
 
         window.deletePost = function(postId) {
             if (confirm('Удалить пост?')) {
                 posts = posts.filter(p => p.id !== postId);
                 comments = comments.filter(c => c.postId !== postId);
-                reactions = reactions.filter(r => r.postId !== postId);
                 postLikes = postLikes.filter(l => l.postId !== postId);
-                savedPosts = savedPosts.filter(s => s.postId !== postId);
                 
                 const commentIds = comments.filter(c => c.postId === postId).map(c => c.id);
                 commentLikes = commentLikes.filter(l => !commentIds.includes(l.commentId));
                 
                 savePosts();
                 saveComments();
-                saveReactions();
                 savePostLikes();
-                saveSavedPosts();
                 saveCommentLikes();
                 
                 const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
@@ -2461,72 +1978,198 @@
                     updateFeed();
                 }
                 updateUI();
-                showNotification('Пост удален');
             }
         };
 
         window.searchByHashtag = function(tag) {
-            const results = posts.filter(p => p.hashtags && p.hashtags.includes(tag));
-            showSearchResults(results, `#${tag}`);
+            showNotification(`Поиск по тегу #${tag}`);
         };
 
-        window.showUserProfile = function(username) {
+        window.openUserProfile = function(username) {
             const user = findUser(username);
-            if (user) {
-                showNotification(`Профиль пользователя ${user.name}`);
+            if (!user || user.id === currentUser.id) return;
+            
+            viewingUser = user;
+            
+            document.getElementById('otherProfileName').textContent = user.name;
+            document.getElementById('otherProfileUsername').textContent = formatUsername(user.username);
+            document.getElementById('otherProfileBio').textContent = user.bio || 'Нет информации';
+            
+            const avatarEl = document.getElementById('otherProfileAvatar');
+            if (user.avatar) {
+                avatarEl.style.backgroundImage = `url('${user.avatar}')`;
+                avatarEl.classList.add('drawn-avatar');
+                avatarEl.textContent = '';
+            } else {
+                avatarEl.style.backgroundImage = '';
+                avatarEl.classList.remove('drawn-avatar');
+                avatarEl.textContent = getInitials(user.name);
             }
+            
+            const followers = subscriptions.filter(s => s.followingId === user.id).length;
+            const following = subscriptions.filter(s => s.followerId === user.id).length;
+            const postsCount = posts.filter(p => p.authorId === user.id).length;
+            
+            document.getElementById('otherFollowersCount').textContent = followers;
+            document.getElementById('otherFollowingCount').textContent = following;
+            document.getElementById('otherPostsCount').textContent = postsCount;
+            
+            const isFollowing = subscriptions.some(s => s.followerId === currentUser.id && s.followingId === user.id);
+            document.getElementById('followFromProfileBtn').textContent = isFollowing ? '✓ Отписался' : '+ Подписаться';
+            
+            document.getElementById('userProfileModal').style.display = 'flex';
         };
 
-        function showSearchResults(results, query) {
-            const modal = document.getElementById('searchModal');
-            const resultsDiv = document.getElementById('searchResults');
+        // Рисование аватара
+        window.openAvatarDrawing = function() {
+            document.getElementById('avatarDrawingModal').style.display = 'flex';
+            initAvatarCanvas();
+        };
+
+        let avatarCanvas, avatarCtx, avatarDrawing = false, avatarColor = '#000000', avatarBrushSize = 5;
+
+        function initAvatarCanvas() {
+            avatarCanvas = document.getElementById('avatarDrawingCanvas');
+            avatarCtx = avatarCanvas.getContext('2d');
             
-            if (results.length === 0) {
-                resultsDiv.innerHTML = '<div class="empty-state">Ничего не найдено</div>';
-            } else {
-                resultsDiv.innerHTML = results.map(post => {
-                    const author = users.find(u => u.id === post.authorId);
-                    return `
-                        <div class="search-item" onclick="showPost('${post.id}')">
-                            <strong>${author.name}</strong>: ${post.content.substring(0, 50)}...
-                        </div>
-                    `;
-                }).join('');
-            }
+            avatarCanvas.addEventListener('mousedown', startAvatarDrawing);
+            avatarCanvas.addEventListener('mousemove', drawAvatar);
+            avatarCanvas.addEventListener('mouseup', stopAvatarDrawing);
+            avatarCanvas.addEventListener('mouseleave', stopAvatarDrawing);
             
-            modal.style.display = 'block';
+            avatarCanvas.addEventListener('touchstart', startAvatarDrawing);
+            avatarCanvas.addEventListener('touchmove', drawAvatar);
+            avatarCanvas.addEventListener('touchend', stopAvatarDrawing);
+            
+            clearAvatarCanvas();
         }
 
-        window.showPost = function(postId) {
-            document.querySelector('[data-nav="feed"]').click();
-            setTimeout(() => {
-                document.getElementById(`comments-${postId}`).style.display = 'block';
-            }, 100);
-            document.getElementById('searchModal').style.display = 'none';
-        };
+        function startAvatarDrawing(e) {
+            e.preventDefault();
+            avatarDrawing = true;
+            const pos = getAvatarCanvasCoordinates(e);
+            avatarCtx.beginPath();
+            avatarCtx.moveTo(pos.x, pos.y);
+        }
 
-        window.triggerAvatarUpload = function() {
-            document.getElementById('avatarUpload').click();
-        };
+        function drawAvatar(e) {
+            e.preventDefault();
+            if (!avatarDrawing) return;
+            
+            const pos = getAvatarCanvasCoordinates(e);
+            avatarCtx.lineTo(pos.x, pos.y);
+            avatarCtx.strokeStyle = avatarColor;
+            avatarCtx.lineWidth = avatarBrushSize;
+            avatarCtx.lineCap = 'round';
+            avatarCtx.stroke();
+            avatarCtx.beginPath();
+            avatarCtx.moveTo(pos.x, pos.y);
+        }
 
-        window.updateAvatar = function(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentUser.avatar = e.target.result;
-                    
-                    const userIndex = users.findIndex(u => u.id === currentUser.id);
-                    if (userIndex !== -1) {
-                        users[userIndex].avatar = e.target.result;
-                        saveUsers();
-                    }
-                    
-                    updateUI();
-                    showNotification('Аватар обновлен');
-                };
-                reader.readAsDataURL(input.files[0]);
+        function stopAvatarDrawing() {
+            avatarDrawing = false;
+        }
+
+        function getAvatarCanvasCoordinates(e) {
+            const rect = avatarCanvas.getBoundingClientRect();
+            const scaleX = avatarCanvas.width / rect.width;
+            const scaleY = avatarCanvas.height / rect.height;
+            
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
             }
-        };
+            
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function clearAvatarCanvas() {
+            if (avatarCtx) {
+                avatarCtx.fillStyle = '#ffffff';
+                avatarCtx.fillRect(0, 0, avatarCanvas.width, avatarCanvas.height);
+            }
+        }
+
+        // Рисование для поста
+        let postCanvas, postCtx, postDrawing = false, postColor = '#000000', postBrushSize = 5;
+
+        function initPostCanvas() {
+            postCanvas = document.getElementById('drawingCanvas');
+            if (!postCanvas) return;
+            
+            postCtx = postCanvas.getContext('2d');
+            
+            postCanvas.addEventListener('mousedown', startPostDrawing);
+            postCanvas.addEventListener('mousemove', drawPost);
+            postCanvas.addEventListener('mouseup', stopPostDrawing);
+            postCanvas.addEventListener('mouseleave', stopPostDrawing);
+            
+            postCanvas.addEventListener('touchstart', startPostDrawing);
+            postCanvas.addEventListener('touchmove', drawPost);
+            postCanvas.addEventListener('touchend', stopPostDrawing);
+            
+            clearPostCanvas();
+        }
+
+        function startPostDrawing(e) {
+            e.preventDefault();
+            postDrawing = true;
+            const pos = getPostCanvasCoordinates(e);
+            postCtx.beginPath();
+            postCtx.moveTo(pos.x, pos.y);
+        }
+
+        function drawPost(e) {
+            e.preventDefault();
+            if (!postDrawing) return;
+            
+            const pos = getPostCanvasCoordinates(e);
+            postCtx.lineTo(pos.x, pos.y);
+            postCtx.strokeStyle = postColor;
+            postCtx.lineWidth = postBrushSize;
+            postCtx.lineCap = 'round';
+            postCtx.stroke();
+            postCtx.beginPath();
+            postCtx.moveTo(pos.x, pos.y);
+        }
+
+        function stopPostDrawing() {
+            postDrawing = false;
+        }
+
+        function getPostCanvasCoordinates(e) {
+            const rect = postCanvas.getBoundingClientRect();
+            const scaleX = postCanvas.width / rect.width;
+            const scaleY = postCanvas.height / rect.height;
+            
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function clearPostCanvas() {
+            if (postCtx) {
+                postCtx.fillStyle = '#ffffff';
+                postCtx.fillRect(0, 0, postCanvas.width, postCanvas.height);
+            }
+        }
 
         // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
@@ -2546,20 +2189,35 @@
             const editProfileBtn = document.getElementById('editProfileBtn');
             const cancelEditBtn = document.getElementById('cancelEditBtn');
             const saveProfileBtn = document.getElementById('saveProfileBtn');
-            const imageUploadBtn = document.getElementById('imageUploadBtn');
-            const imageUpload = document.getElementById('imageUpload');
-            const removeImageBtn = document.getElementById('removeImageBtn');
-            const imagePreview = document.getElementById('imagePreview');
-            const previewImg = document.getElementById('previewImg');
             const saveDraftBtn = document.getElementById('saveDraftBtn');
             const hashtagBtn = document.getElementById('hashtagBtn');
+            const drawingBtn = document.getElementById('drawingBtn');
             const refreshFeedBtn = document.getElementById('refreshFeedBtn');
-            const searchModal = document.getElementById('searchModal');
-            const closeSearch = document.getElementById('closeSearch');
-            const searchInput = document.getElementById('searchInput');
             const navItems = document.querySelectorAll('.nav-item');
+            const clearDrawingBtn = document.getElementById('clearDrawingBtn');
+            const blackColorBtn = document.getElementById('blackColorBtn');
+            const redColorBtn = document.getElementById('redColorBtn');
+            const blueColorBtn = document.getElementById('blueColorBtn');
+            const greenColorBtn = document.getElementById('greenColorBtn');
+            const smallBrushBtn = document.getElementById('smallBrushBtn');
+            const mediumBrushBtn = document.getElementById('mediumBrushBtn');
+            const largeBrushBtn = document.getElementById('largeBrushBtn');
+            
+            // Элементы для рисования аватара
+            const saveAvatarBtn = document.getElementById('saveAvatarBtn');
+            const cancelAvatarBtn = document.getElementById('cancelAvatarBtn');
+            const clearAvatarBtn = document.getElementById('clearAvatarBtn');
+            const avatarBlackBtn = document.getElementById('avatarBlackBtn');
+            const avatarRedBtn = document.getElementById('avatarRedBtn');
+            const avatarBlueBtn = document.getElementById('avatarBlueBtn');
+            const avatarGreenBtn = document.getElementById('avatarGreenBtn');
+            const avatarSmallBtn = document.getElementById('avatarSmallBtn');
+            const avatarMediumBtn = document.getElementById('avatarMediumBtn');
+            const avatarLargeBtn = document.getElementById('avatarLargeBtn');
+            const closeProfileBtn = document.getElementById('closeProfileBtn');
+            const followFromProfileBtn = document.getElementById('followFromProfileBtn');
 
-            // Нижняя навигация - 5 кнопок
+            // Нижняя навигация
             navItems.forEach(item => {
                 item.addEventListener('click', function() {
                     const nav = this.dataset.nav;
@@ -2567,25 +2225,14 @@
                     navItems.forEach(n => n.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Скрываем все секции
                     document.getElementById('profileSection').style.display = 'none';
                     document.getElementById('createPostSection').style.display = 'none';
                     document.getElementById('feedSection').style.display = 'none';
-                    document.getElementById('savedPostsSection').style.display = 'none';
-                    document.getElementById('draftsSection').style.display = 'none';
                     document.getElementById('editProfileForm').style.display = 'none';
                     
                     if (nav === 'feed') {
                         document.getElementById('feedSection').style.display = 'block';
-                        updateFeed(true);
-                    } else if (nav === 'saved') {
-                        document.getElementById('savedPostsSection').style.display = 'block';
-                        updateSavedPosts();
-                    } else if (nav === 'drafts') {
-                        document.getElementById('draftsSection').style.display = 'block';
-                        updateDrafts();
-                    } else if (nav === 'search') {
-                        searchModal.style.display = 'block';
+                        updateFeed();
                     } else if (nav === 'profile') {
                         document.getElementById('profileSection').style.display = 'block';
                         document.getElementById('createPostSection').style.display = 'block';
@@ -2597,66 +2244,199 @@
             // Обновление ленты
             if (refreshFeedBtn) {
                 refreshFeedBtn.onclick = function() {
-                    updateFeed(true);
+                    updateFeed();
                     showNotification('Лента обновлена');
                 };
             }
 
-            // Поиск
-            if (closeSearch) {
-                closeSearch.addEventListener('click', () => {
-                    searchModal.style.display = 'none';
-                });
-            }
-
-            // Закрытие поиска по клику вне
-            searchModal.addEventListener('click', function(e) {
-                if (e.target === searchModal) {
-                    searchModal.style.display = 'none';
-                }
-            });
-
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    const query = this.value.toLowerCase();
-                    if (query.length < 2) {
-                        document.getElementById('searchResults').innerHTML = '';
-                        return;
-                    }
-                    
-                    const hashtagResults = posts.filter(p => p.hashtags && p.hashtags.some(t => t.includes(query)));
-                    const userResults = users.filter(u => u.username.includes(query) || u.name.toLowerCase().includes(query));
-                    
-                    const results = [...hashtagResults, ...userResults];
-                    showSearchResults(results, query);
-                });
-            }
-
-            // Загрузка изображения
-            if (imageUploadBtn) {
-                imageUploadBtn.onclick = function() {
-                    imageUpload.click();
-                };
-            }
-
-            if (imageUpload) {
-                imageUpload.onchange = function() {
-                    if (this.files && this.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            previewImg.src = e.target.result;
-                            imagePreview.style.display = 'block';
-                        };
-                        reader.readAsDataURL(this.files[0]);
+            // Рисование для поста
+            if (drawingBtn) {
+                drawingBtn.onclick = function() {
+                    const container = document.getElementById('drawingCanvasContainer');
+                    if (container.style.display === 'none' || container.style.display === '') {
+                        container.style.display = 'block';
+                        setTimeout(() => initPostCanvas(), 100);
+                    } else {
+                        container.style.display = 'none';
                     }
                 };
             }
 
-            if (removeImageBtn) {
-                removeImageBtn.onclick = function() {
-                    imagePreview.style.display = 'none';
-                    previewImg.src = '';
-                    imageUpload.value = '';
+            if (clearDrawingBtn) {
+                clearDrawingBtn.onclick = clearPostCanvas;
+            }
+
+            if (blackColorBtn) {
+                blackColorBtn.onclick = function() {
+                    postColor = '#000000';
+                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (redColorBtn) {
+                redColorBtn.onclick = function() {
+                    postColor = '#ff4444';
+                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (blueColorBtn) {
+                blueColorBtn.onclick = function() {
+                    postColor = '#667eea';
+                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (greenColorBtn) {
+                greenColorBtn.onclick = function() {
+                    postColor = '#44ff44';
+                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (smallBrushBtn) {
+                smallBrushBtn.onclick = function() {
+                    postBrushSize = 2;
+                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (mediumBrushBtn) {
+                mediumBrushBtn.onclick = function() {
+                    postBrushSize = 5;
+                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (largeBrushBtn) {
+                largeBrushBtn.onclick = function() {
+                    postBrushSize = 10;
+                    document.querySelectorAll('.drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            // Рисование аватара
+            if (avatarBlackBtn) {
+                avatarBlackBtn.onclick = function() {
+                    avatarColor = '#000000';
+                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (avatarRedBtn) {
+                avatarRedBtn.onclick = function() {
+                    avatarColor = '#ff4444';
+                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (avatarBlueBtn) {
+                avatarBlueBtn.onclick = function() {
+                    avatarColor = '#667eea';
+                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (avatarGreenBtn) {
+                avatarGreenBtn.onclick = function() {
+                    avatarColor = '#44ff44';
+                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (avatarSmallBtn) {
+                avatarSmallBtn.onclick = function() {
+                    avatarBrushSize = 2;
+                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (avatarMediumBtn) {
+                avatarMediumBtn.onclick = function() {
+                    avatarBrushSize = 5;
+                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (avatarLargeBtn) {
+                avatarLargeBtn.onclick = function() {
+                    avatarBrushSize = 10;
+                    document.querySelectorAll('#avatarDrawingModal .drawing-control-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                };
+            }
+
+            if (clearAvatarBtn) {
+                clearAvatarBtn.onclick = clearAvatarCanvas;
+            }
+
+            if (saveAvatarBtn) {
+                saveAvatarBtn.onclick = function() {
+                    const drawingData = avatarCanvas.toDataURL('image/png');
+                    currentUser.avatar = drawingData;
+                    
+                    const userIndex = users.findIndex(u => u.id === currentUser.id);
+                    if (userIndex !== -1) {
+                        users[userIndex].avatar = drawingData;
+                        saveUsers();
+                    }
+                    
+                    document.getElementById('avatarDrawingModal').style.display = 'none';
+                    updateUI();
+                    showNotification('Аватар сохранен');
+                };
+            }
+
+            if (cancelAvatarBtn) {
+                cancelAvatarBtn.onclick = function() {
+                    document.getElementById('avatarDrawingModal').style.display = 'none';
+                };
+            }
+
+            // Закрытие профиля другого пользователя
+            if (closeProfileBtn) {
+                closeProfileBtn.onclick = function() {
+                    document.getElementById('userProfileModal').style.display = 'none';
+                };
+            }
+
+            if (followFromProfileBtn) {
+                followFromProfileBtn.onclick = function() {
+                    if (viewingUser) {
+                        const existing = subscriptions.find(s => s.followerId === currentUser.id && s.followingId === viewingUser.id);
+                        
+                        if (existing) {
+                            subscriptions = subscriptions.filter(s => s.id !== existing.id);
+                            this.textContent = '+ Подписаться';
+                            showNotification('Вы отписались');
+                        } else {
+                            subscriptions.push({
+                                id: Date.now().toString(),
+                                followerId: currentUser.id,
+                                followingId: viewingUser.id
+                            });
+                            this.textContent = '✓ Отписался';
+                            showNotification('Вы подписались');
+                        }
+                        
+                        saveSubscriptions();
+                        
+                        const followers = subscriptions.filter(s => s.followingId === viewingUser.id).length;
+                        document.getElementById('otherFollowersCount').textContent = followers;
+                    }
                 };
             }
 
@@ -2677,7 +2457,6 @@
                     });
                     
                     saveDrafts();
-                    updateDrafts();
                     showNotification('Черновик сохранен');
                 };
             }
@@ -2705,11 +2484,18 @@
             if (createPostBtn) {
                 createPostBtn.onclick = function() {
                     const content = document.getElementById('postContent').value.trim();
-                    const previewSrc = document.getElementById('previewImg').src;
-                    const hasImage = previewSrc && previewSrc !== '' && previewSrc !== window.location.href;
                     
-                    if (!content && !hasImage) {
-                        alert('Добавьте текст или фото');
+                    let drawingData = null;
+                    if (postCanvas) {
+                        drawingData = postCanvas.toDataURL('image/png');
+                        // Проверяем, не пустой ли рисунок (белый фон)
+                        const imageData = postCtx.getImageData(0, 0, postCanvas.width, postCanvas.height).data;
+                        const isBlank = imageData.every(pixel => pixel === 255);
+                        if (isBlank) drawingData = null;
+                    }
+                    
+                    if (!content && !drawingData) {
+                        alert('Добавьте текст или рисунок');
                         return;
                     }
 
@@ -2720,7 +2506,7 @@
                         id: Date.now().toString(),
                         authorId: currentUser.id,
                         content: content || '',
-                        image: hasImage ? previewSrc : null,
+                        drawing: drawingData,
                         hashtags: hashtags,
                         mentions: mentions,
                         timestamp: Date.now()
@@ -2729,27 +2515,9 @@
                     posts.push(newPost);
                     savePosts();
                     
-                    // Уведомления для упоминаний
-                    mentions.forEach(username => {
-                        const user = findUser(username);
-                        if (user && user.id !== currentUser.id) {
-                            notifications.push({
-                                id: Date.now().toString(),
-                                userId: user.id,
-                                type: 'mention',
-                                actorId: currentUser.id,
-                                postId: newPost.id,
-                                read: false,
-                                timestamp: Date.now()
-                            });
-                        }
-                    });
-                    saveNotifications();
-                    
                     document.getElementById('postContent').value = '';
-                    imagePreview.style.display = 'none';
-                    document.getElementById('previewImg').src = '';
-                    imageUpload.value = '';
+                    document.getElementById('drawingCanvasContainer').style.display = 'none';
+                    clearPostCanvas();
                     
                     updateUserPosts();
                     updateUI();
@@ -2824,14 +2592,6 @@
                     document.body.classList.toggle('light-theme');
                     this.textContent = document.body.classList.contains('light-theme') ? '☀️' : '🌙';
                     localStorage.setItem('void_theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
-                    
-                    // Обновляем стили
-                    const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
-                    if (activeNav === 'profile') {
-                        updateUserPosts();
-                    } else if (activeNav === 'feed') {
-                        updateFeed();
-                    }
                 };
             }
 
@@ -2847,4 +2607,4 @@
         });
     </script>
 </body>
-  </html>
+</html>
