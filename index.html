@@ -34,11 +34,11 @@
                     <div class="profile-username" id="profileUsername"></div>
                     <div class="profile-bio" id="profileBio"></div>
                     <div class="profile-stats">
-                        <div class="stat">
+                        <div class="stat" onclick="showFollowers()">
                             <div class="stat-value" id="followersCount">0</div>
                             <div class="stat-label">подписчики</div>
                         </div>
-                        <div class="stat">
+                        <div class="stat" onclick="showFollowing()">
                             <div class="stat-value" id="followingCount">0</div>
                             <div class="stat-label">подписки</div>
                         </div>
@@ -230,6 +230,24 @@
                 <button class="drawing-action-btn save" id="followFromProfileBtn">Подписаться</button>
                 <button class="drawing-action-btn cancel" id="closeProfileBtn">Закрыть</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для списка подписчиков -->
+    <div class="modal" id="followersModal">
+        <div class="modal-content">
+            <h3>Подписчики</h3>
+            <div class="users-list" id="followersList"></div>
+            <button class="drawing-action-btn cancel" style="width: 100%; margin-top: 1rem;" id="closeFollowersBtn">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно для списка подписок -->
+    <div class="modal" id="followingModal">
+        <div class="modal-content">
+            <h3>Подписки</h3>
+            <div class="users-list" id="followingList"></div>
+            <button class="drawing-action-btn cancel" style="width: 100%; margin-top: 1rem;" id="closeFollowingBtn">Закрыть</button>
         </div>
     </div>
 
