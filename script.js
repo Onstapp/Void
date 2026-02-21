@@ -289,7 +289,7 @@ function updateFeed() {
                 <span class="comment-toggle" onclick="toggleComments('${post.id}')">💬 ${postComments.length}</span>
                 ${author.id !== currentUser?.id ? `
                     <button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${author.id}')">
-                        ${isFollowing ? '✓ Отписался' : '+ Подписаться'}
+                        ${isFollowing ? '✓ Отписаться' : '+ Подписаться'}
                     </button>
                 ` : ''}
             </div>
@@ -606,11 +606,17 @@ window.goToPost = function(postId) {
     document.getElementById('hashtagModal').style.display = 'none';
     document.querySelector('[data-nav="feed"]').click();
     setTimeout(() => {
-        const post = document.querySelector(`[onclick*="'${postId}'"]`).closest('.post');
-        if (post) {
-            post.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            post.style.transform = 'scale(1.02)';
-            setTimeout(() => post.style.transform = '', 500);
+        const postElement = document.querySelector(`[onclick*="'${postId}'"]`)?.closest('.post');
+        if (postElement) {
+            postElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            postElement.style.transform = 'scale(1.02)';
+            setTimeout(() => postElement.style.transform = '', 500);
+            
+            // Открываем комментарии к посту
+            const commentsSection = postElement.querySelector('.comments-section');
+            if (commentsSection) {
+                commentsSection.style.display = 'block';
+            }
         }
     }, 100);
 };
@@ -668,7 +674,13 @@ window.showFollowing = function() {
 
 window.openUserProfile = function(username) {
     const user = findUser(username);
-    if (!user || user.id === currentUser.id) return;
+    if (!user || user.id === currentUser.id) {
+        if (user && user.id === currentUser.id) {
+            // Если это свой профиль, переключаемся на вкладку профиля
+            document.querySelector('[data-nav="profile"]').click();
+        }
+        return;
+    }
     
     viewingUser = user;
     
@@ -718,7 +730,7 @@ window.openUserProfile = function(username) {
     }
     
     const isFollowing = subscriptions.some(s => s.followerId === currentUser.id && s.followingId === user.id);
-    document.getElementById('followFromProfileBtn').textContent = isFollowing ? '✓ Отписался' : '+ Подписаться';
+    document.getElementById('followFromProfileBtn').textContent = isFollowing ? '✓ Отписаться' : '+ Подписаться';
     
     document.getElementById('userProfileModal').style.display = 'flex';
 };
@@ -962,7 +974,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Редактирование профиля
+    // Редактирование профиля - ИСПРАВЛЕНО
     if (editProfileBtn) {
         editProfileBtn.onclick = function() {
             document.getElementById('profileSection').style.display = 'none';
@@ -1087,11 +1099,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (hasDrawing) {
-                currentUser.avatar = drawingData;
+                // Создаем квадратное изображение для аватара правильного размера
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = 200;
+                tempCanvas.height = 200;
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                // Рисуем белый фон
+                tempCtx.fillStyle = '#ffffff';
+                tempCtx.fillRect(0, 0, 200, 200);
+                
+                // Рисуем рисунок
+                tempCtx.drawImage(avatarCanvas, 0, 0, 200, 200);
+                
+                currentUser.avatar = tempCanvas.toDataURL('image/png');
                 
                 const userIndex = users.findIndex(u => u.id === currentUser.id);
                 if (userIndex !== -1) {
-                    users[userIndex].avatar = drawingData;
+                    users[userIndex].avatar = tempCanvas.toDataURL('image/png');
                     saveUsers();
                 }
                 
@@ -1150,7 +1175,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         followerId: currentUser.id,
                         followingId: viewingUser.id
                     });
-                    this.textContent = '✓ Отписался';
+                    this.textContent = '✓ Отписаться';
                     showNotification('Вы подписались');
                 }
                 
@@ -1158,6 +1183,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const followers = subscriptions.filter(s => s.followingId === viewingUser.id).length;
                 document.getElementById('otherFollowersCount').textContent = followers;
+                const following = subscriptions.filter(s => s.followerId === viewingUser.id).length;
+                document.getElementById('otherFollowingCount').textContent = following;
             }
         };
     }
@@ -1190,7 +1217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Создание поста - ИСПРАВЛЕНО
+    // Создание поста
     if (createPostBtn) {
         createPostBtn.onclick = function() {
             const content = document.getElementById('postContent').value.trim();
