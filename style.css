@@ -26,6 +26,12 @@ body::before {
     background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
     pointer-events: none;
     z-index: -1;
+    animation: pulseGlow 10s ease infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
 }
 
 /* Светлая тема */
@@ -97,12 +103,28 @@ body.light-theme .add-comment input {
     color: #333;
 }
 
+body.light-theme .create-post textarea:focus,
+body.light-theme .edit-profile-form input:focus,
+body.light-theme .edit-profile-form textarea:focus,
+body.light-theme .add-comment input:focus {
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.9);
+}
+
 body.light-theme .tool-btn,
 body.light-theme .follow-btn,
-body.light-theme .comment-like-btn {
+body.light-theme .comment-like-btn,
+body.light-theme .refresh-btn {
     background: rgba(0, 0, 0, 0.03);
     border: 1px solid rgba(0, 0, 0, 0.1);
     color: #555;
+}
+
+body.light-theme .tool-btn:hover,
+body.light-theme .follow-btn:hover,
+body.light-theme .comment-like-btn:hover,
+body.light-theme .refresh-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
 }
 
 body.light-theme .post-like-btn {
@@ -125,7 +147,8 @@ body.light-theme .comments-section {
     border-top-color: rgba(0, 0, 0, 0.1);
 }
 
-body.light-theme .delete-btn {
+body.light-theme .delete-btn,
+body.light-theme .comment-delete-btn {
     color: #ff4757;
 }
 
@@ -149,10 +172,59 @@ body.light-theme .empty-state {
     border: 1px dashed rgba(0, 0, 0, 0.1);
 }
 
+body.light-theme .hashtag-info {
+    color: #666;
+}
+
 body.light-theme .avatar-action-btn {
     background: rgba(0, 0, 0, 0.03);
     border: 1px solid rgba(0, 0, 0, 0.1);
     color: #555;
+}
+
+body.light-theme .avatar-action-btn.delete {
+    color: #ff4757;
+    border-color: rgba(255,68,68,0.3);
+}
+
+body.light-theme .avatar-action-btn.delete:hover {
+    background: rgba(255,68,68,0.1);
+}
+
+body.light-theme .drawing-action-btn {
+    background: rgba(0, 0, 0, 0.03);
+    color: #555;
+}
+
+body.light-theme .drawing-action-btn.save {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+body.light-theme .drawing-action-btn.clear {
+    background: rgba(255,68,68,0.1);
+    color: #ff4757;
+    border: 1px solid rgba(255,68,68,0.3);
+}
+
+body.light-theme .drawing-action-btn.cancel {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #555;
+}
+
+body.light-theme .comment-submit {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+body.light-theme .post-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+body.light-theme ::placeholder {
+    color: #999;
 }
 
 /* Навигация */
@@ -165,6 +237,7 @@ body.light-theme .avatar-action-btn {
     top: 0;
     z-index: 100;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
 }
 
 .nav-content {
@@ -238,6 +311,8 @@ body.light-theme .avatar-action-btn {
 .logout-btn:hover {
     background: #ff4757;
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
 }
 
 /* Контейнер */
@@ -246,16 +321,29 @@ body.light-theme .avatar-action-btn {
     margin: 0 auto;
     padding: 1rem;
     padding-bottom: 90px;
+    animation: fadeSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeSlideUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 /* Профиль */
 .profile-section {
     background: rgba(17, 17, 17, 0.8);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 30px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+}
+
+.profile-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
 }
 
 .profile-header {
@@ -279,10 +367,17 @@ body.light-theme .avatar-action-btn {
     overflow: hidden;
     background-size: cover;
     background-position: center;
+    animation: pulse 4s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5); }
+    50% { box-shadow: 0 20px 50px rgba(102, 126, 234, 0.8); }
 }
 
 .profile-avatar.drawn-avatar {
     background: none;
+    animation: none;
 }
 
 .profile-avatar .avatar-overlay {
@@ -327,11 +422,16 @@ body.light-theme .avatar-action-btn {
 
 .avatar-action-btn:hover {
     background: rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
 }
 
 .avatar-action-btn.delete {
     color: #ff6b6b;
     border-color: rgba(255,68,68,0.3);
+}
+
+.avatar-action-btn.delete:hover {
+    background: rgba(255,68,68,0.2);
 }
 
 .profile-info {
@@ -352,6 +452,7 @@ body.light-theme .avatar-action-btn {
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
     cursor: pointer;
+    transition: color 0.2s;
 }
 
 .profile-username:hover {
@@ -361,6 +462,12 @@ body.light-theme .avatar-action-btn {
 .verified-badge {
     color: #667eea;
     font-size: 1rem;
+    animation: sparkle 3s ease infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.2); }
 }
 
 .profile-bio {
@@ -409,11 +516,33 @@ body.light-theme .avatar-action-btn {
     font-weight: 600;
     font-size: 1rem;
     transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.edit-profile-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    z-index: -1;
 }
 
 .edit-profile-btn:hover {
-    background: rgba(102, 126, 234, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.edit-profile-btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 /* Форма редактирования */
@@ -425,6 +554,12 @@ body.light-theme .avatar-action-btn {
     margin-bottom: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
     display: none;
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .edit-profile-form h3 {
@@ -443,12 +578,15 @@ body.light-theme .avatar-action-btn {
     border-radius: 16px;
     color: white;
     font-size: 0.95rem;
+    transition: all 0.2s;
 }
 
 .edit-profile-form input:focus,
 .edit-profile-form textarea:focus {
     outline: none;
     border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.02);
 }
 
 .form-actions {
@@ -473,7 +611,7 @@ body.light-theme .avatar-action-btn {
 
 .save-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
 }
 
 .cancel-btn {
@@ -484,6 +622,7 @@ body.light-theme .avatar-action-btn {
 
 .cancel-btn:hover {
     background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
 }
 
 /* Создание поста */
@@ -494,6 +633,12 @@ body.light-theme .avatar-action-btn {
     padding: 1.2rem;
     margin-bottom: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+}
+
+.create-post:focus-within {
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
 }
 
 .create-post textarea {
@@ -506,12 +651,14 @@ body.light-theme .avatar-action-btn {
     min-height: 100px;
     margin-bottom: 1rem;
     resize: vertical;
+    transition: all 0.2s;
     font-size: 1rem;
 }
 
 .create-post textarea:focus {
     outline: none;
     border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
 }
 
 .post-tools {
@@ -530,6 +677,9 @@ body.light-theme .avatar-action-btn {
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 .tool-btn:hover {
@@ -543,6 +693,12 @@ body.light-theme .avatar-action-btn {
     border-radius: 20px;
     padding: 1rem;
     margin-bottom: 1rem;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .drawing-canvas-wrapper {
@@ -623,6 +779,7 @@ body.light-theme .avatar-action-btn {
 
 .brush-size-btn:hover {
     background: rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
 }
 
 .brush-size-btn.active {
@@ -662,6 +819,7 @@ body.light-theme .avatar-action-btn {
 
 .drawing-action-btn.clear:hover {
     background: rgba(255,68,68,0.3);
+    transform: translateY(-2px);
 }
 
 .drawing-action-btn.save {
@@ -669,10 +827,20 @@ body.light-theme .avatar-action-btn {
     color: white;
 }
 
+.drawing-action-btn.save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
 .drawing-action-btn.cancel {
     background: rgba(255,255,255,0.05);
     color: white;
     border: 1px solid rgba(255,255,255,0.1);
+}
+
+.drawing-action-btn.cancel:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
 }
 
 .post-btn {
@@ -686,11 +854,31 @@ body.light-theme .avatar-action-btn {
     font-weight: 600;
     font-size: 1rem;
     transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.post-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
 }
 
 .post-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+}
+
+.post-btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 /* Посты */
@@ -702,11 +890,18 @@ body.light-theme .avatar-action-btn {
     margin-bottom: 1.2rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.2s;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .post:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.3);
 }
 
 .post-header {
@@ -728,10 +923,15 @@ body.light-theme .avatar-action-btn {
     font-weight: bold;
     background-size: cover;
     background-position: center;
+    transition: transform 0.2s;
 }
 
 .post-avatar.drawn-avatar {
     background: none;
+}
+
+.post-avatar:hover {
+    transform: scale(1.05);
 }
 
 .post-author-info {
@@ -774,6 +974,7 @@ body.light-theme .avatar-action-btn {
     color: #667eea;
     cursor: pointer;
     font-weight: 500;
+    transition: color 0.2s;
 }
 
 .hashtag:hover {
@@ -784,6 +985,7 @@ body.light-theme .avatar-action-btn {
 .mention {
     color: #764ba2;
     cursor: pointer;
+    transition: color 0.2s;
 }
 
 .mention:hover {
@@ -798,6 +1000,7 @@ body.light-theme .avatar-action-btn {
     border-radius: 20px;
     margin-bottom: 1rem;
     background: white;
+    image-rendering: pixelated;
 }
 
 .delete-btn {
@@ -830,11 +1033,18 @@ body.light-theme .avatar-action-btn {
 .post-like-btn:hover {
     background: rgba(102, 126, 234, 0.2);
     border-color: #667eea;
+    transform: translateY(-2px);
 }
 
 .post-like-btn.liked {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
+    animation: heartBeat 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
 }
 
 .post-actions {
@@ -852,11 +1062,13 @@ body.light-theme .avatar-action-btn {
     cursor: pointer;
     padding: 0.3rem 0;
     display: inline-block;
+    transition: all 0.2s;
     font-size: 0.95rem;
 }
 
 .comment-toggle:hover {
     color: #667eea;
+    transform: translateX(5px);
 }
 
 .follow-btn {
@@ -874,6 +1086,8 @@ body.light-theme .avatar-action-btn {
 .follow-btn:hover {
     background: #667eea;
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
 .follow-btn.following {
@@ -887,12 +1101,19 @@ body.light-theme .avatar-action-btn {
     padding-top: 1rem;
     border-top: 1px solid rgba(255,255,255,0.1);
     display: none;
+    animation: fadeIn 0.3s;
 }
 
 .comment {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1rem;
+    animation: slideRight 0.2s;
+}
+
+@keyframes slideRight {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 .comment-avatar {
@@ -919,6 +1140,11 @@ body.light-theme .avatar-action-btn {
     background: rgba(255,255,255,0.05);
     padding: 0.6rem 1rem;
     border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.comment-content:hover {
+    background: rgba(255,255,255,0.1);
 }
 
 .comment-header {
@@ -933,6 +1159,7 @@ body.light-theme .avatar-action-btn {
     font-size: 0.85rem;
     color: white;
     cursor: pointer;
+    transition: color 0.2s;
 }
 
 .comment-author:hover {
@@ -967,6 +1194,8 @@ body.light-theme .avatar-action-btn {
 
 .comment-like-btn:hover {
     background: rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
+    transform: translateY(-2px);
 }
 
 .comment-like-btn.liked {
@@ -999,12 +1228,15 @@ body.light-theme .avatar-action-btn {
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 30px;
     color: white;
+    transition: all 0.2s;
     font-size: 0.95rem;
 }
 
 .add-comment input:focus {
     outline: none;
     border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.02);
 }
 
 .comment-submit {
@@ -1016,11 +1248,11 @@ body.light-theme .avatar-action-btn {
     border-radius: 50%;
     cursor: pointer;
     font-size: 1.2rem;
-    transition: transform 0.2s;
+    transition: all 0.2s;
 }
 
 .comment-submit:hover {
-    transform: scale(1.1);
+    transform: scale(1.1) rotate(360deg);
 }
 
 /* Кнопка обновления */
@@ -1040,11 +1272,37 @@ body.light-theme .avatar-action-btn {
     font-size: 0.95rem;
     font-weight: 500;
     transition: all 0.2s;
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+}
+
+.refresh-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
 }
 
 .refresh-btn:hover {
     background: rgba(102, 126, 234, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.refresh-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.refresh-btn:active {
+    transform: translateY(0);
 }
 
 /* Нижняя навигация */
@@ -1060,6 +1318,12 @@ body.light-theme .avatar-action-btn {
     padding: 0.5rem 0.2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 99;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
 }
 
 .nav-item {
@@ -1079,15 +1343,29 @@ body.light-theme .avatar-action-btn {
 .nav-item span:first-child {
     font-size: 1.3rem;
     margin-bottom: 0.1rem;
+    transition: transform 0.2s;
 }
 
 .nav-item:hover {
     color: #667eea;
 }
 
+.nav-item:hover span:first-child {
+    transform: translateY(-3px);
+}
+
 .nav-item.active {
     color: #667eea;
     background: rgba(102, 126, 234, 0.15);
+}
+
+.nav-item.active span:first-child {
+    animation: bounce 0.3s;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
 /* Модальные окна */
@@ -1104,6 +1382,12 @@ body.light-theme .avatar-action-btn {
     align-items: center;
     justify-content: center;
     padding: 1rem;
+    animation: modalFade 0.3s;
+}
+
+@keyframes modalFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .modal-content {
@@ -1115,6 +1399,12 @@ body.light-theme .avatar-action-btn {
     border: 1px solid rgba(255,255,255,0.1);
     max-height: 90vh;
     overflow-y: auto;
+    animation: modalSlide 0.3s;
+}
+
+@keyframes modalSlide {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .modal h3 {
@@ -1204,6 +1494,17 @@ body.light-theme .avatar-action-btn {
 .hashtag-post-item:hover {
     background: rgba(102, 126, 234, 0.1);
     border-color: #667eea;
+    transform: translateX(5px);
+}
+
+.hashtag-post-author {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.hashtag-post-content {
+    color: #888;
+    font-size: 0.9rem;
 }
 
 /* Профиль пользователя */
@@ -1286,6 +1587,7 @@ body.light-theme .avatar-action-btn {
 .profile-post-item:hover {
     background: rgba(102, 126, 234, 0.1);
     border-color: #667eea;
+    transform: translateX(5px);
 }
 
 .profile-post-content {
@@ -1427,4 +1729,8 @@ body.light-theme .avatar-action-btn {
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
 }
