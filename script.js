@@ -974,7 +974,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Редактирование профиля - ИСПРАВЛЕНО
+    // Редактирование профиля
     if (editProfileBtn) {
         editProfileBtn.onclick = function() {
             document.getElementById('profileSection').style.display = 'none';
@@ -1083,7 +1083,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clearAvatarBtn.onclick = clearAvatarCanvas;
     }
 
-    // Сохранение аватара - ИСПРАВЛЕНО
+    // Сохранение аватара
     if (saveAvatarBtn) {
         saveAvatarBtn.onclick = function() {
             // Проверяем, не пустой ли рисунок
