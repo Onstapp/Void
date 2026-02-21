@@ -34,7 +34,7 @@ body::before {
     50% { opacity: 0.8; transform: scale(1.1); }
 }
 
-/* Светлая тема - ИСПРАВЛЕНО */
+/* Светлая тема */
 body.light-theme {
     background: linear-gradient(135deg, #f0f2f5 0%, #e0e5ec 100%);
     color: #1a1a1a;
@@ -92,6 +92,10 @@ body.light-theme .edit-profile-btn {
     background: rgba(102, 126, 234, 0.1);
     border: 1px solid rgba(102, 126, 234, 0.3);
     color: #333;
+}
+
+body.light-theme .edit-profile-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
 }
 
 body.light-theme .create-post textarea,
@@ -172,10 +176,6 @@ body.light-theme .empty-state {
     border: 1px dashed rgba(0, 0, 0, 0.1);
 }
 
-body.light-theme .hashtag-info {
-    color: #666;
-}
-
 body.light-theme .avatar-action-btn {
     background: rgba(0, 0, 0, 0.03);
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -227,10 +227,7 @@ body.light-theme .stat-value {
     color: #667eea;
 }
 
-body.light-theme .user-item-name {
-    color: #333;
-}
-
+body.light-theme .user-item-name,
 body.light-theme .profile-modal-name {
     color: #333;
 }
@@ -414,7 +411,6 @@ body.light-theme ::placeholder {
     opacity: 1;
 }
 
-/* ИСПРАВЛЕНО: кнопки аватарки всегда видны в режиме редактирования */
 .avatar-actions {
     display: flex;
     gap: 0.5rem;
@@ -489,7 +485,6 @@ body.light-theme ::placeholder {
     margin-bottom: 1rem;
 }
 
-/* ИСПРАВЛЕНО: расположение статистики */
 .profile-stats {
     display: flex;
     gap: 2rem;
@@ -1443,7 +1438,7 @@ body.light-theme ::placeholder {
     font-size: 1.2rem;
 }
 
-/* Рисование аватара - ИСПРАВЛЕНО */
+/* Рисование аватара */
 .avatar-drawing-content {
     max-width: 450px;
 }
