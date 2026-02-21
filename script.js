@@ -548,6 +548,8 @@ window.toggleFollow = function(userId) {
     // Обновляем счетчики в профиле
     const followers = subscriptions.filter(s => s.followingId === currentUser.id).length;
     document.getElementById('followersCount').textContent = followers;
+    const following = subscriptions.filter(s => s.followerId === currentUser.id).length;
+    document.getElementById('followingCount').textContent = following;
 };
 
 window.deletePost = function(postId) {
@@ -611,6 +613,57 @@ window.goToPost = function(postId) {
             setTimeout(() => post.style.transform = '', 500);
         }
     }, 100);
+};
+
+// Функции для просмотра подписчиков и подписок
+window.showFollowers = function() {
+    const followers = subscriptions.filter(s => s.followingId === currentUser.id);
+    const followersList = document.getElementById('followersList');
+    
+    if (followers.length === 0) {
+        followersList.innerHTML = '<div class="empty-state">У вас пока нет подписчиков</div>';
+    } else {
+        followersList.innerHTML = followers.map(sub => {
+            const user = users.find(u => u.id === sub.followerId);
+            if (!user) return '';
+            return `
+                <div class="user-item" onclick="openUserProfile('${user.username}')">
+                    <div class="user-item-avatar ${user.avatar ? 'drawn-avatar' : ''}" ${user.avatar ? `style="background-image: url('${user.avatar}')"` : ''}>${!user.avatar ? getInitials(user.name) : ''}</div>
+                    <div class="user-item-info">
+                        <div class="user-item-name">${user.name}</div>
+                        <div class="user-item-username">${formatUsername(user.username)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    document.getElementById('followersModal').style.display = 'flex';
+};
+
+window.showFollowing = function() {
+    const following = subscriptions.filter(s => s.followerId === currentUser.id);
+    const followingList = document.getElementById('followingList');
+    
+    if (following.length === 0) {
+        followingList.innerHTML = '<div class="empty-state">Вы ни на кого не подписаны</div>';
+    } else {
+        followingList.innerHTML = following.map(sub => {
+            const user = users.find(u => u.id === sub.followingId);
+            if (!user) return '';
+            return `
+                <div class="user-item" onclick="openUserProfile('${user.username}')">
+                    <div class="user-item-avatar ${user.avatar ? 'drawn-avatar' : ''}" ${user.avatar ? `style="background-image: url('${user.avatar}')"` : ''}>${!user.avatar ? getInitials(user.name) : ''}</div>
+                    <div class="user-item-info">
+                        <div class="user-item-name">${user.name}</div>
+                        <div class="user-item-username">${formatUsername(user.username)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    document.getElementById('followingModal').style.display = 'flex';
 };
 
 window.openUserProfile = function(username) {
@@ -867,6 +920,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Элементы для профиля
     const closeProfileBtn = document.getElementById('closeProfileBtn');
     const followFromProfileBtn = document.getElementById('followFromProfileBtn');
+    
+    // Элементы для подписчиков и подписок
+    const closeFollowersBtn = document.getElementById('closeFollowersBtn');
+    const closeFollowingBtn = document.getElementById('closeFollowingBtn');
 
     // Нижняя навигация
     navItems.forEach(item => {
@@ -1015,11 +1072,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Проверяем, не пустой ли рисунок
             const imageData = avatarCtx.getImageData(0, 0, avatarCanvas.width, avatarCanvas.height).data;
-            const isBlank = imageData.every((pixel, index) => {
-                return (index + 1) % 4 === 0 ? pixel === 255 : true;
-            });
+            let hasDrawing = false;
+            for (let i = 0; i < imageData.length; i += 4) {
+                if (imageData[i] < 250 || imageData[i+1] < 250 || imageData[i+2] < 250) {
+                    hasDrawing = true;
+                    break;
+                }
+            }
             
-            if (!isBlank) {
+            if (hasDrawing) {
                 currentUser.avatar = drawingData;
                 
                 const userIndex = users.findIndex(u => u.id === currentUser.id);
@@ -1053,6 +1114,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (closeProfileBtn) {
         closeProfileBtn.onclick = function() {
             document.getElementById('userProfileModal').style.display = 'none';
+        };
+    }
+
+    if (closeFollowersBtn) {
+        closeFollowersBtn.onclick = function() {
+            document.getElementById('followersModal').style.display = 'none';
+        };
+    }
+
+    if (closeFollowingBtn) {
+        closeFollowingBtn.onclick = function() {
+            document.getElementById('followingModal').style.display = 'none';
         };
     }
 
@@ -1120,11 +1193,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (postCanvas) {
                 // Проверяем, не пустой ли рисунок
                 const imageData = postCtx.getImageData(0, 0, postCanvas.width, postCanvas.height).data;
-                const isBlank = imageData.every((pixel, index) => {
-                    return (index + 1) % 4 === 0 ? pixel === 255 : true;
-                });
+                let hasDrawing = false;
+                for (let i = 0; i < imageData.length; i += 4) {
+                    if (imageData[i] < 250 || imageData[i+1] < 250 || imageData[i+2] < 250) {
+                        hasDrawing = true;
+                        break;
+                    }
+                }
                 
-                if (!isBlank) {
+                if (hasDrawing) {
                     drawingData = postCanvas.toDataURL('image/png');
                 }
             }
