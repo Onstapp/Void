@@ -5,8 +5,1769 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Void ✦ Социальная сеть</title>
     <style>
-        /* ===== СЮДА ВСТАВЬТЕ ВЕСЬ КОД ИЗ style.css ===== */
-        /* Просто скопируйте всё из style.css и вставьте сюда */
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    color: #ffffff;
+    line-height: 1.5;
+    transition: all 0.3s ease;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    animation: pulseGlow 10s ease infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+/* Светлая тема */
+body.light-theme {
+    background: linear-gradient(135deg, #f0f2f5 0%, #e0e5ec 100%);
+    color: #1a1a1a;
+}
+
+body.light-theme::before {
+    background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+}
+
+body.light-theme .navbar {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .nav-icon {
+    color: #333;
+}
+
+body.light-theme .user-name {
+    color: #333 !important;
+}
+
+body.light-theme .profile-section,
+body.light-theme .create-post,
+body.light-theme .post,
+body.light-theme .edit-profile-form,
+body.light-theme .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .profile-name {
+    background: linear-gradient(135deg, #333, #555);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .profile-username,
+body.light-theme .post-username,
+body.light-theme .post-time,
+body.light-theme .stat-label {
+    color: #666;
+}
+
+body.light-theme .post-time {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .post-content {
+    color: #1a1a1a;
+}
+
+body.light-theme .edit-profile-btn {
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: #333;
+}
+
+body.light-theme .edit-profile-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+body.light-theme .create-post textarea,
+body.light-theme .edit-profile-form input,
+body.light-theme .edit-profile-form textarea,
+body.light-theme .add-comment input {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+body.light-theme .create-post textarea:focus,
+body.light-theme .edit-profile-form input:focus,
+body.light-theme .edit-profile-form textarea:focus,
+body.light-theme .add-comment input:focus {
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+body.light-theme .tool-btn,
+body.light-theme .follow-btn,
+body.light-theme .comment-like-btn,
+body.light-theme .refresh-btn {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #555;
+}
+
+body.light-theme .tool-btn:hover,
+body.light-theme .follow-btn:hover,
+body.light-theme .comment-like-btn:hover,
+body.light-theme .refresh-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+body.light-theme .post-like-btn {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #555;
+}
+
+body.light-theme .post-like-btn.liked {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+body.light-theme .comment-content {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+body.light-theme .post-actions,
+body.light-theme .comments-section {
+    border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .delete-btn,
+body.light-theme .comment-delete-btn {
+    color: #ff4757;
+}
+
+body.light-theme .bottom-nav {
+    background: rgba(255, 255, 255, 0.9);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .nav-item {
+    color: #666;
+}
+
+body.light-theme .nav-item.active {
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+body.light-theme .empty-state {
+    color: #888;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .avatar-action-btn {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #555;
+}
+
+body.light-theme .avatar-action-btn.delete {
+    color: #ff4757;
+    border-color: rgba(255,68,68,0.3);
+}
+
+body.light-theme .avatar-action-btn.delete:hover {
+    background: rgba(255,68,68,0.1);
+}
+
+body.light-theme .drawing-action-btn {
+    background: rgba(0, 0, 0, 0.03);
+    color: #555;
+}
+
+body.light-theme .drawing-action-btn.save {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+body.light-theme .drawing-action-btn.clear {
+    background: rgba(255,68,68,0.1);
+    color: #ff4757;
+    border: 1px solid rgba(255,68,68,0.3);
+}
+
+body.light-theme .drawing-action-btn.cancel {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #555;
+}
+
+body.light-theme .comment-submit {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+body.light-theme .post-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+body.light-theme .stat-value {
+    color: #667eea;
+}
+
+body.light-theme .user-item-name,
+body.light-theme .profile-modal-name {
+    color: #333;
+}
+
+body.light-theme ::placeholder {
+    color: #999;
+}
+
+/* Навигация */
+.navbar {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.nav-content {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea, #764ba2, #667eea);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 8s ease infinite;
+    letter-spacing: 2px;
+}
+
+@keyframes gradientFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    color: white;
+}
+
+.nav-icon:hover {
+    transform: scale(1.1);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: white;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logout-btn {
+    background: rgba(255, 68, 68, 0.15);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff6b6b;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    background: #ff4757;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+}
+
+/* Контейнер */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+    padding-bottom: 90px;
+    animation: fadeSlideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeSlideUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Профиль */
+.profile-section {
+    background: rgba(17, 17, 17, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+}
+
+.profile-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+}
+
+.profile-header {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.profile-avatar {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    animation: pulse 4s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5); }
+    50% { box-shadow: 0 20px 50px rgba(102, 126, 234, 0.8); }
+}
+
+.profile-avatar.drawn-avatar {
+    background: none;
+    animation: none;
+}
+
+.profile-avatar .avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5rem;
+    backdrop-filter: blur(5px);
+}
+
+.profile-avatar:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    justify-content: center;
+}
+
+.avatar-action-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.avatar-action-btn:hover {
+    background: rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
+}
+
+.avatar-action-btn.delete {
+    color: #ff6b6b;
+    border-color: rgba(255,68,68,0.3);
+}
+
+.avatar-action-btn.delete:hover {
+    background: rgba(255,68,68,0.2);
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    background: linear-gradient(135deg, #fff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.profile-username {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.profile-username:hover {
+    color: #667eea;
+}
+
+.verified-badge {
+    color: #667eea;
+    font-size: 1rem;
+    animation: sparkle 3s ease infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.2); }
+}
+
+.profile-bio {
+    color: #b0b0b0;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat {
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat:first-child {
+    text-align: left;
+    align-items: flex-start;
+}
+
+.stat:last-child {
+    text-align: right;
+    align-items: flex-end;
+}
+
+.stat:hover {
+    transform: translateY(-3px);
+}
+
+.stat-value {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #667eea;
+}
+
+.stat-label {
+    color: #888;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.edit-profile-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: rgba(102, 126, 234, 0.15);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    margin-top: 1.2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.edit-profile-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    z-index: -1;
+}
+
+.edit-profile-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.edit-profile-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Форма редактирования */
+.edit-profile-form {
+    background: rgba(17, 17, 17, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: none;
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.edit-profile-form h3 {
+    margin-bottom: 1rem;
+    color: #667eea;
+    font-size: 1.2rem;
+}
+
+.edit-profile-form input,
+.edit-profile-form textarea {
+    width: 100%;
+    padding: 0.9rem;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    color: white;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.edit-profile-form input:focus,
+.edit-profile-form textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.02);
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.save-btn, .cancel-btn {
+    flex: 1;
+    padding: 0.9rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.cancel-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+}
+
+.cancel-btn:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+}
+
+/* Создание поста */
+.create-post {
+    background: rgba(17, 17, 17, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+}
+
+.create-post:focus-within {
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.create-post textarea {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: white;
+    min-height: 100px;
+    margin-bottom: 1rem;
+    resize: vertical;
+    transition: all 0.2s;
+    font-size: 1rem;
+}
+
+.create-post textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.post-tools {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.tool-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.tool-btn:hover {
+    background: rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Рисование */
+.drawing-container {
+    background: rgba(0,0,0,0.2);
+    border-radius: 20px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.drawing-canvas-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.drawing-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: white;
+    cursor: crosshair;
+    touch-action: none;
+}
+
+.drawing-tools {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.color-palette {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.color-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.color-btn:hover {
+    transform: scale(1.1);
+    border-color: #667eea;
+}
+
+.color-btn.active {
+    border-color: #667eea;
+    transform: scale(1.1);
+}
+
+.brush-size-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.brush-size-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.brush-size-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.brush-size-btn:hover {
+    background: rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
+}
+
+.brush-size-btn.active {
+    background: #667eea;
+    color: white;
+}
+
+.brush-preview {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: white;
+    display: inline-block;
+}
+
+.drawing-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.drawing-action-btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+}
+
+.drawing-action-btn.clear {
+    background: rgba(255,68,68,0.2);
+    color: #ff6b6b;
+    border: 1px solid rgba(255,68,68,0.3);
+}
+
+.drawing-action-btn.clear:hover {
+    background: rgba(255,68,68,0.3);
+    transform: translateY(-2px);
+}
+
+.drawing-action-btn.save {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.drawing-action-btn.save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.drawing-action-btn.cancel {
+    background: rgba(255,255,255,0.05);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.drawing-action-btn.cancel:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+}
+
+.post-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.post-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.post-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+}
+
+.post-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Посты */
+.post {
+    background: rgba(17, 17, 17, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 1.2rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.post:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    cursor: pointer;
+}
+
+.post-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-weight: bold;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.2s;
+}
+
+.post-avatar.drawn-avatar {
+    background: none;
+}
+
+.post-avatar:hover {
+    transform: scale(1.05);
+}
+
+.post-author-info {
+    flex: 1;
+}
+
+.post-author {
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.post-username {
+    color: #888;
+    font-size: 0.75rem;
+}
+
+.post-time {
+    color: #888;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.8rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50px;
+    display: inline-block;
+}
+
+.post-content {
+    color: #e0e0e0;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.hashtag {
+    color: #667eea;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.hashtag:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.mention {
+    color: #764ba2;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.mention:hover {
+    color: #667eea;
+    text-decoration: underline;
+}
+
+.post-drawing {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    background: white;
+    image-rendering: pixelated;
+}
+
+.delete-btn {
+    color: #ff6b6b;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+    margin-left: 0.5rem;
+}
+
+.delete-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Лайки */
+.post-like-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    color: #888;
+}
+
+.post-like-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.post-like-btn.liked {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    animation: heartBeat 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+}
+
+.comment-toggle {
+    color: #888;
+    cursor: pointer;
+    padding: 0.3rem 0;
+    display: inline-block;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.comment-toggle:hover {
+    color: #667eea;
+    transform: translateX(5px);
+}
+
+.follow-btn {
+    background: transparent;
+    border: 1px solid #667eea;
+    color: #667eea;
+    padding: 0.4rem 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: auto;
+    transition: all 0.2s;
+}
+
+.follow-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.follow-btn.following {
+    background: rgba(102, 126, 234, 0.2);
+    color: #888;
+}
+
+/* Комментарии */
+.comments-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: none;
+    animation: fadeIn 0.3s;
+}
+
+.comment {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    animation: slideRight 0.2s;
+}
+
+@keyframes slideRight {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.comment-avatar {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+}
+
+.comment-avatar.drawn-avatar {
+    background: none;
+}
+
+.comment-content {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    padding: 0.6rem 1rem;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.comment-content:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.2rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: white;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.comment-author:hover {
+    color: #667eea;
+}
+
+.comment-text {
+    font-size: 0.9rem;
+    color: #e0e0e0;
+}
+
+.comment-footer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.3rem;
+}
+
+.comment-like-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 0.2rem 0.8rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    color: #888;
+    transition: all 0.2s;
+}
+
+.comment-like-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.comment-like-btn.liked {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.comment-delete-btn {
+    color: #ff6b6b;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-left: 0.3rem;
+}
+
+.comment-delete-btn:hover {
+    transform: scale(1.2);
+}
+
+.add-comment {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.add-comment input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 30px;
+    color: white;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.add-comment input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.02);
+}
+
+.comment-submit {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+}
+
+.comment-submit:hover {
+    transform: scale(1.1) rotate(360deg);
+}
+
+/* Кнопка обновления */
+.refresh-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.refresh-btn {
+    background: rgba(102, 126, 234, 0.15);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: #667eea;
+    padding: 0.7rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+}
+
+.refresh-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.refresh-btn:hover {
+    background: rgba(102, 126, 234, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.refresh-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.refresh-btn:active {
+    transform: translateY(0);
+}
+
+/* Нижняя навигация */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(20px);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem 0.2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 99;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #888;
+    font-size: 0.65rem;
+    cursor: pointer;
+    padding: 0.3rem 0.3rem;
+    border-radius: 12px;
+    transition: all 0.2s;
+    flex: 1;
+    max-width: 70px;
+}
+
+.nav-item span:first-child {
+    font-size: 1.3rem;
+    margin-bottom: 0.1rem;
+    transition: transform 0.2s;
+}
+
+.nav-item:hover {
+    color: #667eea;
+}
+
+.nav-item:hover span:first-child {
+    transform: translateY(-3px);
+}
+
+.nav-item.active {
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.15);
+}
+
+.nav-item.active span:first-child {
+    animation: bounce 0.3s;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Модальные окна */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: modalFade 0.3s;
+}
+
+@keyframes modalFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: #111;
+    border-radius: 30px;
+    padding: 1.5rem;
+    max-width: 500px;
+    width: 100%;
+    border: 1px solid rgba(255,255,255,0.1);
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlide 0.3s;
+}
+
+@keyframes modalSlide {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal h3 {
+    margin-bottom: 1rem;
+    color: #667eea;
+    font-size: 1.2rem;
+}
+
+/* Рисование аватара */
+.avatar-drawing-content {
+    max-width: 450px;
+}
+
+.avatar-drawing-canvas-wrapper {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #667eea;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.avatar-drawing-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: white;
+    cursor: crosshair;
+    touch-action: none;
+}
+
+.avatar-preview-text {
+    text-align: center;
+    color: #888;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+}
+
+/* Хештеги */
+.hashtag-modal .modal-content {
+    max-width: 400px;
+}
+
+.hashtag-info {
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.hashtag-name {
+    font-size: 1.5rem;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.hashtag-count {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.hashtag-label {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+.hashtag-posts {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.hashtag-post-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hashtag-post-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    transform: translateX(5px);
+}
+
+.hashtag-post-author {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.hashtag-post-content {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+/* Профиль пользователя */
+.profile-modal-content {
+    max-width: 500px;
+}
+
+.profile-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.profile-modal-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background-size: cover;
+    background-position: center;
+}
+
+.profile-modal-info {
+    flex: 1;
+}
+
+.profile-modal-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: white;
+}
+
+.profile-modal-username {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.profile-modal-bio {
+    color: #b0b0b0;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.profile-modal-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+}
+
+.profile-posts-section {
+    margin-top: 1.5rem;
+}
+
+.profile-posts-section h4 {
+    margin-bottom: 1rem;
+    color: #667eea;
+}
+
+.profile-posts-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.profile-post-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.profile-post-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    transform: translateX(5px);
+}
+
+.profile-post-content {
+    color: #e0e0e0;
+    margin-bottom: 0.3rem;
+}
+
+.profile-post-stats {
+    display: flex;
+    gap: 1rem;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+/* Списки пользователей */
+.users-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.user-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    transform: translateX(5px);
+}
+
+.user-item-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    background-size: cover;
+    background-position: center;
+}
+
+.user-item-info {
+    flex: 1;
+}
+
+.user-item-name {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: white;
+}
+
+.user-item-username {
+    color: #888;
+    font-size: 0.8rem;
+}
+
+/* Пустое состояние */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #888;
+    background: rgba(255,255,255,0.02);
+    border-radius: 20px;
+    border: 1px dashed rgba(255,255,255,0.1);
+}
+
+/* Уведомления */
+.notification-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    animation: slideUpToast 0.3s forwards;
+}
+
+@keyframes slideUpToast {
+    to { transform: translateX(-50%) translateY(0); }
+}
+
+/* Адаптация */
+@media (max-width: 480px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-info {
+        align-items: center;
+    }
+    
+    .profile-stats {
+        justify-content: center;
+    }
+    
+    .post-time {
+        font-size: 0.65rem;
+    }
+
+    .nav-item {
+        font-size: 0.6rem;
+    }
+    
+    .nav-item span:first-child {
+        font-size: 1.2rem;
+    }
+
+    .color-btn {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* Скроллбар */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2, #667eea);
+}
     </style>
 </head>
 <body>
