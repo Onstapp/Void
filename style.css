@@ -34,7 +34,7 @@ body::before {
     50% { opacity: 0.8; transform: scale(1.1); }
 }
 
-/* Светлая тема */
+/* Светлая тема - ИСПРАВЛЕНО */
 body.light-theme {
     background: linear-gradient(135deg, #f0f2f5 0%, #e0e5ec 100%);
     color: #1a1a1a;
@@ -54,7 +54,7 @@ body.light-theme .nav-icon {
 }
 
 body.light-theme .user-name {
-    color: #333;
+    color: #333 !important;
 }
 
 body.light-theme .profile-section,
@@ -221,6 +221,18 @@ body.light-theme .comment-submit {
 body.light-theme .post-btn {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
+}
+
+body.light-theme .stat-value {
+    color: #667eea;
+}
+
+body.light-theme .user-item-name {
+    color: #333;
+}
+
+body.light-theme .profile-modal-name {
+    color: #333;
 }
 
 body.light-theme ::placeholder {
@@ -476,15 +488,26 @@ body.light-theme ::placeholder {
     margin-bottom: 1rem;
 }
 
+/* ИСПРАВЛЕНО: поменял местами подписчики и подписки */
 .profile-stats {
     display: flex;
     gap: 2rem;
+    justify-content: space-between;
 }
 
 .stat {
     text-align: center;
     cursor: pointer;
     transition: transform 0.2s;
+    flex: 1;
+}
+
+.stat:first-child {
+    text-align: left;
+}
+
+.stat:last-child {
+    text-align: right;
 }
 
 .stat:hover {
@@ -1413,7 +1436,7 @@ body.light-theme ::placeholder {
     font-size: 1.2rem;
 }
 
-/* Рисование аватара */
+/* Рисование аватара - ИСПРАВЛЕНО */
 .avatar-drawing-content {
     max-width: 450px;
 }
@@ -1540,6 +1563,7 @@ body.light-theme ::placeholder {
     font-size: 1.2rem;
     font-weight: 600;
     margin-bottom: 0.2rem;
+    color: white;
 }
 
 .profile-modal-username {
@@ -1647,6 +1671,7 @@ body.light-theme ::placeholder {
 .user-item-name {
     font-weight: 600;
     margin-bottom: 0.2rem;
+    color: white;
 }
 
 .user-item-username {
