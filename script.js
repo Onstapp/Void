@@ -735,6 +735,10 @@ function initAvatarCanvas() {
     avatarCanvas = document.getElementById('avatarDrawingCanvas');
     avatarCtx = avatarCanvas.getContext('2d');
     
+    // Устанавливаем белый фон
+    avatarCtx.fillStyle = '#ffffff';
+    avatarCtx.fillRect(0, 0, avatarCanvas.width, avatarCanvas.height);
+    
     avatarCanvas.addEventListener('mousedown', startAvatarDrawing);
     avatarCanvas.addEventListener('mousemove', drawAvatar);
     avatarCanvas.addEventListener('mouseup', stopAvatarDrawing);
@@ -743,8 +747,6 @@ function initAvatarCanvas() {
     avatarCanvas.addEventListener('touchstart', startAvatarDrawing);
     avatarCanvas.addEventListener('touchmove', drawAvatar);
     avatarCanvas.addEventListener('touchend', stopAvatarDrawing);
-    
-    clearAvatarCanvas();
 }
 
 function startAvatarDrawing(e) {
@@ -809,6 +811,10 @@ function initPostCanvas() {
     
     postCtx = postCanvas.getContext('2d');
     
+    // Устанавливаем белый фон
+    postCtx.fillStyle = '#ffffff';
+    postCtx.fillRect(0, 0, postCanvas.width, postCanvas.height);
+    
     postCanvas.addEventListener('mousedown', startPostDrawing);
     postCanvas.addEventListener('mousemove', drawPost);
     postCanvas.addEventListener('mouseup', stopPostDrawing);
@@ -817,8 +823,6 @@ function initPostCanvas() {
     postCanvas.addEventListener('touchstart', startPostDrawing);
     postCanvas.addEventListener('touchmove', drawPost);
     postCanvas.addEventListener('touchend', stopPostDrawing);
-    
-    clearPostCanvas();
 }
 
 function startPostDrawing(e) {
@@ -1011,6 +1015,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     initPostCanvas();
                     // Устанавливаем цвета по умолчанию
                     document.querySelector('.color-btn[data-color="#000000"]').classList.add('active');
+                    document.querySelector('.brush-size-btn[data-size="5"]').classList.add('active');
                     updateBrushPreview();
                 }, 100);
             } else {
@@ -1074,6 +1079,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const imageData = avatarCtx.getImageData(0, 0, avatarCanvas.width, avatarCanvas.height).data;
             let hasDrawing = false;
             for (let i = 0; i < imageData.length; i += 4) {
+                // Проверяем, отличается ли пиксель от белого
                 if (imageData[i] < 250 || imageData[i+1] < 250 || imageData[i+2] < 250) {
                     hasDrawing = true;
                     break;
@@ -1184,7 +1190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Создание поста
+    // Создание поста - ИСПРАВЛЕНО
     if (createPostBtn) {
         createPostBtn.onclick = function() {
             const content = document.getElementById('postContent').value.trim();
@@ -1195,6 +1201,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const imageData = postCtx.getImageData(0, 0, postCanvas.width, postCanvas.height).data;
                 let hasDrawing = false;
                 for (let i = 0; i < imageData.length; i += 4) {
+                    // Проверяем, отличается ли пиксель от белого
                     if (imageData[i] < 250 || imageData[i+1] < 250 || imageData[i+2] < 250) {
                         hasDrawing = true;
                         break;
@@ -1285,6 +1292,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.toggle('light-theme');
             this.textContent = document.body.classList.contains('light-theme') ? '☀️' : '🌙';
             localStorage.setItem('void_theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+            
+            // Обновляем стили
+            const activeNav = document.querySelector('.nav-item.active')?.dataset.nav;
+            if (activeNav === 'profile') {
+                updateUserPosts();
+            } else {
+                updateFeed();
+            }
         };
     }
 
