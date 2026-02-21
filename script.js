@@ -974,7 +974,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Редактирование профиля - ИСПРАВЛЕНО
+    // ИСПРАВЛЕНО: Редактирование профиля с показом кнопок аватарки
     if (editProfileBtn) {
         editProfileBtn.onclick = function() {
             document.getElementById('profileSection').style.display = 'none';
@@ -1083,6 +1083,7 @@ document.addEventListener('DOMContentLoaded', function() {
         clearAvatarBtn.onclick = clearAvatarCanvas;
     }
 
+    // ИСПРАВЛЕНО: сохранение аватара с правильным размером
     if (saveAvatarBtn) {
         saveAvatarBtn.onclick = function() {
             const drawingData = avatarCanvas.toDataURL('image/png');
@@ -1099,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (hasDrawing) {
-                // Создаем квадратное изображение для аватара правильного размера
+                // Создаем изображение правильного размера для аватара
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = 200;
                 tempCanvas.height = 200;
@@ -1109,14 +1110,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 tempCtx.fillStyle = '#ffffff';
                 tempCtx.fillRect(0, 0, 200, 200);
                 
-                // Рисуем рисунок
+                // Рисуем рисунок с масштабированием
                 tempCtx.drawImage(avatarCanvas, 0, 0, 200, 200);
                 
-                currentUser.avatar = tempCanvas.toDataURL('image/png');
+                const avatarData = tempCanvas.toDataURL('image/png');
+                currentUser.avatar = avatarData;
                 
                 const userIndex = users.findIndex(u => u.id === currentUser.id);
                 if (userIndex !== -1) {
-                    users[userIndex].avatar = tempCanvas.toDataURL('image/png');
+                    users[userIndex].avatar = avatarData;
                     saveUsers();
                 }
                 
