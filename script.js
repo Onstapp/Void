@@ -974,7 +974,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // ИСПРАВЛЕНО: Редактирование профиля с показом кнопок аватарки
+    // Редактирование профиля - ИСПРАВЛЕНО
     if (editProfileBtn) {
         editProfileBtn.onclick = function() {
             document.getElementById('profileSection').style.display = 'none';
@@ -1083,11 +1083,9 @@ document.addEventListener('DOMContentLoaded', function() {
         clearAvatarBtn.onclick = clearAvatarCanvas;
     }
 
-    // ИСПРАВЛЕНО: сохранение аватара с правильным размером
+    // Сохранение аватара - ИСПРАВЛЕНО
     if (saveAvatarBtn) {
         saveAvatarBtn.onclick = function() {
-            const drawingData = avatarCanvas.toDataURL('image/png');
-            
             // Проверяем, не пустой ли рисунок
             const imageData = avatarCtx.getImageData(0, 0, avatarCanvas.width, avatarCanvas.height).data;
             let hasDrawing = false;
