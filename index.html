@@ -1,256 +1,465 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Void ✦ Социальная сеть</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Brawl Stars · два джойстика (Mobile)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none; /* запрещаем прокрутку/масштаб внутри канваса */
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #1a2a32;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            touch-action: pan-y; /* общий запрет на горизонтальный скролл */
+        }
+        .game-container {
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 9 / 16;
+            background: #2a3f4a;
+            border-radius: 36px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #5f7f8f;
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 40%, #507080, #1e2f38);
+            cursor: none; /* на мобилке неважно */
+        }
+        /* декоративные метки (необязательно, для красоты) */
+        .label-left, .label-right {
+            position: absolute;
+            bottom: 16px;
+            left: 24px;
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 10px;
+            border-radius: 30px;
+            backdrop-filter: blur(2px);
+            pointer-events: none;
+        }
+        .label-right {
+            left: auto;
+            right: 24px;
+        }
+        .joystick-indicator {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 10px;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-    <!-- Навигация -->
-    <nav class="navbar">
-        <div class="nav-content">
-            <div class="logo">VOID</div>
-            <div class="nav-icons">
-                <div class="nav-icon" id="themeIcon">🌙</div>
-                <div class="user-info" id="userInfo">
-                    <span class="user-name" id="currentUserName"></span>
-                    <button class="logout-btn" id="logoutBtn">Выйти</button>
-                </div>
-            </div>
-        </div>
-    </nav>
+<div class="game-container" id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+    <!-- маленькие подписи, просто для ориентира -->
+    <div class="label-left">⬆️ ДВИЖЕНИЕ</div>
+    <div class="label-right">🔫 СТРЕЛЬБА</div>
+</div>
 
-    <!-- Основной контент -->
-    <div class="container" id="mainContent">
-        <!-- Профиль -->
-        <div class="profile-section" id="profileSection" style="display: none;">
-            <div class="profile-header">
-                <div class="profile-avatar" id="profileAvatar" onclick="openAvatarDrawing()">
-                    <div class="avatar-overlay">✏️</div>
-                </div>
-                <div class="profile-info">
-                    <div class="profile-name" id="profileName"></div>
-                    <div class="profile-username" id="profileUsername"></div>
-                    <div class="profile-bio" id="profileBio"></div>
-                    <div class="profile-stats">
-                        <div class="stat" onclick="showFollowers()">
-                            <div class="stat-value" id="followersCount">0</div>
-                            <div class="stat-label">подписчики</div>
-                        </div>
-                        <div class="stat" onclick="showFollowing()">
-                            <div class="stat-value" id="followingCount">0</div>
-                            <div class="stat-label">подписки</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value" id="totalLikesCount">0</div>
-                            <div class="stat-label">лайки</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="avatar-actions" id="avatarActions" style="display: none;">
-                <button class="avatar-action-btn" id="newAvatarBtn">Новая</button>
-                <button class="avatar-action-btn delete" id="deleteAvatarBtn">Удалить</button>
-            </div>
-            <button class="edit-profile-btn" id="editProfileBtn">Редактировать профиль</button>
-        </div>
+<script>
+    (function() {
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-        <!-- Форма редактирования -->
-        <div class="edit-profile-form" id="editProfileForm" style="display: none;">
-            <h3>Редактировать профиль</h3>
-            <input type="text" id="editName" placeholder="Имя">
-            <input type="text" id="editUsername" placeholder="Юзернейм (латиница, цифры, _, 5-50 символов)">
-            <textarea id="editBio" placeholder="О себе" maxlength="150"></textarea>
-            <div class="form-actions">
-                <button class="save-btn" id="saveProfileBtn">Сохранить</button>
-                <button class="cancel-btn" id="cancelEditBtn">Отмена</button>
-            </div>
-        </div>
+        // Размеры канваса (будет пересчитано под контейнер)
+        let canvasWidth, canvasHeight;
 
-        <!-- Создание поста -->
-        <div class="create-post" id="createPostSection" style="display: none;">
-            <textarea id="postContent" placeholder="Что у вас нового?"></textarea>
-            <div class="post-tools">
-                <button class="tool-btn" id="hashtagBtn"># Хештег</button>
-                <button class="tool-btn" id="drawingBtn">✏️ Рисунок</button>
-            </div>
-            
-            <!-- Контейнер для рисования -->
-            <div class="drawing-container" id="drawingContainer" style="display: none;">
-                <div class="drawing-canvas-wrapper">
-                    <canvas id="postDrawingCanvas" class="drawing-canvas" width="400" height="400"></canvas>
-                </div>
-                
-                <div class="drawing-tools">
-                    <div class="color-palette">
-                        <button class="color-btn" style="background: #000000;" data-color="#000000"></button>
-                        <button class="color-btn" style="background: #ff4444;" data-color="#ff4444"></button>
-                        <button class="color-btn" style="background: #ff8800;" data-color="#ff8800"></button>
-                        <button class="color-btn" style="background: #ffdd44;" data-color="#ffdd44"></button>
-                        <button class="color-btn" style="background: #44ff44;" data-color="#44ff44"></button>
-                        <button class="color-btn" style="background: #44ddff;" data-color="#44ddff"></button>
-                        <button class="color-btn" style="background: #667eea;" data-color="#667eea"></button>
-                        <button class="color-btn" style="background: #aa44ff;" data-color="#aa44ff"></button>
-                        <button class="color-btn" style="background: #ff44aa;" data-color="#ff44aa"></button>
-                        <button class="color-btn" style="background: #ffffff;" data-color="#ffffff"></button>
-                    </div>
-                    
-                    <div class="brush-size-control">
-                        <span style="color: #888;">Толщина:</span>
-                        <div class="brush-size-buttons">
-                            <button class="brush-size-btn" data-size="2">Мелкий</button>
-                            <button class="brush-size-btn active" data-size="5">Средний</button>
-                            <button class="brush-size-btn" data-size="10">Крупный</button>
-                        </div>
-                        <div class="brush-preview" id="brushPreview" style="background: #000000; width: 10px; height: 10px;"></div>
-                    </div>
-                    
-                    <div class="drawing-actions">
-                        <button class="drawing-action-btn clear" id="clearPostDrawingBtn">Очистить</button>
-                    </div>
-                </div>
-            </div>
-            
-            <button class="post-btn" id="createPostBtn">Опубликовать</button>
-        </div>
+        // ----- ИГРОК (круг) -----
+        const player = {
+            x: 0,        // центр экрана (установим после ресайза)
+            y: 0,
+            r: 22,       // радиус
+            speed: 4.2   // пикселей за кадр (под 60fps)
+        };
 
-        <!-- Лента постов -->
-        <div id="feedSection">
-            <div class="refresh-container">
-                <button class="refresh-btn" id="refreshFeedBtn">Обновить</button>
-            </div>
-            <div id="postsFeed"></div>
-        </div>
-    </div>
+        // ----- ДЖОЙСТИКИ -----
+        // Левый (синий) — перемещение
+        const leftStick = {
+            active: false,
+            id: 'left',
+            startX: 0, startY: 0,    // позиция центра зоны (фикс. низ слева)
+            currentX: 0, currentY: 0, // фактическое положение ручки (для отрисовки)
+            dirX: 0, dirY: 0,         // нормализованное направление (-1 .. 1)
+            maxDist: 60,              // радиус мёртвой зоны/макс смещения ручки
+            baseR: 40,                // радиус внешней базы
+            handleR: 22,              // радиус внутренней ручки
+            touchId: null             // для мультитач идентификации
+        };
 
-    <!-- Нижняя навигация -->
-    <div class="bottom-nav" id="bottomNav">
-        <div class="nav-item active" data-nav="feed">
-            <span>🏠</span>
-            <span>Лента</span>
-        </div>
-        <div class="nav-item" data-nav="profile">
-            <span>👤</span>
-            <span>Профиль</span>
-        </div>
-    </div>
+        // Правый (красный) — стрельба
+        const rightStick = {
+            active: false,
+            id: 'right',
+            startX: 0, startY: 0,
+            currentX: 0, currentY: 0,
+            dirX: 0, dirY: 0,
+            maxDist: 60,
+            baseR: 40,
+            handleR: 22,
+            touchId: null
+        };
 
-    <!-- Модальное окно для рисования аватара -->
-    <div class="modal" id="avatarDrawingModal">
-        <div class="modal-content avatar-drawing-content">
-            <h3>Нарисуйте аватар</h3>
-            
-            <div class="avatar-preview-text">Рисуйте в круге</div>
-            
-            <div class="avatar-drawing-canvas-wrapper">
-                <canvas id="avatarDrawingCanvas" class="avatar-drawing-canvas" width="200" height="200"></canvas>
-            </div>
-            
-            <div class="color-palette" style="margin-bottom: 1rem;">
-                <button class="color-btn" style="background: #000000;" data-avatar-color="#000000"></button>
-                <button class="color-btn" style="background: #ff4444;" data-avatar-color="#ff4444"></button>
-                <button class="color-btn" style="background: #ff8800;" data-avatar-color="#ff8800"></button>
-                <button class="color-btn" style="background: #ffdd44;" data-avatar-color="#ffdd44"></button>
-                <button class="color-btn" style="background: #44ff44;" data-avatar-color="#44ff44"></button>
-                <button class="color-btn" style="background: #44ddff;" data-avatar-color="#44ddff"></button>
-                <button class="color-btn" style="background: #667eea;" data-avatar-color="#667eea"></button>
-                <button class="color-btn" style="background: #aa44ff;" data-avatar-color="#aa44ff"></button>
-                <button class="color-btn" style="background: #ff44aa;" data-avatar-color="#ff44aa"></button>
-                <button class="color-btn" style="background: #ffffff;" data-avatar-color="#ffffff"></button>
-            </div>
-            
-            <div class="brush-size-control" style="margin-bottom: 1rem;">
-                <span style="color: #888;">Толщина:</span>
-                <div class="brush-size-buttons">
-                    <button class="brush-size-btn" data-avatar-size="2">Мелкий</button>
-                    <button class="brush-size-btn active" data-avatar-size="5">Средний</button>
-                    <button class="brush-size-btn" data-avatar-size="10">Крупный</button>
-                </div>
-            </div>
-            
-            <div class="drawing-actions">
-                <button class="drawing-action-btn save" id="saveAvatarBtn">Сохранить</button>
-                <button class="drawing-action-btn clear" id="clearAvatarBtn">Очистить</button>
-                <button class="drawing-action-btn cancel" id="cancelAvatarBtn">Отмена</button>
-            </div>
-        </div>
-    </div>
+        // ----- МАССИВ ПУЛЬ -----
+        let bullets = [];
+        const BULLET_SPEED = 5.6;
+        const BULLET_RADIUS = 8;
+        const MAX_BULLETS = 50;          // ограничим, чтобы не засорять память
+        const FIRE_COOLDOWN_FRAMES = 12;  // примерно 5 выстрелов в сек при 60fps
+        let fireCooldown = 0;
 
-    <!-- Модальное окно для хештегов -->
-    <div class="modal hashtag-modal" id="hashtagModal">
-        <div class="modal-content">
-            <h3 id="hashtagModalTitle">#хештег</h3>
-            <div class="hashtag-info">
-                <div class="hashtag-name" id="hashtagName"></div>
-                <div class="hashtag-count" id="hashtagCount">0</div>
-                <div class="hashtag-label">постов с этим тегом</div>
-            </div>
-            <div class="hashtag-posts" id="hashtagPostsList"></div>
-            <button class="drawing-action-btn cancel" style="width: 100%;" id="closeHashtagBtn">Закрыть</button>
-        </div>
-    </div>
+        // ----- ИНИЦИАЛИЗАЦИЯ РАЗМЕРОВ И ПОЗИЦИЙ -----
+        function resizeCanvas() {
+            const container = document.getElementById('gameContainer');
+            // получаем актуальные размеры контейнера
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
 
-    <!-- Модальное окно для просмотра чужого профиля -->
-    <div class="modal" id="userProfileModal">
-        <div class="modal-content profile-modal-content">
-            <h3 id="otherProfileName">Профиль пользователя</h3>
-            
-            <div class="profile-modal-header">
-                <div class="profile-modal-avatar" id="otherProfileAvatar"></div>
-                <div class="profile-modal-info">
-                    <div class="profile-modal-name" id="otherProfileDisplayName"></div>
-                    <div class="profile-modal-username" id="otherProfileUsername"></div>
-                </div>
-            </div>
-            
-            <div class="profile-modal-bio" id="otherProfileBio"></div>
-            
-            <div class="profile-modal-stats">
-                <div class="stat">
-                    <div class="stat-value" id="otherFollowersCount">0</div>
-                    <div class="stat-label">подписчики</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value" id="otherFollowingCount">0</div>
-                    <div class="stat-label">подписки</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value" id="otherTotalLikesCount">0</div>
-                    <div class="stat-label">лайки</div>
-                </div>
-            </div>
-            
-            <div class="profile-posts-section">
-                <h4>Посты пользователя</h4>
-                <div class="profile-posts-list" id="otherUserPosts"></div>
-            </div>
-            
-            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                <button class="drawing-action-btn save" id="followFromProfileBtn">Подписаться</button>
-                <button class="drawing-action-btn cancel" id="closeProfileBtn">Закрыть</button>
-            </div>
-        </div>
-    </div>
+            canvasWidth = canvas.width;
+            canvasHeight = canvas.height;
 
-    <!-- Модальное окно для списка подписчиков -->
-    <div class="modal" id="followersModal">
-        <div class="modal-content">
-            <h3>Подписчики</h3>
-            <div class="users-list" id="followersList"></div>
-            <button class="drawing-action-btn cancel" style="width: 100%; margin-top: 1rem;" id="closeFollowersBtn">Закрыть</button>
-        </div>
-    </div>
+            // игрок по центру
+            player.x = canvasWidth / 2;
+            player.y = canvasHeight / 2;
 
-    <!-- Модальное окно для списка подписок -->
-    <div class="modal" id="followingModal">
-        <div class="modal-content">
-            <h3>Подписки</h3>
-            <div class="users-list" id="followingList"></div>
-            <button class="drawing-action-btn cancel" style="width: 100%; margin-top: 1rem;" id="closeFollowingBtn">Закрыть</button>
-        </div>
-    </div>
+            // фиксируем стартовые позиции джойстиков (нижние углы с отступом)
+            leftStick.startX = 90;
+            leftStick.startY = canvasHeight - 90;
+            // начальное положение ручки совпадает с базой
+            leftStick.currentX = leftStick.startX;
+            leftStick.currentY = leftStick.startY;
 
-    <script src="script.js"></script>
+            rightStick.startX = canvasWidth - 90;
+            rightStick.startY = canvasHeight - 90;
+            rightStick.currentX = rightStick.startX;
+            rightStick.currentY = rightStick.startY;
+        }
+
+        // ----- ОБРАБОТКА КАСАНИЙ (мультитач) -----
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touches = e.touches;
+
+            for (let i = 0; i < touches.length; i++) {
+                const touch = touches[i];
+                const touchId = touch.identifier;
+                const touchX = touch.clientX - canvas.getBoundingClientRect().left;
+                const touchY = touch.clientY - canvas.getBoundingClientRect().top;
+
+                // проверяем, не принадлежит ли уже касание какому-то стику (по touchId)
+                if (leftStick.touchId === null && rightStick.touchId === null) {
+                    // свободны оба — определяем по горизонтали: левая половина экрана -> левый стик
+                    if (touchX < canvasWidth / 2) {
+                        // активируем левый стик
+                        leftStick.active = true;
+                        leftStick.touchId = touchId;
+                        updateStickFromTouch(leftStick, touchX, touchY);
+                    } else {
+                        // правый
+                        rightStick.active = true;
+                        rightStick.touchId = touchId;
+                        updateStickFromTouch(rightStick, touchX, touchY);
+                    }
+                } 
+                else if (leftStick.touchId === null && !leftStick.active) {
+                    // если левый свободен, но правый занят? проверим, может коснулись левой стороны
+                    if (touchX < canvasWidth / 2) {
+                        leftStick.active = true;
+                        leftStick.touchId = touchId;
+                        updateStickFromTouch(leftStick, touchX, touchY);
+                    } else {
+                        // а если правая сторона, но правый уже занят? игнорируем (не назначаем два на один стик)
+                        // но можно принудительно перезаписать? оставим так: не назначаем.
+                    }
+                }
+                else if (rightStick.touchId === null && !rightStick.active) {
+                    if (touchX >= canvasWidth / 2) {
+                        rightStick.active = true;
+                        rightStick.touchId = touchId;
+                        updateStickFromTouch(rightStick, touchX, touchY);
+                    }
+                }
+            }
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touches = e.touches;
+
+            for (let i = 0; i < touches.length; i++) {
+                const touch = touches[i];
+                const touchId = touch.identifier;
+                const touchX = touch.clientX - canvas.getBoundingClientRect().left;
+                const touchY = touch.clientY - canvas.getBoundingClientRect().top;
+
+                // обновляем левый стик если совпадает идентификатор
+                if (leftStick.active && leftStick.touchId === touchId) {
+                    updateStickFromTouch(leftStick, touchX, touchY);
+                }
+                // обновляем правый стик
+                if (rightStick.active && rightStick.touchId === touchId) {
+                    updateStickFromTouch(rightStick, touchX, touchY);
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            const touches = e.touches; // оставшиеся касания
+            const touchIds = new Set();
+            for (let i = 0; i < touches.length; i++) {
+                touchIds.add(touches[i].identifier);
+            }
+
+            // деактивируем стики, чей touchId больше не в наборе
+            if (leftStick.touchId !== null && !touchIds.has(leftStick.touchId)) {
+                resetStick(leftStick);
+            }
+            if (rightStick.touchId !== null && !touchIds.has(rightStick.touchId)) {
+                resetStick(rightStick);
+            }
+
+            // дополнительно: если вдруг стики остались активными из-за багов, но нет касаний вообще
+            if (touches.length === 0) {
+                if (leftStick.active) resetStick(leftStick);
+                if (rightStick.active) resetStick(rightStick);
+            }
+        }
+
+        // Вспомогательные функции для стиков
+        function updateStickFromTouch(stick, touchX, touchY) {
+            // вычисляем вектор от базы до касания
+            let dx = touchX - stick.startX;
+            let dy = touchY - stick.startY;
+            const distance = Math.sqrt(dx*dx + dy*dy);
+
+            // ограничим радиусом maxDist
+            if (distance > stick.maxDist) {
+                dx = (dx / distance) * stick.maxDist;
+                dy = (dy / distance) * stick.maxDist;
+            }
+
+            stick.currentX = stick.startX + dx;
+            stick.currentY = stick.startY + dy;
+
+            // сохраняем нормализованное направление (если distance > 0, иначе (0,0))
+            if (distance > 1) {
+                stick.dirX = dx / stick.maxDist;
+                stick.dirY = dy / stick.maxDist;
+            } else {
+                stick.dirX = 0;
+                stick.dirY = 0;
+            }
+        }
+
+        function resetStick(stick) {
+            stick.active = false;
+            stick.touchId = null;
+            stick.currentX = stick.startX;
+            stick.currentY = stick.startY;
+            stick.dirX = 0;
+            stick.dirY = 0;
+        }
+
+        // ----- СТРЕЛЬБА (на основе правого джойстика) -----
+        function shootFromRightStick() {
+            if (!rightStick.active) return;            // стик не активен
+            if (rightStick.dirX === 0 && rightStick.dirY === 0) return; // нет направления
+
+            // нормализованный вектор уже есть (dirX, dirY) — он уже в пределах -1..1
+            // но может быть длиной меньше 1, если смещение не на полную. Используем как есть (скорость пули постоянна)
+            let norm = Math.hypot(rightStick.dirX, rightStick.dirY);
+            if (norm < 0.15) return; // мёртвая зона, слишком слабое отклонение
+
+            // нормализуем для точного единичного вектора
+            const dirX = rightStick.dirX / norm;
+            const dirY = rightStick.dirY / norm;
+
+            bullets.push({
+                x: player.x,
+                y: player.y,
+                vx: dirX * BULLET_SPEED,
+                vy: dirY * BULLET_SPEED,
+                r: BULLET_RADIUS,
+                life: true
+            });
+
+            // ограничим массив (удалим старые, если слишком много)
+            if (bullets.length > MAX_BULLETS) {
+                bullets.splice(0, bullets.length - MAX_BULLETS);
+            }
+        }
+
+        // ----- ОБНОВЛЕНИЕ ЛОГИКИ -----
+        function update() {
+            // 1. двигаем игрока по левому стику
+            if (leftStick.active) {
+                const moveX = leftStick.dirX * player.speed;
+                const moveY = leftStick.dirY * player.speed;
+                // ограничим, чтобы игрок не уходил за края (с учётом радиуса)
+                let newX = player.x + moveX;
+                let newY = player.y + moveY;
+                newX = Math.min(Math.max(newX, player.r), canvasWidth - player.r);
+                newY = Math.min(Math.max(newY, player.r), canvasHeight - player.r);
+                player.x = newX;
+                player.y = newY;
+            }
+
+            // 2. стрельба (с кулдауном)
+            if (fireCooldown <= 0) {
+                if (rightStick.active) {
+                    shootFromRightStick();
+                    fireCooldown = FIRE_COOLDOWN_FRAMES;
+                }
+            } else {
+                fireCooldown--;
+            }
+
+            // 3. двигаем пули и удаляем вышедшие за границы
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const b = bullets[i];
+                b.x += b.vx;
+                b.y += b.vy;
+
+                // если пуля совсем улетела за пределы (с запасом)
+                if (b.x + b.r < 0 || b.x - b.r > canvasWidth || b.y + b.r < 0 || b.y - b.r > canvasHeight) {
+                    bullets.splice(i, 1);
+                }
+            }
+        }
+
+        // ----- ОТРИСОВКА -----
+        function draw() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            // ---- игрок (круг) ----
+            ctx.shadowColor = '#ffffff60';
+            ctx.shadowBlur = 20;
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.r, 0, Math.PI*2);
+            ctx.fillStyle = '#F5D742'; // золотистый
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.shadowColor = 'transparent';
+            // контур
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // ---- левый джойстик (синий) ----
+            ctx.globalAlpha = 0.65;
+            // база
+            ctx.beginPath();
+            ctx.arc(leftStick.startX, leftStick.startY, leftStick.baseR, 0, Math.PI*2);
+            ctx.fillStyle = '#2277ff';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff80';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            // ручка (смещаемая)
+            ctx.shadowBlur = 14;
+            ctx.shadowColor = '#00000060';
+            ctx.beginPath();
+            ctx.arc(leftStick.currentX, leftStick.currentY, leftStick.handleR, 0, Math.PI*2);
+            ctx.fillStyle = '#88ccff';
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // ---- правый джойстик (красный) ----
+            ctx.beginPath();
+            ctx.arc(rightStick.startX, rightStick.startY, rightStick.baseR, 0, Math.PI*2);
+            ctx.fillStyle = '#cc3333';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff80';
+            ctx.stroke();
+            // ручка
+            ctx.beginPath();
+            ctx.arc(rightStick.currentX, rightStick.currentY, rightStick.handleR, 0, Math.PI*2);
+            ctx.fillStyle = '#ff8888';
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+
+            ctx.shadowBlur = 0;
+            ctx.globalAlpha = 1.0;
+
+            // ---- пули (красные маленькие шарики) ----
+            for (let b of bullets) {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r, 0, 2 * Math.PI);
+                ctx.fillStyle = '#FF5555';
+                ctx.shadowBlur = 16;
+                ctx.shadowColor = '#ffaaaa';
+                ctx.fill();
+                // небольшой блик
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#FFEE88';
+                ctx.beginPath();
+                ctx.arc(b.x-2, b.y-2, 3, 0, 2*Math.PI);
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+            ctx.shadowColor = 'transparent';
+        }
+
+        // игровой цикл
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // ----- ПОДПИСКА НА СОБЫТИЯ (мобильные touch) -----
+        function attachEvents() {
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+            canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+            // мышь для отладки на десктопе (но основное — тач)
+            // для удобства тестирования в браузере можно добавить мышь, но здесь сохраним чистоту
+        }
+
+        // ----- СТАРТ -----
+        function init() {
+            resizeCanvas();
+            attachEvents();
+            gameLoop();
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            // после ресайза надо обновить позиции стиков (они пересчитаны внутри resizeCanvas)
+            // но если стики были активны, они получат старые координаты, сбросим их.
+            resetStick(leftStick);
+            resetStick(rightStick);
+        });
+
+        init();
+    })();
+</script>
 </body>
 </html>
