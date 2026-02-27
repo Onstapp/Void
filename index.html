@@ -2,562 +2,764 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Эхо Башни · демо</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit — соцсеть веса слов</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+
         body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #f3f5fc 0%, #eef0f8 100%);
             min-height: 100vh;
-            background: #0b0e14;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            touch-action: manipulation;
-            margin: 0;
-            padding: 12px;
+            padding: 20px;
+            color: #1e1e2f;
         }
-        .game-wrapper {
-            background: #1a1f2b;
-            border-radius: 42px;
-            padding: 18px;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
-        }
-        canvas {
-            display: block;
+
+        /* главный каркас — мобильный вид, как настоящий интерфейс соцсети */
+        .phone-frame {
+            max-width: 420px;
             width: 100%;
-            max-width: 380px;
-            height: auto;
-            border-radius: 28px;
-            background: #10131e;
-            box-shadow: inset 0 0 30px #00000055;
-            cursor: pointer;
-            touch-action: none;
-            margin: 0 auto;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 48px;
+            box-shadow: 0 30px 60px rgba(0,10,30,0.2), 0 0 0 1px rgba(255,255,255,0.6) inset;
+            overflow: hidden;
+            padding: 20px 16px 24px 16px;
+            border: 1px solid rgba(255,255,255,0.7);
         }
-        .panel {
-            margin-top: 16px;
+
+        /* статус-бар (имитация) */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e1e2f;
+            opacity: 0.7;
+            margin-bottom: 16px;
+            padding: 0 6px;
+        }
+
+        /* хедер с балансом */
+        .balance-card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 18px 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 18px -6px rgba(0,32,64,0.1);
+            border: 1px solid rgba(255,255,255,0.9);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            color: #b9c6db;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-            background: #232a37;
-            padding: 12px 18px;
-            border-radius: 60px;
-            box-shadow: inset 0 2px 3px #0a0c12;
         }
-        .status {
+
+        .balance-label {
             display: flex;
-            gap: 20px;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #2a3a4e;
         }
-        .status span {
+
+        .balance-label i {
+            font-size: 22px;
+            color: #2d6cdf;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1f2b3a, #2d3c50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .daily-bonus {
+            background: #e3eaff;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f3b6b;
             display: flex;
             align-items: center;
             gap: 6px;
+            border: 1px solid white;
         }
-        .status i {
-            font-style: normal;
-            width: 10px;
-            height: 10px;
-            border-radius: 10px;
-            background: currentColor;
+
+        .daily-bonus i {
+            font-size: 12px;
+            color: #2d6cdf;
         }
-        .echo-indicator {
-            color: #80cbc4;
-            text-shadow: 0 0 6px #4db6ac;
+
+        /* кнопка действия (как получить монеты) */
+        .action-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 28px;
         }
-        .live-indicator {
-            color: #ffb6a0;
-        }
-        button {
-            background: #323e52;
+
+        .earn-btn {
+            background: #1e2c3a;
             border: none;
+            border-radius: 40px;
+            padding: 12px 20px;
             color: white;
             font-weight: 600;
-            font-size: 0.9rem;
-            padding: 8px 18px;
-            border-radius: 40px;
-            box-shadow: 0 4px 0 #141a24, 0 6px 10px black;
-            transition: 0.08s linear;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
             cursor: pointer;
-            letter-spacing: 0.4px;
-            border: 1px solid #5d6f8b;
+            transition: 0.2s;
+            box-shadow: 0 6px 14px rgba(0,30,60,0.25);
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #141a24, 0 6px 10px black;
+
+        .earn-btn i {
+            font-size: 16px;
         }
-        .hint {
-            font-size: 0.75rem;
-            color: #6d7c99;
+
+        .earn-btn:hover {
+            background: #253544;
+            transform: scale(0.98);
+        }
+
+        .stats-btn {
+            background: white;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 40px;
+            padding: 12px 18px;
+            font-weight: 600;
+            color: #1a2634;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+        }
+
+        .stats-btn:hover {
+            background: #f0f4fe;
+        }
+
+        /* таблица тарифов (стоимость) */
+        .tariff-grid {
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(6px);
+            border-radius: 24px;
+            padding: 16px 14px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .tariff-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 6px;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .tariff-row:last-child {
+            border-bottom: none;
+        }
+
+        .tariff-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tariff-action i {
+            width: 24px;
+            color: #2d3e5c;
+        }
+
+        .tariff-name {
+            font-weight: 500;
+        }
+
+        .tariff-cost {
+            font-weight: 700;
+            background: #1e2c3c;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+
+        /* лента (посты) */
+        .feed-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 12px;
+            padding-left: 6px;
+            color: #2d3f54;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 28px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            border: 1px solid rgba(255,255,255,0.9);
+            transition: 0.15s;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar-placeholder {
+            width: 42px;
+            height: 42px;
+            border-radius: 42px;
+            background: linear-gradient(145deg, #c0d0e5, #a2b6d0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .post-author {
+            font-weight: 700;
+            color: #151e2a;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #7e8a9a;
+        }
+
+        .post-content {
+            font-size: 15px;
+            line-height: 1.45;
+            margin-bottom: 18px;
+            color: #1e293b;
+            padding-left: 4px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border-top: 1px solid #edf2f9;
+            padding-top: 14px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #41576b;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 15px;
+            padding: 6px 12px;
+            border-radius: 40px;
+        }
+
+        .action-btn i {
+            font-size: 18px;
+        }
+
+        .action-btn.liked {
+            color: #1e79e4;
+        }
+
+        .action-btn.liked i {
+            font-weight: 900;
+        }
+
+        .action-btn.subscribed {
+            color: #20b053;
+        }
+
+        .comment-section {
+            margin-top: 14px;
+            background: #f8faff;
+            border-radius: 24px;
+            padding: 14px;
+        }
+
+        .comment-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            font-size: 14px;
+        }
+
+        .comment-author {
+            font-weight: 700;
+            color: #1d2b3a;
+            white-space: nowrap;
+        }
+
+        .comment-text {
+            color: #2d3f53;
+            word-break: break-word;
+        }
+
+        .remove-comment {
+            color: #b00f1f;
+            background: none;
+            border: none;
+            margin-left: auto;
+            cursor: pointer;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .write-comment {
             display: flex;
             gap: 8px;
-            margin-top: 8px;
-            padding-left: 8px;
+            margin-top: 12px;
         }
-        .hint div {
-            background: #1f2633;
-            padding: 5px 14px;
-            border-radius: 30px;
-            border: 1px solid #374152;
+
+        .write-comment input {
+            flex: 1;
+            border: none;
+            border-radius: 40px;
+            padding: 12px 18px;
+            background: white;
+            border: 1px solid #dee6f0;
+            font-size: 14px;
+        }
+
+        .write-comment button {
+            background: #1e2c3a;
+            border: none;
+            border-radius: 40px;
+            padding: 0 18px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* уведомления */
+        .toast-message {
+            background: #1e2c3a;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 14px;
+            margin-top: 16px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fade 2s ease-in-out forwards;
+        }
+
+        @keyframes fade {
+            0% { opacity: 0; transform: translateY(10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-5px); }
+        }
+
+        footer {
+            font-size: 12px;
+            color: #7e8e9f;
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .refund-note {
+            font-size: 12px;
+            color: #4f6072;
+            padding: 10px 10px 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
-<div>
-    <div class="game-wrapper">
-        <canvas id="gameCanvas" width="380" height="600"></canvas>
-        <div class="panel">
-            <div class="status">
-                <span class="live-indicator"><i style="background: #ff8a6c;"></i> Живая</span>
-                <span class="echo-indicator"><i style="background: #6ef0d0;"></i> Эхо</span>
+    <div class="phone-frame">
+        <!-- имитация статус бара -->
+        <div class="status-bar">
+            <span>12:38</span>
+            <span><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+        </div>
+
+        <!-- Баланс и ежедневное пополнение -->
+        <div class="balance-card">
+            <div class="balance-label">
+                <i class="fas fa-coins"></i>
+                <span>Баланс</span>
             </div>
-            <button id="restartBtn">↻ Восхождение</button>
+            <div class="balance-amount" id="balanceDisplay">150</div>
+            <div class="daily-bonus" id="dailyBonusBtn">
+                <i class="fas fa-sync-alt"></i> +100
+            </div>
         </div>
-        <div class="hint">
-            <div>⬅ тап слева</div>
-            <div>➡ тап справа</div>
-            <div>⬆ свайп вверх</div>
+
+        <!-- Кнопки действий: заработать / статистика -->
+        <div class="action-row">
+            <button class="earn-btn" id="earnButton"><i class="fas fa-eye"></i> Реклама (+1)</button>
+            <button class="stats-btn" id="statsButton"><i class="fas fa-chart-line"></i> Стата</button>
         </div>
+
+        <!-- Стоимость действий -->
+        <div class="tariff-grid">
+            <div class="tariff-row">
+                <div class="tariff-action"><i class="fas fa-pen-fancy"></i><span class="tariff-name">Пост</span></div>
+                <span class="tariff-cost">-10</span>
+            </div>
+            <div class="tariff-row">
+                <div class="tariff-action"><i class="fas fa-comment"></i><span class="tariff-name">Комментарий</span></div>
+                <span class="tariff-cost">-5</span>
+            </div>
+            <div class="tariff-row">
+                <div class="tariff-action"><i class="fas fa-heart"></i><span class="tariff-name">Лайк</span></div>
+                <span class="tariff-cost">-2</span>
+            </div>
+            <div class="tariff-row">
+                <div class="tariff-action"><i class="fas fa-user-plus"></i><span class="tariff-name">Подписка</span></div>
+                <span class="tariff-cost">-2</span>
+            </div>
+        </div>
+
+        <!-- ЛЕНТА: пост с действиями -->
+        <div class="feed-title"><i class="fas fa-stream"></i> Лента событий</div>
+
+        <!-- Пост 1 -->
+        <div class="post-card" id="post1">
+            <div class="post-header">
+                <div class="avatar-placeholder">А</div>
+                <div>
+                    <div class="post-author">alice_reads</div>
+                    <div class="post-time">1 час назад</div>
+                </div>
+            </div>
+            <div class="post-content">
+                Ищу книгу, где главный герой накапливает слова, чтобы сказать главное. Дайте рекомендации 👇
+            </div>
+            <div class="post-actions">
+                <!-- Лайк счётчик -->
+                <button class="action-btn" id="likePost1"><i class="far fa-heart"></i> Лайк <span id="likeCount1">4</span></button>
+                <!-- Подписка (на автора) -->
+                <button class="action-btn" id="subscribeAuthor1"><i class="far fa-user"></i> Подписаться</button>
+            </div>
+
+            <!-- Комментарии (один существующий) -->
+            <div class="comment-section" id="commentSection1">
+                <div class="comment-row" id="comment1">
+                    <span class="comment-author">bob_mentor:</span>
+                    <span class="comment-text">«451 градус по Фаренгейту» — там тоже вес слов</span>
+                    <button class="remove-comment" data-comment="comment1" data-cost="5"><i class="fas fa-trash-alt"></i></button>
+                </div>
+                <!-- Новые комментарии будут добавляться сюда -->
+                <div class="write-comment">
+                    <input type="text" placeholder="Написать комментарий... (стоит 5)" id="commentInput1">
+                    <button id="sendComment1"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Пост 2 (для подписки и лайка) -->
+        <div class="post-card" id="post2">
+            <div class="post-header">
+                <div class="avatar-placeholder">К</div>
+                <div>
+                    <div class="post-author">koder_ivan</div>
+                    <div class="post-time">30 мин назад</div>
+                </div>
+            </div>
+            <div class="post-content">
+                Написал функцию, которая возвращает валюту за отписку. Тестируем экономику Credit 🧪
+            </div>
+            <div class="post-actions">
+                <button class="action-btn" id="likePost2"><i class="far fa-heart"></i> Лайк <span id="likeCount2">12</span></button>
+                <button class="action-btn" id="subscribeAuthor2"><i class="far fa-user"></i> Подписаться</button>
+            </div>
+            <!-- мини комментарий -->
+            <div class="comment-section" id="commentSection2">
+                <div class="comment-row">
+                    <span class="comment-author">designer_ann:</span>
+                    <span class="comment-text">Краш-тест проведём?</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Сообщение о возврате / подсказки -->
+        <div id="toastContainer" style="min-height: 40px;"></div>
+
+        <!-- Подпись о механике возврата -->
+        <div class="refund-note">
+            <i class="fas fa-undo-alt"></i> Вернём валюту: отмена лайка, отписка, удаление комментария. Удалил пост — возврат 5 (штраф 5).
+        </div>
+
+        <footer>Credit — твой баланс слов</footer>
     </div>
-    <p style="text-align: center; margin-top: 18px; color: #4d5a73; font-size: 0.8rem;">Эхо повторяет твой путь с задержкой 1.5 сек. Если эхо упадёт — башня дрожит!</p>
-</div>
-<script>
-    (function() {
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const restartBtn = document.getElementById('restartBtn');
 
-        // ---------- фиксированные размеры ----------
-        const CANVAS_W = 380, CANVAS_H = 600;
+    <script>
+        (function() {
+            // --- Инициализация состояния ---
+            let balance = 150;        // стартовый баланс
 
-        // ---------- состояние игры ----------
-        let live = { x: 180, y: 480, vx: 0, vy: 0, onGround: true, wobbling: false };
-        let pathHistory = [];            // массив {x, y, frame}
-        const ECHO_DELAY_FRAMES = 45;    // 1.5 сек при 30fps
-        let echoPositions = [];           // точки для отрисовки эха (история со смещением)
-        let frame = 0;
-        let gameOver = false;
-        let shake = 0;                    // эффект тряски при падении эха
+            // Объект для отслеживания состояний (лайкнуто/подписан)
+            const likes = {
+                post1: false,
+                post2: false
+            };
+            const subscriptions = {
+                alice_reads: false,
+                koder_ivan: false
+            };
 
-        // платформы (башня) – красивые светящиеся плиты
-        let platforms = [];
+            // Для возврата лайков и подписок запоминаем, платили ли уже
+            const likePaid = { post1: false, post2: false };
+            const subPaid = { alice_reads: false, koder_ivan: false };
 
-        // камера смещается, чтобы игрок был в центре вертикально (но низ привязан)
-        let cameraY = 0;
+            // Элементы баланса
+            const balanceSpan = document.getElementById('balanceDisplay');
+            const toastContainer = document.getElementById('toastContainer');
 
-        // инициализация уровня
-        function buildTower() {
-            platforms = [];
-            // генерируем 25 платформ, начиная снизу (y ~ 550) до верха (y ~ 50)
-            for (let i = 0; i < 22; i++) {
-                let y = 540 - i * 28;      // расстояние по вертикали
-                // чередование: то две слева, то одна справа, создаём интересный путь
-                let x, width;
-                if (i % 3 === 0) {
-                    x = 80;                // левая сторона
-                    width = 60;
-                } else if (i % 3 === 1) {
-                    x = 220;               // центр/правая
-                    width = 70;
+            // Вспомогательная функция показа уведомления
+            function showToast(text, isSuccess = true) {
+                const toast = document.createElement('div');
+                toast.className = 'toast-message';
+                toast.style.background = isSuccess ? '#1e2c3a' : '#a1312b';
+                toast.innerText = text;
+                toastContainer.innerHTML = '';
+                toastContainer.appendChild(toast);
+                setTimeout(() => {
+                    if (toastContainer.firstChild === toast) toastContainer.innerHTML = '';
+                }, 2000);
+            }
+
+            // Обновление баланса в интерфейсе
+            function updateBalanceUI() {
+                balanceSpan.innerText = balance;
+            }
+
+            // Проверка достаточно ли средств, и списание, если да
+            function deduct(amount, actionName) {
+                if (balance >= amount) {
+                    balance -= amount;
+                    updateBalanceUI();
+                    return true;
                 } else {
-                    x = 280;                // правая сторона
-                    width = 55;
+                    showToast(`Не хватает валюты: нужно ${amount} для ${actionName}`, false);
+                    return false;
                 }
-                // немного хаоса, чтобы было похоже на башню
-                if (i > 15) x = 140 + (i%2)*80;
-                if (i === 7) { x = 50; width = 70; }   // низкая платформа слева
-                if (i === 12) { x = 270; width = 60; }
-                if (i === 18) { x = 160; width = 100; } // широкая площадка
-
-                platforms.push({
-                    x: x,
-                    y: y,
-                    w: width,
-                    h: 8,
-                    // свечение
-                    glow: 0.6 + Math.random()*0.3
-                });
             }
-            // последняя платформа (самая верхняя) чуть ниже верха
-            platforms.push({ x: 130, y: 50, w: 100, h: 8, glow: 1.0 });
-        }
-        buildTower();
 
-        // начать заново (сброс игрока)
-        function resetGame() {
-            live = { x: 180, y: 490, vx: 0, vy: 0, onGround: true, wobbling: false };
-            pathHistory = [];
-            echoPositions = [];
-            frame = 0;
-            gameOver = false;
-            shake = 0;
-            cameraY = 0;
-        }
+            // Добавление валюты
+            function add(amount, reason) {
+                balance += amount;
+                updateBalanceUI();
+                showToast(`+${amount} (${reason})`);
+            }
 
-        // проверка столкновения с платформами (только снизу, просто)
-        function applyCollisions() {
-            if (gameOver) return;
-            const GRAV = 0.5;
-            live.vy += GRAV;
+            // --- Ежедневное пополнение (кнопка) ---
+            document.getElementById('dailyBonusBtn').addEventListener('click', function() {
+                add(100, 'ежедневное пополнение');
+            });
 
-            // горизонтальное движение + ограничение по краям
-            live.x += live.vx;
-            live.x = Math.max(15, Math.min(CANVAS_W - 15, live.x));
-            live.vx *= 0.9; // трение
+            // --- Просмотр рекламы (+1) ---
+            document.getElementById('earnButton').addEventListener('click', function() {
+                add(1, 'реклама');
+            });
 
-            // вертикальное
-            live.y += live.vy;
+            // --- Лайки (пост 1) ---
+            const likeBtn1 = document.getElementById('likePost1');
+            const likeIcon1 = likeBtn1.querySelector('i');
+            const likeSpan1 = document.getElementById('likeCount1');
+            let likeCount1 = 4;
 
-            // коллизия с платформами
-            live.onGround = false;
-            for (let p of platforms) {
-                // платформа находится ниже центра персонажа (примерно ноги)
-                if (live.y + 8 > p.y && live.y - 8 < p.y + p.h) {
-                    // проверка попадания по горизонтали
-                    if (live.x + 10 > p.x && live.x - 10 < p.x + p.w) {
-                        // падает сверху
-                        if (live.vy >= 0 && live.y - 8 <= p.y + 2 && live.y + 6 >= p.y) {
-                            live.y = p.y - 8;  // ставим на платформу
-                            live.vy = 0;
-                            live.onGround = true;
-                        }
+            likeBtn1.addEventListener('click', function() {
+                if (!likes.post1) {
+                    // хотим лайкнуть
+                    if (deduct(2, 'лайк')) {
+                        likes.post1 = true;
+                        likePaid.post1 = true;
+                        likeCount1 += 1;
+                        likeSpan1.innerText = likeCount1;
+                        likeBtn1.classList.add('liked');
+                        likeIcon1.className = 'fas fa-heart';  // залитое сердце
+                        showToast('Лайк поставлен (списано 2)');
                     }
-                }
-            }
-
-            // если упал ниже 620 — game over
-            if (live.y > 620) {
-                gameOver = true;
-            }
-            // если слишком высоко — тоже фиксируем камеру, но не умираем
-        }
-
-        // обработка касаний/событий мыши (упрощённо: имитация клавиш через тапы)
-        let touchTarget = null;
-        let touchStartY = 0;
-
-        function handleTapLeft() {
-            if (gameOver) return;
-            // левый прыжок / рывок влево
-            if (live.onGround) {
-                live.vx = -5;
-                live.vy = -7; // небольшой прыжок
-                live.onGround = false;
-            } else {
-                // в воздухе можно чуть шевельнуться
-                live.vx = -3;
-            }
-        }
-
-        function handleTapRight() {
-            if (gameOver) return;
-            if (live.onGround) {
-                live.vx = 5;
-                live.vy = -7;
-                live.onGround = false;
-            } else {
-                live.vx = 3;
-            }
-        }
-
-        function handleSwipeUp() {
-            if (gameOver) return;
-            // хвататься за уступ (просто подпрыгнуть выше, если на земле, либо рывок вверх)
-            if (live.onGround) {
-                live.vy = -10; // сильный прыжок
-                live.onGround = false;
-            } else {
-                // иммитация "подтягивания" — небольшой импульс вверх
-                live.vy = -6;
-            }
-        }
-
-        // слушатели событий (мышь + тач)
-        canvas.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const canvasX = (e.clientX - rect.left) * scaleX;
-            const canvasY = (e.clientY - rect.top) * scaleY;
-
-            if (canvasX < CANVAS_W * 0.33) {
-                handleTapLeft();
-            } else if (canvasX > CANVAS_W * 0.66) {
-                handleTapRight();
-            } else {
-                // средняя зона — потенциальный свайп, запомним Y для определения свайпа вверх
-                touchStartY = canvasY;
-                touchTarget = 'center';
-            }
-        });
-
-        canvas.addEventListener('mouseup', (e) => {
-            if (touchTarget === 'center') {
-                // если был центровой тап без движения — считаем как свайп вверх (для удобства)
-                handleSwipeUp();
-            }
-            touchTarget = null;
-        });
-
-        // touch-события
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const canvasX = (touch.clientX - rect.left) * scaleX;
-            const canvasY = (touch.clientY - rect.top) * scaleY;
-
-            if (canvasX < CANVAS_W * 0.33) {
-                handleTapLeft();
-                touchTarget = null;
-            } else if (canvasX > CANVAS_W * 0.66) {
-                handleTapRight();
-                touchTarget = null;
-            } else {
-                touchStartY = canvasY;
-                touchTarget = 'center';
-            }
-        }, { passive: false });
-
-        canvas.addEventListener('touchmove', (e) => {
-            if (touchTarget === 'center') {
-                e.preventDefault();
-                // определяем свайп вверх, если палец сместился вверх больше чем на 15px
-                const rect = canvas.getBoundingClientRect();
-                const touch = e.touches[0];
-                const scaleY = canvas.height / rect.height;
-                const canvasY = (touch.clientY - rect.left) * scaleY; // используем clientY корректно
-                // пересчитаем правильно clientY -> canvasY
-                const adjustedY = (touch.clientY - rect.top) * scaleY;
-                if (touchStartY - adjustedY > 20) {
-                    handleSwipeUp();
-                    touchTarget = 'done'; // сбрасываем, чтобы не вызывать повторно
-                }
-            }
-        }, { passive: false });
-
-        canvas.addEventListener('touchend', (e) => {
-            if (touchTarget === 'center') {
-                // если не было свайпа, но просто тап в центре — расценим как свайп (подтягивание)
-                handleSwipeUp();
-            }
-            touchTarget = null;
-        });
-
-        // запрет контекстного меню
-        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
-        // запись истории и эха
-        function updateEcho() {
-            if (gameOver) return;
-
-            // запоминаем позицию live каждый кадр
-            pathHistory.push({ x: live.x, y: live.y, frame: frame });
-
-            // формируем массив для эха — элементы из истории, отстающие на ECHO_DELAY_FRAMES
-            echoPositions = pathHistory.filter(p => (frame - p.frame) >= ECHO_DELAY_FRAMES);
-
-            // проверка падения эха: возьмём последнюю точку эха (самую свежую) и проверим, не провалилась ли она
-            if (echoPositions.length > 0) {
-                // сортировка по убыванию frame, последнее положение эха — максимальный frame
-                const latestEcho = echoPositions.reduce((a, b) => a.frame > b.frame ? a : b);
-                // симулируем падение: если y эха > 610 (ниже смерти), башня дрожит
-                if (latestEcho.y > 610) {
-                    // эхо упало!
-                    shake = 12; // тряска
-                    // удаляем все старые точки эха, чтобы оно не триггерило постоянно
-                    pathHistory = pathHistory.filter(p => (frame - p.frame) < ECHO_DELAY_FRAMES); 
-                    echoPositions = [];
-                }
-            }
-
-            // подчищаем старую историю (старше 4 секунд, не нужна)
-            pathHistory = pathHistory.filter(p => frame - p.frame < 150);
-        }
-
-        // обновление камеры — следим за live.y
-        function updateCamera() {
-            // целевая камера: персонаж примерно в 300px от верха
-            let targetCam = live.y - 270;
-            targetCam = Math.max(0, Math.min(1000, targetCam)); // ограничим
-            cameraY += (targetCam - cameraY) * 0.1;
-        }
-
-        // игровой цикл
-        function gameLoop() {
-            if (!gameOver) {
-                applyCollisions();
-                updateEcho();
-                updateCamera();
-                if (shake > 0) shake -= 1;
-            } else {
-                if (shake > 0) shake -= 1;
-            }
-
-            drawCanvas();
-            requestAnimationFrame(gameLoop);
-        }
-
-        // ---------- отрисовка ----------
-        function drawCanvas() {
-            ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
-            ctx.save();
-
-            // эффект тряски
-            if (shake > 0) {
-                let dx = (Math.random() * shake - shake/2) * 1.3;
-                let dy = (Math.random() * shake - shake/2) * 1.3;
-                ctx.translate(dx, dy);
-            }
-
-            // фон градиент (ночь)
-            const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
-            gradient.addColorStop(0, '#0c1120');
-            gradient.addColorStop(1, '#1b2335');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-
-            // туман/звёзды
-            ctx.fillStyle = '#d4eaff20';
-            for (let i=0; i<10; i++) {
-                ctx.beginPath();
-                ctx.arc(40 + i*31, (i*50 + cameraY*0.1) % 600, 1.5, 0, Math.PI*2);
-                ctx.fillStyle = '#bcd5ff30';
-                ctx.fill();
-            }
-
-            // рисуем платформы (башня) со смещением камеры
-            platforms.forEach(p => {
-                let yScreen = p.y - cameraY;
-                if (yScreen > -20 && yScreen < CANVAS_H + 30) {
-                    // свечение
-                    ctx.shadowColor = '#7cc7ff';
-                    ctx.shadowBlur = 14 * p.glow;
-                    ctx.shadowOffsetX = 0;
-                    ctx.shadowOffsetY = 0;
-                    ctx.fillStyle = '#b3defa';
-                    ctx.beginPath();
-                    ctx.roundRect(p.x, yScreen - 2, p.w, p.h+2, 6);
-                    ctx.fill();
-
-                    ctx.shadowBlur = 20;
-                    ctx.fillStyle = '#f5f9ff';
-                    ctx.beginPath();
-                    ctx.roundRect(p.x+2, yScreen-2, p.w-4, 4, 4);
-                    ctx.fill();
-
-                    // надписи (энергия)
-                    ctx.shadowBlur = 10;
-                    ctx.fillStyle = '#f0f4ff';
-                    ctx.font = 'bold 8px monospace';
-                    ctx.fillText('⬤', p.x + 10, yScreen-6);
+                } else {
+                    // отмена лайка — возврат 2
+                    likes.post1 = false;
+                    likeCount1 -= 1;
+                    likeSpan1.innerText = likeCount1;
+                    likeBtn1.classList.remove('liked');
+                    likeIcon1.className = 'far fa-heart';
+                    if (likePaid.post1) {
+                        add(2, 'возврат лайка');
+                        likePaid.post1 = false;
+                    } else {
+                        showToast('Лайк снят (без возврата)', false);
+                    }
                 }
             });
 
-            // сброс тени для персонажей
-            ctx.shadowBlur = 18;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 2;
+            // --- Лайк пост 2 ---
+            const likeBtn2 = document.getElementById('likePost2');
+            const likeIcon2 = likeBtn2.querySelector('i');
+            const likeSpan2 = document.getElementById('likeCount2');
+            let likeCount2 = 12;
 
-            // рисуем Эхо (полупрозрачное, повторяет путь)
-            if (echoPositions.length > 0) {
-                // сортируем, чтобы рисовать в порядке старения (более старые снизу)
-                const sortedEcho = [...echoPositions].sort((a,b) => a.frame - b.frame);
-                sortedEcho.forEach((pos, idx) => {
-                    let yEcho = pos.y - cameraY;
-                    if (yEcho > -20 && yEcho < CANVAS_H+30) {
-                        ctx.globalAlpha = 0.4 + 0.1 * Math.sin(frame*0.2 + idx);
-                        ctx.shadowColor = '#4db6ac';
-                        ctx.fillStyle = '#9ef0e0';
-                        ctx.beginPath();
-                        ctx.ellipse(pos.x-2, yEcho-4, 10, 12, 0, 0, Math.PI*2);
-                        ctx.fill();
-                        ctx.fillStyle = '#2c5f5a';
-                        ctx.beginPath();
-                        ctx.ellipse(pos.x-4, yEcho-8, 4, 6, 0, 0, Math.PI*2);
-                        ctx.fill();
+            likeBtn2.addEventListener('click', function() {
+                if (!likes.post2) {
+                    if (deduct(2, 'лайк')) {
+                        likes.post2 = true;
+                        likePaid.post2 = true;
+                        likeCount2 += 1;
+                        likeSpan2.innerText = likeCount2;
+                        likeBtn2.classList.add('liked');
+                        likeIcon2.className = 'fas fa-heart';
+                        showToast('Лайк поставлен (списано 2)');
                     }
-                });
-            }
+                } else {
+                    likes.post2 = false;
+                    likeCount2 -= 1;
+                    likeSpan2.innerText = likeCount2;
+                    likeBtn2.classList.remove('liked');
+                    likeIcon2.className = 'far fa-heart';
+                    if (likePaid.post2) {
+                        add(2, 'возврат лайка');
+                        likePaid.post2 = false;
+                    }
+                }
+            });
 
-            // рисуем живую Эру
-            ctx.globalAlpha = 1.0;
-            ctx.shadowColor = '#ffa07a';
-            ctx.shadowBlur = 30;
-            // тело
-            ctx.fillStyle = '#ffc7b1';
-            ctx.beginPath();
-            ctx.ellipse(live.x-2, live.y-4 - cameraY, 10, 14, 0, 0, Math.PI*2);
-            ctx.fill();
-            // плащ
-            ctx.fillStyle = '#cc6b4f';
-            ctx.beginPath();
-            ctx.ellipse(live.x-6, live.y-2 - cameraY, 8, 12, 0.1, 0, Math.PI*2);
-            ctx.fill();
-            // ледоруб
-            ctx.fillStyle = '#aaaaaa';
-            ctx.shadowBlur = 10;
-            ctx.fillRect(live.x+8, live.y-10 - cameraY, 4, 20);
+            // --- Подписки (авторы alice_reads, koder_ivan) ---
+            const subBtn1 = document.getElementById('subscribeAuthor1');
+            const subBtn2 = document.getElementById('subscribeAuthor2');
 
-            // индикатор "жива"
-            ctx.shadowBlur = 20;
-            ctx.fillStyle = '#ffb092';
-            ctx.beginPath();
-            ctx.arc(live.x-6, live.y-22 - cameraY, 6, 0, Math.PI*2);
-            ctx.fill();
+            subBtn1.addEventListener('click', function() {
+                if (!subscriptions.alice_reads) {
+                    if (deduct(2, 'подписка')) {
+                        subscriptions.alice_reads = true;
+                        subPaid.alice_reads = true;
+                        subBtn1.classList.add('subscribed');
+                        subBtn1.innerHTML = '<i class="fas fa-user-check"></i> Подписано';
+                        showToast('Подписка на alice_reads (списано 2)');
+                    }
+                } else {
+                    // отписка — возврат 2
+                    subscriptions.alice_reads = false;
+                    subBtn1.classList.remove('subscribed');
+                    subBtn1.innerHTML = '<i class="far fa-user"></i> Подписаться';
+                    if (subPaid.alice_reads) {
+                        add(2, 'отписка (возврат)');
+                        subPaid.alice_reads = false;
+                    }
+                }
+            });
 
-            // эффект падения / gameover
-            if (gameOver) {
-                ctx.globalAlpha = 0.7;
-                ctx.fillStyle = '#170f1c';
-                ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-                ctx.globalAlpha = 1;
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 20px sans-serif';
-                ctx.shadowBlur = 30;
-                ctx.fillText('Падение', 100, 300 - cameraY);
-            }
+            subBtn2.addEventListener('click', function() {
+                if (!subscriptions.koder_ivan) {
+                    if (deduct(2, 'подписка')) {
+                        subscriptions.koder_ivan = true;
+                        subPaid.koder_ivan = true;
+                        subBtn2.classList.add('subscribed');
+                        subBtn2.innerHTML = '<i class="fas fa-user-check"></i> Подписано';
+                        showToast('Подписка на koder_ivan (списано 2)');
+                    }
+                } else {
+                    subscriptions.koder_ivan = false;
+                    subBtn2.classList.remove('subscribed');
+                    subBtn2.innerHTML = '<i class="far fa-user"></i> Подписаться';
+                    if (subPaid.koder_ivan) {
+                        add(2, 'отписка (возврат)');
+                        subPaid.koder_ivan = false;
+                    }
+                }
+            });
 
-            ctx.restore();
-        }
+            // --- Комментарии (с возвратом при удалении) ---
+            // Для поста 1
+            const commentInput1 = document.getElementById('commentInput1');
+            const sendComment1 = document.getElementById('sendComment1');
+            const commentSection1 = document.getElementById('commentSection1');
 
-        // helper для roundRect
-        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
-            if (w < 2 * r) r = w / 2;
-            if (h < 2 * r) r = h / 2;
-            this.moveTo(x + r, y);
-            this.lineTo(x + w - r, y);
-            this.quadraticCurveTo(x + w, y, x + w, y + r);
-            this.lineTo(x + w, y + h - r);
-            this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-            this.lineTo(x + r, y + h);
-            this.quadraticCurveTo(x, y + h, x, y + h - r);
-            this.lineTo(x, y + r);
-            this.quadraticCurveTo(x, y, x + r, y);
-            return this;
-        };
+            sendComment1.addEventListener('click', function() {
+                const text = commentInput1.value.trim();
+                if (text === '') return;
+                if (deduct(5, 'комментарий')) {
+                    // создаём новый комментарий
+                    const newCommentDiv = document.createElement('div');
+                    newCommentDiv.className = 'comment-row';
+                    const randId = 'c' + Math.floor(Math.random() * 10000);
+                    newCommentDiv.id = randId;
+                    newCommentDiv.innerHTML = `
+                        <span class="comment-author">you:</span>
+                        <span class="comment-text">${text}</span>
+                        <button class="remove-comment" data-comment="${randId}" data-cost="5"><i class="fas fa-trash-alt"></i></button>
+                    `;
+                    // вставляем перед блоком ввода
+                    commentSection1.insertBefore(newCommentDiv, commentSection1.querySelector('.write-comment'));
+                    commentInput1.value = '';
+                    showToast('Комментарий оставлен (-5)');
+                }
+            });
 
-        // перезапуск
-        restartBtn.addEventListener('click', () => {
-            resetGame();
-        });
+            // Удаление комментариев (делегирование) для всей страницы
+            document.addEventListener('click', function(e) {
+                const removeBtn = e.target.closest('.remove-comment');
+                if (!removeBtn) return;
+                const commentId = removeBtn.dataset.comment;
+                const commentRow = document.getElementById(commentId);
+                if (commentRow) {
+                    const cost = parseInt(removeBtn.dataset.cost, 10); // 5
+                    // возвращаем валюту (комментарий удалён)
+                    add(cost, 'комментарий удалён (возврат)');
+                    commentRow.remove();
+                }
+            });
 
-        // старт цикла
-        gameLoop();
-    })();
-</script>
+            // --- Пост удалить нельзя в этом демо, но добавим имизацию возврата 5 (как если бы удалили пост) ---
+            // Кнопки "Стата" покажет напоминание про удаление поста
+            document.getElementById('statsButton').addEventListener('click', function() {
+                showToast('❓ Если удалить пост — вернётся 5 (штраф 5)');
+            });
+
+            // Инициализация баланса
+            updateBalanceUI();
+
+            // Подсказка при загрузке
+            showToast('Добро пожаловать в Credit!');
+        })();
+    </script>
 </body>
 </html>
