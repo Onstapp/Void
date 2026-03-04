@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TriView · фиолетовая соцсеть</title>
+    <title>TriView · вход и регистрация</title>
     <style>
         * {
             margin: 0;
@@ -18,686 +18,498 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 12px;
+            padding: 16px;
         }
 
-        /* главное приложение — карточка телефона */
-        .phone-frame {
+        /* главный контейнер — как экран телефона, но мягче */
+        .auth-frame {
             max-width: 400px;
             width: 100%;
-            height: 760px;
             background: linear-gradient(165deg, #1e1029 0%, #2c1a38 70%, #3d2352 100%);
-            border-radius: 42px;
+            border-radius: 48px;
             box-shadow: 0 30px 50px rgba(0, 0, 0, 0.8), 0 0 0 2px #9f7aea33, 0 0 0 6px #1a0e22;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            padding: 32px 24px 40px 24px;
             position: relative;
+            backdrop-filter: blur(2px);
         }
 
-        /* динамический контент занимает всё свободное место */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px 14px 8px 14px;
-            scrollbar-width: thin;
-            scrollbar-color: #b794f4 #2d1b3a;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .main-content::-webkit-scrollbar {
-            width: 4px;
-        }
-        .main-content::-webkit-scrollbar-track {
-            background: #2d1b3a;
-            border-radius: 10px;
-        }
-        .main-content::-webkit-scrollbar-thumb {
-            background: #b794f4;
-            border-radius: 10px;
-        }
-
-        /* ===== ПРОФИЛЬ (главный экран) ===== */
-        .profile-header {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 24px;
-        }
-
-        .profile-cover {
-            height: 100px;
-            background: linear-gradient(135deg, #7b3fe4, #ba7af0, #c85bdd);
-            border-radius: 28px 28px 28px 28px;
-            margin-bottom: -30px;
-            opacity: 0.7;
-            box-shadow: inset 0 1px 3px rgba(255,255,255,0.2);
-        }
-
-        .profile-avatar-row {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            padding: 0 12px;
-        }
-
-        .avatar-big {
-            width: 84px;
-            height: 84px;
+        /* декоративные фиолетовые блики */
+        .auth-frame::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 200px;
+            height: 200px;
+            background: #c084fc55;
+            filter: blur(80px);
             border-radius: 50%;
-            background: linear-gradient(145deg, #c493ff, #a555e8);
-            border: 4px solid #2f1746;
-            box-shadow: 0 4px 15px #a06fd9aa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 42px;
-            color: white;
-            text-shadow: 2px 2px 5px #1b0c29;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        .profile-stats-row {
-            display: flex;
-            gap: 24px;
-            margin-top: 10px;
-            padding: 0 12px;
+        .auth-frame::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 250px;
+            height: 250px;
+            background: #a855f755;
+            filter: blur(90px);
+            border-radius: 50%;
+            z-index: 0;
         }
 
-        .stat-item {
+        /* всё содержимое поверх бликов */
+        .auth-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* логотип / заголовок */
+        .logo-area {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            margin-bottom: 32px;
         }
 
-        .stat-num {
-            font-size: 20px;
+        .logo-icon {
+            font-size: 56px;
+            filter: drop-shadow(0 8px 12px #3d1f5e);
+            background: linear-gradient(135deg, #d8b4ff, #b47aff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px #c48aff;
+        }
+
+        .logo-text {
+            font-size: 32px;
             font-weight: 700;
-            color: #f0e4ff;
-            letter-spacing: 0.5px;
+            letter-spacing: 2px;
+            background: linear-gradient(145deg, #f0dbff, #caa5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
         }
 
-        .stat-label {
-            font-size: 13px;
-            color: #c7b0e6;
+        .logo-sub {
+            color: #b38fdd;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 1px;
         }
 
-        .profile-bio {
-            padding: 12px 12px 6px 12px;
-            color: #ead6ff;
-            font-size: 15px;
-            line-height: 1.3;
-        }
-
-        .profile-bio span {
-            color: #cfaaff;
-            font-weight: 500;
-        }
-
-        /* три вкладки профиля */
-        .tabs-profile {
+        /* переключатель: вход / регистрация */
+        .tab-switch {
             display: flex;
-            margin: 16px 0 8px 0;
-            border-bottom: 1px solid #4f3670;
-            justify-content: space-around;
+            background: #221530cc;
+            backdrop-filter: blur(10px);
+            border-radius: 100px;
+            padding: 5px;
+            margin-bottom: 28px;
+            border: 1px solid #6a4790;
+            box-shadow: inset 0 2px 5px #0f0a15;
         }
 
-        .tab-profile-item {
+        .tab-btn {
             flex: 1;
             text-align: center;
-            padding: 12px 0 10px 0;
-            font-size: 15px;
+            padding: 14px 0;
+            border-radius: 60px;
             font-weight: 600;
-            color: #b294d6;
-            border-bottom: 3px solid transparent;
-            transition: all 0.1s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            font-size: 18px;
+            color: #bba3db;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+            background: transparent;
+            backdrop-filter: blur(4px);
         }
 
-        .tab-profile-item.active {
-            color: #f1dcff;
-            border-bottom: 3px solid #cd9cf7;
+        .tab-btn.active {
+            background: #9e72da;
+            color: white;
+            box-shadow: 0 6px 14px #602e9b, 0 0 0 1px #dbb6ff;
         }
 
-        .badge-count {
-            background: #3c2952;
-            padding: 3px 8px;
-            border-radius: 30px;
-            font-size: 12px;
-            color: #decbff;
-            font-weight: 500;
-        }
-
-        /* сетка контента в активной вкладке */
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin-bottom: 24px;
-        }
-
-        .grid-item {
-            aspect-ratio: 1 / 1;
-            background: #37264b;
-            border-radius: 18px;
+        /* универсальная форма (и login и register) */
+        .auth-form {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            box-shadow: 0 2px 10px #1b0e25;
-        }
-
-        .grid-item.video:after {
-            content: "🎥";
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            font-size: 18px;
-            opacity: 0.9;
-            filter: drop-shadow(0 2px 3px black);
-        }
-
-        .grid-item.photo:after {
-            content: "📷";
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            font-size: 16px;
-        }
-
-        .grid-item.text:after {
-            content: "✍️";
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            font-size: 16px;
-        }
-
-        .private-badge {
-            position: absolute;
-            bottom: 6px;
-            left: 8px;
-            background: #221530dd;
-            backdrop-filter: blur(3px);
-            border-radius: 20px;
-            padding: 3px 8px;
-            font-size: 11px;
-            color: #dbbaff;
-            border: 1px solid #a882d1;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        /* кнопка создания поста (парящая) */
-        .fab-create {
-            background: #a76ef2;
-            width: 56px;
-            height: 56px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: white;
-            box-shadow: 0 8px 18px #451f7d;
-            align-self: flex-end;
-            margin: 8px 0 12px 0;
-            transition: 0.1s;
-            border: 2px solid #e5c5ff;
-            cursor: pointer;
-        }
-
-        /* модальное окно создания поста */
-        .post-modal {
-            background: #261b33;
-            border-radius: 38px;
-            padding: 22px 20px;
-            margin-top: 16px;
-            border: 1px solid #785fa0;
-            box-shadow: 0 20px 30px #020004;
-        }
-
-        .post-modal h4 {
-            color: #f1d9ff;
-            margin-bottom: 16px;
-            font-size: 18px;
-        }
-
-        .type-selector {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .type-option {
-            background: #372a47;
-            padding: 10px 16px;
-            border-radius: 40px;
-            color: #ceb5f0;
-            font-weight: 500;
-            border: 1px solid #624985;
-            cursor: pointer;
-        }
-
-        .type-option.selected {
-            background: #9f6fdf;
-            color: white;
-            border-color: #c7a0ff;
-        }
-
-        .privacy-toggle {
-            display: flex;
-            align-items: center;
             gap: 20px;
-            background: #31213f;
-            padding: 12px 16px;
-            border-radius: 50px;
-            margin: 16px 0;
+            margin-bottom: 28px;
         }
 
-        .privacy-label {
+        /* скрытая форма */
+        .hidden-form {
+            display: none;
+        }
+
+        /* поле ввода */
+        .input-field {
+            width: 100%;
+            background: #2d1d3ee0;
+            border: 1.5px solid #6b4993;
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 18px 24px;
+            font-size: 16px;
+            color: #f0e2ff;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #cc9eff;
+            box-shadow: 0 0 0 4px #8f6acf55, 0 0 15px #cb9eff;
+        }
+
+        .input-field::placeholder {
+            color: #a687c5;
+            font-weight: 400;
+        }
+
+        /* дополнительные опции (запомнить / забыли пароль) */
+        .row-options {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 6px;
-            color: #dfc7ff;
+            color: #bea4e3;
             font-size: 15px;
         }
 
-        .publish-btn {
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #b47aff;
+            border-radius: 6px;
+        }
+
+        .forgot-link {
+            color: #caabff;
+            text-decoration: none;
+            border-bottom: 1px dashed #a678d4;
+        }
+
+        .forgot-link:hover {
+            color: #eaceff;
+        }
+
+        /* кнопка действия (войти / зарегистрироваться) */
+        .action-btn {
             background: linear-gradient(95deg, #a16cf4, #d090ff);
             border: none;
+            padding: 18px 24px;
+            border-radius: 60px;
             color: white;
             font-weight: 700;
-            font-size: 18px;
-            padding: 16px;
-            border-radius: 60px;
-            width: 100%;
+            font-size: 20px;
+            letter-spacing: 0.7px;
             cursor: pointer;
+            box-shadow: 0 12px 25px #532e8d, 0 2px 0 0 #efd2ff inset;
+            transition: 0.15s;
+            margin-top: 8px;
         }
 
-        /* нижняя навигация */
-        .bottom-nav {
-            background: #1f1329e0;
-            backdrop-filter: blur(16px);
-            border-top: 1px solid #624588;
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            border-radius: 30px 30px 0 0;
-            margin-top: 4px;
+        .action-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 15px #401f6e;
         }
 
-        .nav-item {
-            color: #b691e6;
-            font-size: 24px;
+        /* разделитель "или" */
+        .divider {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            transition: 0.1s;
-            cursor: pointer;
+            gap: 15px;
+            color: #a17ec2;
+            font-size: 14px;
+            margin: 16px 0 20px;
         }
 
-        .nav-item.active {
-            color: #eacdff;
-            transform: translateY(-3px);
-            filter: drop-shadow(0 0 6px #d194ff);
+        .divider-line {
+            flex: 1;
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent, #ab80d5, #ab80d5, transparent);
         }
 
-        .nav-label {
-            font-size: 11px;
-            margin-top: 2px;
-            color: #b493dd;
-        }
-
-        /* ленты (общие) */
-        .feed-header {
+        /* вход через Google (стильно) */
+        .social-btn {
+            background: #2e1e3fdd;
+            backdrop-filter: blur(12px);
+            border: 1.5px solid #8a65b5;
+            border-radius: 60px;
+            padding: 16px 24px;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 18px;
-            color: #e2c9ff;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #e7d2ff;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
         }
 
-        .feed-header h2 {
-            font-size: 24px;
+        .social-btn:hover {
+            background: #3f2b57;
+            border-color: #be97f0;
+        }
+
+        .social-icon {
+            font-size: 26px;
+        }
+
+        /* сообщение об ошибке/успехе (демо) */
+        .demo-message {
+            margin-top: 24px;
+            background: #1f142bb3;
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 16px 22px;
+            text-align: center;
+            color: #dcc3ff;
+            font-size: 15px;
+            border: 1px solid #b28aff;
+            box-shadow: 0 5px 12px #1e1029;
+        }
+
+        .demo-message span {
+            color: #f0c4ff;
             font-weight: 600;
         }
 
-        .feed-item {
-            background: #2f2040c9;
-            backdrop-filter: blur(4px);
-            border-radius: 28px;
-            padding: 16px;
-            margin-bottom: 14px;
-            border: 1px solid #6b4790;
+        /* мелкий текст внизу */
+        .terms {
+            text-align: center;
+            color: #8f73b0;
+            font-size: 13px;
+            margin-top: 24px;
+        }
+        .terms a {
+            color: #c5a4ff;
+            text-decoration: none;
+            border-bottom: 1px dotted #8b62b7;
         }
 
-        .feed-author {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
+        /* анимации плавности */
+        button, .tab-btn, .social-btn, .forgot-link {
+            cursor: pointer;
+            user-select: none;
         }
 
-        .author-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: #b484e0;
+        /* скрыть стандартные галки */
+        input[type="checkbox"] {
+            filter: drop-shadow(0 0 4px #a06bd0);
         }
 
-        .private-tag {
-            background: #4a2a66;
-            border-radius: 16px;
-            padding: 2px 12px;
-            font-size: 12px;
-            color: #dbbefc;
+        /* placeholder */
+        input:-webkit-autofill,
+        input:-webkit-autofill:focus {
+            transition: background-color 600000s 0s, color 600000s 0s;
         }
-
-        /* просто имитация контента */
-        .mock-image {
-            width: 100%;
-            height: 180px;
-            background: linear-gradient(130deg, #6f479b, #a475cf);
-            border-radius: 24px;
-            margin: 8px 0;
-        }
-
-        .mock-text {
-            background: #392d47;
-            padding: 12px;
-            border-radius: 18px;
-            color: #d4c0ec;
+        input:-webkit-autofill {
+            -webkit-text-fill-color: #f0d9ff !important;
+            caret-color: white;
         }
     </style>
 </head>
 <body>
-    <div class="phone-frame">
-        <!-- основные сменные экраны (в зависимости от навигации) -->
-        <div id="appScreens" class="main-content">
-            <!-- ПО УМОЛЧАНИЮ ЗАГРУЖЕН ПРОФИЛЬ (ЛК) -->
-            <div id="profileScreen" style="display: flex; flex-direction: column;">
-                <!-- шапка профиля (свой/чужой - универсально) -->
-                <div class="profile-cover"></div>
-                <div class="profile-avatar-row">
-                    <div class="avatar-big">🌙</div>
-                    <div style="display: flex; gap: 10px;">
-                        <span style="background:#4b2d6a; padding:8px 18px; border-radius:40px; color:white; font-size:14px;">ред.</span>
-                    </div>
-                </div>
-                <div class="profile-stats-row">
-                    <div class="stat-item"><span class="stat-num">124</span><span class="stat-label">подписчики</span></div>
-                    <div class="stat-item"><span class="stat-num">86</span><span class="stat-label">подписки</span></div>
-                    <div class="stat-item"><span class="stat-num">—</span><span class="stat-label"></span></div>
-                </div>
-                <div class="profile-bio">
-                    <span>✦ Алиса</span> · мечтаю в фиолетовом<br>✎ «личное и публичное»
-                </div>
-
-                <!-- вкладки профиля (три + счетчики) -->
-                <div class="tabs-profile" id="profileTabs">
-                    <div class="tab-profile-item active" data-tab="video">
-                        🎥 ВИДЕО <span class="badge-count">12 <span style="opacity:0.7;">(3🔒)</span></span>
-                    </div>
-                    <div class="tab-profile-item" data-tab="photo">
-                        📷 ФОТО <span class="badge-count">43 <span style="opacity:0.7;">(10🔒)</span></span>
-                    </div>
-                    <div class="tab-profile-item" data-tab="text">
-                        ✍️ ТЕКСТ <span class="badge-count">8 <span style="opacity:0.7;">(2🔒)</span></span>
-                    </div>
-                </div>
-
-                <!-- динамическая сетка (для активной вкладки) -->
-                <div id="profileContentGrid" class="content-grid">
-                    <!-- видео вкладка по умолчанию (пример) -->
-                    <div class="grid-item video" style="background-image: linear-gradient(#7b56b1, #301e45);">🎬</div>
-                    <div class="grid-item video private-badge" style="background-image: linear-gradient(#7a4baa, #2c193f);">🎥<span class="private-badge">🔒 личное</span></div>
-                    <div class="grid-item video" style="background-image: linear-gradient(#8b60c1, #3d2457);">▶️</div>
-                    <div class="grid-item video" style="background-image: linear-gradient(#a56fd6, #2e1b40);">📽️</div>
-                    <div class="grid-item video private-badge" style="background-image: linear-gradient(#a56fd6, #2e1b40);">📼<span class="private-badge">🔒 личное</span></div>
-                    <div class="grid-item video" style="background-image: linear-gradient(#7b56b1, #301e45);">🎞️</div>
-                    <div class="grid-item video private-badge" style="background-image: linear-gradient(#7b56b1, #301e45);">📹<span class="private-badge">🔒 личное</span></div>
-                    <div class="grid-item video" style="background-image: linear-gradient(#8b60c1, #3d2457);">🎥</div>
-                    <div class="grid-item video" style="background-image: linear-gradient(#a56fd6, #2e1b40);">📺</div>
-                </div>
-
-                <!-- кнопка нового поста (открывает форму) -->
-                <div class="fab-create" id="showPostModalBtn">+</div>
-
-                <!-- модалка создания поста (изначально скрыта, показ по клику) -->
-                <div id="postModal" style="display: none;">
-                    <div class="post-modal">
-                        <h4>новый пост</h4>
-                        <div class="type-selector" id="postTypeSelector">
-                            <span class="type-option selected" data-type="video">🎥 видео</span>
-                            <span class="type-option" data-type="photo">📷 фото</span>
-                            <span class="type-option" data-type="text">✍️ текст</span>
-                        </div>
-                        <div class="privacy-toggle">
-                            <span class="privacy-label">🌍 публичный</span>
-                            <label class="privacy-label">
-                                <input type="checkbox" id="privateCheckbox"> 🔒 только в профиле
-                            </label>
-                        </div>
-                        <button class="publish-btn" id="publishMockPost">➕ создать (демо)</button>
-                        <p style="color:#c7b0ea; font-size:13px; margin-top:12px;">(демо-режим, пост появится в сетке)</p>
-                    </div>
-                </div>
+    <div class="auth-frame">
+        <div class="auth-content">
+            <!-- логотип -->
+            <div class="logo-area">
+                <div class="logo-icon">◈</div>
+                <div class="logo-text">TriView</div>
+                <div class="logo-sub">лента · фото · текст</div>
             </div>
 
-            <!-- Видео-лента (вкладка навигации) -->
-            <div id="videoFeedScreen" style="display: none;">
-                <div class="feed-header"><h2>🎥 видео</h2><span style="color:#caabff;">новое 7+</span></div>
-                <div class="feed-item">
-                    <div class="feed-author"><div class="author-avatar"></div><div><b>daria.mp4</b><br><span class="private-tag">приватный</span></div></div>
-                    <div class="mock-image" style="background: #4f3775;">▶️ превью видео</div>
-                </div>
-                <div class="feed-item">
-                    <div class="feed-author"><div class="author-avatar"></div><div><b>max_creativ</b></div></div>
-                    <div class="mock-image" style="background: #684b96;">🎬 вертикальный ролик</div>
-                </div>
-                <div class="feed-item">
-                    <div class="feed-author"><div class="author-avatar"></div><div><b>privet_ya_anna</b><br><span class="private-tag">приватный</span></div></div>
-                    <div class="mock-image" style="background: #5b3f80;">📹 влог</div>
-                </div>
+            <!-- табы: вход / регистрация -->
+            <div class="tab-switch" id="tabSwitch">
+                <button class="tab-btn active" id="tabLoginBtn">Вход</button>
+                <button class="tab-btn" id="tabRegisterBtn">Регистрация</button>
             </div>
 
-            <!-- Фото-лента -->
-            <div id="photoFeedScreen" style="display: none;">
-                <div class="feed-header"><h2>📷 фото</h2><span style="color:#caabff;">новые 23</span></div>
-                <div class="feed-item">
-                    <div class="feed-author"><div class="author-avatar"></div><div><b>foto.graff</b></div></div>
-                    <div class="mock-image" style="background: #724cac;">🌆 закат</div>
+            <!-- ========== ФОРМА ВХОДА (email) ========= -->
+            <div id="loginForm" class="auth-form">
+                <input type="email" class="input-field" placeholder="Электронная почта" id="loginEmail" value="demo@triview.ru">
+                <input type="password" class="input-field" placeholder="Пароль" id="loginPassword" value="123456">
+                
+                <div class="row-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked> Запомнить меня
+                    </label>
+                    <a href="#" class="forgot-link" id="fakeForgot">Не помню пароль</a>
                 </div>
-                <div class="feed-item">
-                    <div class="feed-author"><div class="author-avatar"></div><div><b>lina_priv</b><br><span class="private-tag">приватный</span></div></div>
-                    <div class="mock-image" style="background: #8d62c4;">🐱 котик</div>
-                </div>
+
+                <button class="action-btn" id="loginActionBtn">Войти</button>
             </div>
 
-            <!-- Текст-лента -->
-            <div id="textFeedScreen" style="display: none;">
-                <div class="feed-header"><h2>✍️ текст</h2><span style="color:#caabff;">8 новых</span></div>
-                <div class="feed-item">
-                    <div class="feed-author"><div class="author-avatar"></div><div><b>poemsbym</b></div></div>
-                    <div class="mock-text">сегодня ветер шепчет фиолетовым...</div>
-                </div>
-                <div class="feed-item">
-                    <div class="feed-author"><div class="author-avatar"></div><div><b>priv_thinker</b><br><span class="private-tag">приватный</span></div></div>
-                    <div class="mock-text">мысль дня: личное — не значит скрытое</div>
-                </div>
-            </div>
-        </div>
+            <!-- ========== ФОРМА РЕГИСТРАЦИИ (email) ========= -->
+            <div id="registerForm" class="auth-form hidden-form">
+                <input type="email" class="input-field" placeholder="Электронная почта" id="regEmail" value="new@triview.ru">
+                <input type="password" class="input-field" placeholder="Придумайте пароль" id="regPassword">
+                <input type="password" class="input-field" placeholder="Повторите пароль" id="regPasswordConfirm">
 
-        <!-- нижний навигационный бар (4 кнопки) -->
-        <div class="bottom-nav">
-            <div class="nav-item" data-screen="videoFeed" id="navVideo">
-                🎥<span class="nav-label">Видео</span>
+                <label class="checkbox-label" style="margin: 5px 0 0 10px;">
+                    <input type="checkbox" id="agreeCheck" checked> Я принимаю <a href="#" style="color:#ccaaff;">условия</a>
+                </label>
+
+                <button class="action-btn" id="registerActionBtn">Создать аккаунт</button>
             </div>
-            <div class="nav-item" data-screen="photoFeed" id="navPhoto">
-                📷<span class="nav-label">Фото</span>
+
+            <!-- разделитель или -->
+            <div class="divider">
+                <span class="divider-line"></span>
+                <span>или</span>
+                <span class="divider-line"></span>
             </div>
-            <div class="nav-item" data-screen="textFeed" id="navText">
-                ✍️<span class="nav-label">Текст</span>
+
+            <!-- кнопка google (для красоты) -->
+            <button class="social-btn" id="googleMockBtn">
+                <span class="social-icon">G</span>
+                <span>Продолжить с Google</span>
+            </button>
+
+            <!-- демо-инфо (отзыв на действия) -->
+            <div class="demo-message" id="demoMessage">
+                <span>👋 демо</span> · введи любые данные, форма валидирует почту
             </div>
-            <div class="nav-item active" data-screen="profile" id="navProfile">
-                👤<span class="nav-label">Профиль</span>
+
+            <!-- мелкий текст -->
+            <div class="terms">
+                Нажимая кнопку, ты соглашаешься с <a href="#">правилами</a> и <a href="#">политикой</a>.
             </div>
         </div>
     </div>
 
     <script>
         (function() {
-            // переключение экранов (profile, videoFeed, photoFeed, textFeed)
-            const screens = {
-                profile: document.getElementById('profileScreen'),
-                videoFeed: document.getElementById('videoFeedScreen'),
-                photoFeed: document.getElementById('photoFeedScreen'),
-                textFeed: document.getElementById('textFeedScreen')
-            };
+            // табы
+            const tabLogin = document.getElementById('tabLoginBtn');
+            const tabRegister = document.getElementById('tabRegisterBtn');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const demoMessage = document.getElementById('demoMessage');
 
-            const navItems = {
-                profile: document.getElementById('navProfile'),
-                videoFeed: document.getElementById('navVideo'),
-                photoFeed: document.getElementById('navPhoto'),
-                textFeed: document.getElementById('navText')
-            };
+            // поля для демо-проверки
+            const loginEmail = document.getElementById('loginEmail');
+            const loginPass = document.getElementById('loginPassword');
+            const regEmail = document.getElementById('regEmail');
+            const regPass = document.getElementById('regPassword');
+            const regConfirm = document.getElementById('regPasswordConfirm');
+            const agreeCheck = document.getElementById('agreeCheck');
 
-            function showScreen(screenId) {
-                // скрыть все
-                for (let key in screens) {
-                    screens[key].style.display = 'none';
-                }
-                screens[screenId].style.display = 'flex'; // профиль flex, остальные block (но пусть flex)
-                // сбросить активный класс у навигации
-                for (let key in navItems) {
-                    navItems[key].classList.remove('active');
-                }
-                if (navItems[screenId]) {
-                    navItems[screenId].classList.add('active');
-                }
-                // если переключились на профиль, убедиться что модалка скрыта
-                if (screenId === 'profile') {
-                    document.getElementById('postModal').style.display = 'none';
-                }
+            // переключение на ВХОД
+            function showLogin() {
+                loginForm.classList.remove('hidden-form');
+                registerForm.classList.add('hidden-form');
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
             }
 
-            // клик по навигации
-            navItems.profile.addEventListener('click', (e) => { e.preventDefault(); showScreen('profile'); });
-            navItems.videoFeed.addEventListener('click', (e) => { e.preventDefault(); showScreen('videoFeed'); });
-            navItems.photoFeed.addEventListener('click', (e) => { e.preventDefault(); showScreen('photoFeed'); });
-            navItems.textFeed.addEventListener('click', (e) => { e.preventDefault(); showScreen('textFeed'); });
-
-            // вкладки внутри профиля (видео/фото/текст)
-            const tabVideo = document.querySelector('[data-tab="video"]');
-            const tabPhoto = document.querySelector('[data-tab="photo"]');
-            const tabText = document.querySelector('[data-tab="text"]');
-            const profileGrid = document.getElementById('profileContentGrid');
-
-            function setActiveTab(selectedTab) {
-                document.querySelectorAll('.tab-profile-item').forEach(t => t.classList.remove('active'));
-                selectedTab.classList.add('active');
-                // меняем наполнение grid в зависимости от вкладки (демо-контент)
-                if (selectedTab === tabVideo) {
-                    profileGrid.innerHTML = `
-                        <div class="grid-item video" style="background-image: linear-gradient(#7b56b1, #301e45);">🎬</div>
-                        <div class="grid-item video private-badge" style="background-image: linear-gradient(#7a4baa, #2c193f);">🎥<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item video" style="background-image: linear-gradient(#8b60c1, #3d2457);">▶️</div>
-                        <div class="grid-item video private-badge" style="background-image: linear-gradient(#a56fd6, #2e1b40);">📼<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item video" style="background-image: linear-gradient(#8b60c1, #3d2457);">🎥</div>
-                        <div class="grid-item video private-badge" style="background-image: linear-gradient(#7b56b1, #301e45);">📹<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item video" style="background-image: linear-gradient(#a56fd6, #2e1b40);">📺</div>
-                        <div class="grid-item video" style="background-image: linear-gradient(#7b56b1, #301e45);">🎞️</div>
-                        <div class="grid-item video" style="background-image: linear-gradient(#8b60c1, #3d2457);">▶️</div>
-                    `;
-                } else if (selectedTab === tabPhoto) {
-                    profileGrid.innerHTML = `
-                        <div class="grid-item photo" style="background-image: linear-gradient(#985fd1, #40275b);">🌄</div>
-                        <div class="grid-item photo private-badge" style="background-image: linear-gradient(#a474d3, #352049);">🌅<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item photo" style="background-image: linear-gradient(#835dbc, #452f5b);">🏙️</div>
-                        <div class="grid-item photo" style="background-image: linear-gradient(#a474d3, #352049);">🌌</div>
-                        <div class="grid-item photo private-badge" style="background-image: linear-gradient(#985fd1, #40275b);">📸<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item photo" style="background-image: linear-gradient(#835dbc, #452f5b);">🌁</div>
-                        <div class="grid-item photo private-badge" style="background-image: linear-gradient(#a474d3, #352049);">🌉<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item photo" style="background-image: linear-gradient(#985fd1, #40275b);">🗾</div>
-                        <div class="grid-item photo" style="background-image: linear-gradient(#835dbc, #452f5b);">🎑</div>
-                    `;
-                } else if (selectedTab === tabText) {
-                    profileGrid.innerHTML = `
-                        <div class="grid-item text" style="background-image: linear-gradient(#8f5ec7, #2f1d44);">📝</div>
-                        <div class="grid-item text private-badge" style="background-image: linear-gradient(#aa74da, #3d2554);">✏️<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item text" style="background-image: linear-gradient(#8355b5, #34224b);">📄</div>
-                        <div class="grid-item text private-badge" style="background-image: linear-gradient(#8f5ec7, #2f1d44);">📃<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item text" style="background-image: linear-gradient(#aa74da, #3d2554);">✍️</div>
-                        <div class="grid-item text" style="background-image: linear-gradient(#8355b5, #34224b);">📜</div>
-                        <div class="grid-item text private-badge" style="background-image: linear-gradient(#8f5ec7, #2f1d44);">📓<span class="private-badge">🔒 личное</span></div>
-                        <div class="grid-item text" style="background-image: linear-gradient(#aa74da, #3d2554);">📰</div>
-                    `;
-                }
+            // переключение на РЕГИСТРАЦИЮ
+            function showRegister() {
+                registerForm.classList.remove('hidden-form');
+                loginForm.classList.add('hidden-form');
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
             }
 
-            tabVideo.addEventListener('click', () => setActiveTab(tabVideo));
-            tabPhoto.addEventListener('click', () => setActiveTab(tabPhoto));
-            tabText.addEventListener('click', () => setActiveTab(tabText));
+            tabLogin.addEventListener('click', showLogin);
+            tabRegister.addEventListener('click', showRegister);
 
-            // модальное окно создания поста
-            const fab = document.getElementById('showPostModalBtn');
-            const modal = document.getElementById('postModal');
-            fab.addEventListener('click', () => {
-                modal.style.display = (modal.style.display === 'none') ? 'block' : 'none';
-            });
+            // простая валидация email
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
 
-            // выбор типа поста (подсветка)
-            const typeOptions = document.querySelectorAll('.type-option');
-            typeOptions.forEach(opt => {
-                opt.addEventListener('click', function() {
-                    typeOptions.forEach(o => o.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
+            // очистка сообщения (чтоб не засорять)
+            function setMessage(text, isGood = false) {
+                demoMessage.innerHTML = `<span>${isGood ? '✅' : '👋'}</span> ${text}`;
+            }
 
-            // публикация демо-поста (добавляет элемент в активную вкладку профиля)
-            document.getElementById('publishMockPost').addEventListener('click', function() {
-                const selectedType = document.querySelector('.type-option.selected')?.getAttribute('data-type') || 'video';
-                const isPrivate = document.getElementById('privateCheckbox').checked;
-                const privateBadge = isPrivate ? '<span class="private-badge">🔒 личное</span>' : '';
-                const typeIcon = selectedType === 'video' ? '🎥' : (selectedType === 'photo' ? '📷' : '✍️');
-                const gradient = 'linear-gradient(#a16ed6, #482f65)';
-                const newItem = document.createElement('div');
-                newItem.className = `grid-item ${selectedType}` + (isPrivate ? ' private-badge' : '');
-                newItem.style.backgroundImage = gradient;
-                newItem.innerHTML = `${typeIcon} ${privateBadge}`;
-                if (isPrivate) newItem.classList.add('private-badge'); // чтобы дважды не цеплять
-                // вставить в начало грида
-                profileGrid.prepend(newItem);
+            // КНОПКА ВХОДА
+            document.getElementById('loginActionBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = loginEmail.value.trim();
+                const pass = loginPass.value.trim();
 
-                // увеличить счетчик в нужной вкладке (демо-эффект)
-                if (selectedType === 'video') {
-                    let badge = tabVideo.querySelector('.badge-count');
-                    badge.innerHTML = badge.innerHTML.replace(/(\d+)/, (m) => parseInt(m)+1);
-                } else if (selectedType === 'photo') {
-                    let badge = tabPhoto.querySelector('.badge-count');
-                    badge.innerHTML = badge.innerHTML.replace(/(\d+)/, (m) => parseInt(m)+1);
-                } else if (selectedType === 'text') {
-                    let badge = tabText.querySelector('.badge-count');
-                    badge.innerHTML = badge.innerHTML.replace(/(\d+)/, (m) => parseInt(m)+1);
+                if (!email || !pass) {
+                    setMessage('заполните почту и пароль');
+                    return;
                 }
-
-                modal.style.display = 'none';
+                if (!isValidEmail(email)) {
+                    setMessage('почта выглядит некорректно');
+                    return;
+                }
+                if (pass.length < 3) {
+                    setMessage('пароль слишком короткий (демо минимум 3 символа)');
+                    return;
+                }
+                setMessage('✓ успешный вход (демо-режим)', true);
+                // здесь можно добавить редирект или анимацию
             });
 
-            // при клике вне модального окна (упрощенно) – скрывать не будем, юзер сам закроет через +
-            // зато сделаем, что если таб переключили – модалка не мешает
-            window.setActiveTab = setActiveTab; // отладка
+            // КНОПКА РЕГИСТРАЦИИ
+            document.getElementById('registerActionBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = regEmail.value.trim();
+                const pass = regPass.value.trim();
+                const confirm = regConfirm.value.trim();
 
-            // по умолчанию профиль показан, всё ок
-            // дополнительно: приватный/публичный текст для чужого профиля не реализуем, но в лентах висит тег "приватный"
+                if (!email || !pass || !confirm) {
+                    setMessage('заполни все поля');
+                    return;
+                }
+                if (!isValidEmail(email)) {
+                    setMessage('проверь формат почты');
+                    return;
+                }
+                if (pass.length < 4) {
+                    setMessage('пароль должен быть хотя бы 4 символа');
+                    return;
+                }
+                if (pass !== confirm) {
+                    setMessage('пароли не совпадают');
+                    return;
+                }
+                if (!agreeCheck.checked) {
+                    setMessage('нужно принять условия');
+                    return;
+                }
+                setMessage('🎉 аккаунт создан (демо)', true);
+                // здесь можно переключить на вход или что-то еще
+            });
+
+            // кнопка google просто уведомление
+            document.getElementById('googleMockBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                setMessage('google oauth (демо-заглушка)', false);
+            });
+
+            // забыли пароль
+            document.getElementById('fakeForgot').addEventListener('click', (e) => {
+                e.preventDefault();
+                setMessage('сброс пароля пока не реализован ✦ демо');
+            });
+
+            // красивое переключение: предзаполненные поля для демо
+            // ничего лишнего не делаем
         })();
     </script>
 </body>
