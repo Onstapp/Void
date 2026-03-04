@@ -107,12 +107,13 @@
             font-size: 16px;
             color: #ffffff;
             outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
         }
 
         .input-field:focus {
             border-color: #505054;
             box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.03);
+            transform: scale(1.01);
         }
 
         .input-field::placeholder {
@@ -122,6 +123,15 @@
 
         .input-field.error {
             border-color: #a33c3c;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-4px); }
+            40% { transform: translateX(4px); }
+            60% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
         }
 
         .action-btn {
@@ -133,14 +143,35 @@
             font-weight: 600;
             font-size: 17px;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
+            transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
             margin-top: 6px;
             letter-spacing: -0.2px;
+            position: relative;
+            overflow: hidden;
         }
 
         .action-btn:active {
-            transform: scale(0.985);
-            opacity: 0.9;
+            transform: scale(0.96);
+            opacity: 0.8;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.3s ease-out;
+        }
+
+        .action-btn:active::after {
+            transform: translate(-50%, -50%) scale(2);
+            opacity: 0;
         }
 
         .message-block {
@@ -154,6 +185,7 @@
             line-height: 1.5;
             text-align: center;
             min-height: 60px;
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .message-block.success {
@@ -162,18 +194,35 @@
             color: #e0e0e8;
         }
 
-        .hint-text {
-            color: #5a5a60;
-            font-size: 12px;
-            margin-top: -10px;
-            padding-left: 8px;
-        }
-
         .terms-hint {
             text-align: center;
             color: #4a4a50;
             font-size: 12px;
             margin-top: 28px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .terms-hint:active {
+            color: #7a7a80;
+            transform: scale(0.98);
+        }
+
+        /* скип выглядит как обычный текст, но с анимацией */
+        .skip-text {
+            color: #4a4a50;
+            font-size: 12px;
+            margin-top: 28px;
+            text-align: center;
+            transition: color 0.2s, transform 0.1s;
+            cursor: pointer;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .skip-text:active {
+            color: #7a7a80;
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -199,7 +248,7 @@
         <!-- ФОРМА РЕГИСТРАЦИИ (username + пароль) -->
         <div id="registerForm" class="auth-form hidden-form">
             <input type="text" class="input-field" id="regUsername" placeholder="юзернейм" autocomplete="off" maxlength="20">
-            <div class="hint-text">только a-z, 0-9, _ (макс. 20)</div>
+            <!-- подсказка убрана полностью -->
             <input type="password" class="input-field" id="regPassword" placeholder="пароль">
             <button class="action-btn" id="registerActionBtn">зарегистрироваться</button>
         </div>
@@ -209,7 +258,8 @@
             введите юзернейм и пароль
         </div>
         
-        <div class="terms-hint">нажимая кнопку, вы соглашаетесь с условиями</div>
+        <!-- вместо terms теперь Skip с красивым нажатием -->
+        <div class="skip-text" id="skipBtn">Skip</div>
     </div>
 
     <script>
@@ -217,7 +267,6 @@
             // ========== РАБОТА С ХРАНИЛИЩЕМ (localStorage) ==========
             const USERS_KEY = 'triview_users';
             
-            // структура пользователя: { username: string, password: string }
             function getUsers() {
                 const data = localStorage.getItem(USERS_KEY);
                 return data ? JSON.parse(data) : [];
@@ -234,7 +283,7 @@
 
             function addUser(username, password) {
                 const users = getUsers();
-                users.push({ username, password }); // храним пароль в открытом виде (демо)
+                users.push({ username, password });
                 saveUsers(users);
             }
 
@@ -244,6 +293,7 @@
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
             const globalMsg = document.getElementById('globalMessage');
+            const skipBtn = document.getElementById('skipBtn');
 
             const loginUsername = document.getElementById('loginUsername');
             const loginPassword = document.getElementById('loginPassword');
@@ -263,7 +313,6 @@
                 [loginUsername, loginPassword, regUsername, regPassword].forEach(i => i.classList.remove('error'));
             }
 
-            // валидация username: только латиница, цифры, _, макс 20
             function isValidUsername(str) {
                 if (!str || str.length > 20) return false;
                 return /^[a-zA-Z0-9_]+$/.test(str);
@@ -296,7 +345,6 @@
                 const username = regUsername.value.trim();
                 const password = regPassword.value.trim();
 
-                // проверка на пустые
                 if (!username || !password) {
                     showMessage('заполните все поля');
                     if (!username) regUsername.classList.add('error');
@@ -304,14 +352,12 @@
                     return;
                 }
 
-                // валидация юзернейма
                 if (!isValidUsername(username)) {
                     showMessage('юзернейм может содержать только a-z, 0-9, _ (макс. 20)');
                     regUsername.classList.add('error');
                     return;
                 }
 
-                // проверка существования
                 const existing = findUserByUsername(username);
                 if (existing) {
                     showMessage('такой юзернейм уже занят');
@@ -319,18 +365,15 @@
                     return;
                 }
 
-                // всё ок — сохраняем
                 addUser(username, password);
                 showMessage(`✅ пользователь ${username} создан!`, true);
                 
-                // очищаем поля
                 regUsername.value = '';
                 regPassword.value = '';
 
-                // можно автоматически переключить на вход
                 setTimeout(() => {
                     tabLogin.click();
-                    loginUsername.value = username; // подставляем для удобства
+                    loginUsername.value = username;
                 }, 1200);
             });
 
@@ -362,28 +405,34 @@
                     return;
                 }
 
-                // успешный вход
                 showMessage(`✨ добро пожаловать, ${user.username}!`, true);
                 
-                // здесь можно перенаправить в профиль, но пока просто очистим
                 loginUsername.value = '';
                 loginPassword.value = '';
 
-                // пример: через 1.5 сек показать сообщение
                 setTimeout(() => {
                     showMessage('выполнен вход (демо-режим)', true);
                 }, 1500);
             });
 
-            // ========== ДОПОЛНИТЕЛЬНО ==========
-            // ограничение ввода для username (только разрешённые символы)
+            // ========== SKIP ==========
+            skipBtn.addEventListener('click', () => {
+                // красивая анимация уже в CSS :active
+                showMessage('👋 пропуск (демо-режим)', true);
+                // можно добавить легкую вибрацию идеи
+                skipBtn.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    skipBtn.style.transform = 'scale(1)';
+                }, 150);
+            });
+
+            // ========== ОГРАНИЧЕНИЕ ВВОДА ==========
             [regUsername, loginUsername].forEach(field => {
                 field.addEventListener('input', function() {
                     this.value = this.value.replace(/[^a-zA-Z0-9_]/g, '');
                 });
             });
 
-            // начальное сообщение
             showMessage('введите юзернейм и пароль');
         })();
     </script>
