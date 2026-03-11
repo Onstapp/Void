@@ -3,557 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>огонёк · серия</title>
+    <title>огонь · серия</title>
     <style>
-        /* Чёрно-белая эстетика — минимум оттенков, только свет и тень */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            background: #000000;  /* глубокий чёрный фон */
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            line-height: 1.5;
-            padding: 1.25rem;
-        }
-
-        .card {
-            background: #0f0f0f;  /* почти чёрный, но с лёгкой текстурой */
-            border: 2px solid #2a2a2a;
-            box-shadow: 0 25px 50px -12px rgba(255, 255, 255, 0.05);
-            max-width: 680px;
+        html, body {
+            height: 100%;
             width: 100%;
-            padding: 2.5rem 2rem;
-            border-radius: 64px 64px 48px 48px;
-            transition: border 0.2s ease;
         }
 
-        /* Лёгкое свечение при фокусе / ховере — только белое */
-        .card:focus-within {
-            border-color: #7a7a7a;
-        }
-
-        /* заголовок и описание */
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            border-bottom: 1px dashed #2f2f2f;
-            padding-bottom: 1.8rem;
-        }
-
-        .header h1 {
-            font-size: 3.2rem;
-            font-weight: 500;
-            letter-spacing: -0.02em;
-            text-transform: uppercase;
-            color: #f0f0f0;
-            margin-bottom: 0.4rem;
-            text-shadow: 0 0 10px rgba(255,255,255,0.1);
-        }
-
-        .header .sub {
-            font-size: 1rem;
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            color: #7a7a7a;
-            margin-top: 0.2rem;
-            word-spacing: 2px;
-        }
-
-        /* центр — огонёк и число */
-        .fire-container {
+        body {
+            background: #000000;
+            font-family: 'SF Mono', 'Fira Code', 'Roboto Mono', 'Dank Mono', 'Source Code Pro', monospace;
+            color: #ffffff;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin: 1.5rem 0 2.5rem 0;
-        }
-
-        .flame-wrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.2s cubic-bezier(0.2, 1.2, 0.8, 1);
-        }
-
-        .flame-wrapper:active {
-            transform: scale(0.94);
-        }
-
-        /* большое число над огоньком */
-        .series-count {
-            font-size: 7rem;
-            font-weight: 500;
             line-height: 1;
-            color: #f5f5f5;
-            margin-bottom: 0.2rem;
-            font-feature-settings: "tnum";
-            letter-spacing: -4px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            transition: text-shadow 0.2s;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* сам огонёк – графичный, чёрно-белый, похож на пламя/иконку */
-        .flame-icon {
-            width: 110px;
-            height: 110px;
-            background: #1f1f1f;
-            border-radius: 50% 30% 50% 30% / 40% 40% 40% 40%;
-            border: 3px solid #5a5a5a;
-            box-shadow: 
-                0 0 0 2px #0a0a0a,
-                0 0 0 5px #2a2a2a,
-                inset 0 -6px 0 #2d2d2d;
+        .app {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* число — огромное, только суть */
+        .counter {
+            font-size: 15rem;
+            font-weight: 400;
+            letter-spacing: -0.03em;
+            color: #f0f0f0;
+            line-height: 0.9;
+            margin-bottom: 1rem;
+            font-feature-settings: "tnum";
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+        }
+
+        /* огонь — почти иероглиф */
+        .flame {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 2.5rem auto;
+            background: #0f0f0f;
+            border: none;
+            border-radius: 50% 35% 45% 35%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s ease;
-            position: relative;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 0 0 1px #2b2b2b;
         }
 
-        /* стилизованное изображение языка пламени (чистая геометрия) */
-        .flame-icon::before {
-            content: "";
-            display: block;
-            width: 40px;
-            height: 55px;
-            background: #e0e0e0;
-            border-radius: 70% 20% 60% 30% / 50% 40% 50% 30%;
-            transform: rotate(-5deg) translateY(-4px);
-            box-shadow: 0 0 15px #9f9f9f;
-            border: 1px solid #b0b0b0;
-            transition: background 0.2s, box-shadow 0.2s;
+        .flame:hover {
+            background: #151515;
+            box-shadow: 0 0 0 1px #5a5a5a;
         }
 
-        /* дополнительная искра (маленький блик) */
-        .flame-icon::after {
-            content: "";
-            position: absolute;
-            top: 20px;
-            right: 24px;
-            width: 14px;
-            height: 14px;
-            background: transparent;
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px #6a6a6a;
-            opacity: 0.5;
+        .flame:active {
+            transform: scale(0.96);
+            background: #1e1e1e;
         }
 
-        /* ежедневная подсказка */
-        .daily-note {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #6f6f6f;
-            border: 1px solid #2b2b2b;
-            padding: 0.4rem 1.2rem;
-            border-radius: 40px;
-            margin-top: 2.5rem;
-            display: inline-block;
-            background: #0a0a0a;
-            font-weight: 300;
+        /* внутренний язык — минимальный */
+        .flame-inner {
+            width: 48px;
+            height: 68px;
+            background: #e5e5e5;
+            border-radius: 65% 20% 55% 25%;
+            transform: rotate(-3deg) translateY(-3px);
+            box-shadow: 0 0 30px #a0a0a0;
+            transition: background 0.15s;
         }
 
-        /* прогресс и статистика */
+        .flame:hover .flame-inner {
+            background: #ffffff;
+        }
+
+        /* статистика одной строкой, без лишнего */
         .stats {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 2px solid #242424;
-            padding-top: 2rem;
-            margin-top: 1rem;
-            font-size: 1.25rem;
-            font-weight: 350;
+            justify-content: center;
+            gap: 3rem;
+            margin: 2rem 0 2.5rem 0;
+            font-size: 1.1rem;
+            color: #5f5f5f;
+            letter-spacing: 0.5px;
         }
 
-        .stat-item {
+        .stat {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
+            gap: 0.4rem;
         }
 
         .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #404040;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            color: #d0d0d0;
+            font-weight: 350;
+        }
+
+        /* блок управления — чисто функциональный */
+        .simulate {
+            background: transparent;
+            border: 1px solid #242424;
+            color: #6f6f6f;
+            font-family: inherit;
             font-size: 0.8rem;
+            padding: 0.7rem 1.8rem;
+            border-radius: 0;
             letter-spacing: 2px;
-            color: #6b6b6b;
-            text-transform: uppercase;
-            margin-bottom: 0.2rem;
-        }
-
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 400;
-            color: #f0f0f0;
-            line-height: 1;
-        }
-
-        .reminder {
-            font-size: 0.9rem;
-            color: #5a5a5a;
-            background: #0c0c0c;
-            padding: 0.4rem 0.9rem;
-            border-radius: 100px;
-            border: 1px solid #303030;
-        }
-
-        /* кнопка сброса (малозаметная, чисто для демо) */
-        .reset-button {
-            background: none;
-            border: 1px solid #3a3a3a;
-            color: #8a8a8a;
-            padding: 0.4rem 1.2rem;
-            border-radius: 36px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.1s;
-            margin-top: 1.8rem;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
         }
 
-        .reset-button:hover {
-            border-color: #a0a0a0;
-            color: #dddddd;
-            background: #1b1b1b;
-        }
-
-        /* сообщение о поддержке */
-        .toast-message {
-            background: #1d1d1d;
-            border: 1px solid #4a4a4a;
+        .simulate:hover {
+            border-color: #5a5a5a;
             color: #cccccc;
-            padding: 0.6rem 1.8rem;
-            border-radius: 120px;
-            font-size: 0.9rem;
-            text-align: center;
-            margin-bottom: 1rem;
-            opacity: 0;
-            transition: opacity 0.2s;
-            height: 2.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #0b0b0b;
         }
 
-        .toast-message.show {
-            opacity: 1;
+        .simulate:active {
+            background: #151515;
         }
 
-        footer {
-            text-align: center;
+        /* фидбек микроскопический, почти незаметный */
+        .feedback {
+            height: 2rem;
             font-size: 0.7rem;
-            color: #3d3d3d;
-            margin-top: 2rem;
+            color: #3f3f3f;
             letter-spacing: 1px;
+            margin: 1rem 0 0 0;
+            transition: color 0.1s;
         }
+
+        .feedback.show {
+            color: #8a8a8a;
+        }
+
+        /* скрытый сброс, только для порядка */
+        .reset {
+            background: none;
+            border: none;
+            color: #222;
+            font-size: 0.6rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            padding: 0.2rem 0.5rem;
+        }
+
+        .reset:hover {
+            color: #444;
+        }
+
+        /* всё предельно пусто */
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="header">
-            <h1>СЕРИЯ</h1>
-            <div class="sub">ЕЖЕДНЕВНЫЙ ОГОНЬ</div>
+    <div class="app">
+        <!-- только число, больше ничего -->
+        <div class="counter" id="counter">0</div>
+
+        <!-- огонь — кнопка поддержки -->
+        <div class="flame" id="flameBtn" role="button" tabindex="0">
+            <div class="flame-inner"></div>
         </div>
 
-        <!-- зона огня и числа -->
-        <div class="fire-container">
-            <!-- число над огоньком (растёт с каждым днём) -->
-            <div class="series-count" id="seriesCounter">0</div>
-
-            <!-- кликабельная зона огонька -->
-            <div class="flame-wrapper" id="flameButton" role="button" tabindex="0" aria-label="поддержать серию">
-                <div class="flame-icon"></div>
-            </div>
-
-            <!-- сообщение-фидбек после клика -->
-            <div class="toast-message" id="feedbackMessage">➕ огонь поддержан</div>
-
-            <div class="daily-note">✦ заходи каждый день ✦</div>
-        </div>
-
-        <!-- небольшая статистика: текущая серия и сколько осталось до новой ступени -->
+        <!-- минимум статистики: текущая / пик -->
         <div class="stats">
-            <div class="stat-item">
-                <span class="stat-label">дней подряд</span>
-                <span class="stat-value" id="streakDisplay">0</span>
+            <div class="stat">
+                <span class="stat-label">сейчас</span>
+                <span class="stat-number" id="currentStreak">0</span>
             </div>
-            <div class="stat-item">
-                <span class="stat-label">пик</span>
-                <span class="stat-value" id="peakDisplay">0</span>
+            <div class="stat">
+                <span class="stat-label">макс</span>
+                <span class="stat-number" id="maxStreak">0</span>
             </div>
-            <div class="reminder" id="nextMilestone">⚡ до 5</div>
         </div>
 
-        <!-- скромная кнопка сброса (для тестирования; обнуляет серию) -->
-        <button class="reset-button" id="resetBtn">⟲ обнулить серию</button>
-        <footer>BLACK & WHITE · СЕРИЯ</footer>
+        <!-- симулятор перехода на день вперёд (только для теста) -->
+        <button class="simulate" id="nextDayBtn">+1 день →</button>
+
+        <!-- тихий фидбек -->
+        <div class="feedback" id="feedback"></div>
+
+        <!-- незаметный сброс (для чистоты) -->
+        <button class="reset" id="resetBtn">пусто</button>
     </div>
 
     <script>
         (function() {
-            // ------------------------- ЧЁРНО-БЕЛАЯ ЛОГИКА -------------------------
-            // ключи для localStorage
-            const STORAGE_KEY = 'fire_series_data';
-            const LAST_DATE_KEY = 'fire_last_click_date';
+            // минимализм в коде
+            const STREAK_KEY = 'fs_streak';
+            const MAX_KEY = 'fs_max';
+            const COUNT_KEY = 'fs_count';
+            const DATE_KEY = 'fs_last';
 
-            // данные по умолчанию
-            let currentStreak = 0;         // текущая серия (сколько дней подряд жали)
-            let maxStreak = 0;              // рекордная серия
-            let seriesCounter = 0;           // число над огоньком (может расти с каждым подтверждённым днём)
-
-            // элементы интерфейса
-            const seriesEl = document.getElementById('seriesCounter');
-            const streakEl = document.getElementById('streakDisplay');
-            const peakEl = document.getElementById('peakDisplay');
-            const nextMilestoneEl = document.getElementById('nextMilestone');
-            const flameBtn = document.getElementById('flameButton');
-            const feedbackEl = document.getElementById('feedbackMessage');
+            // элементы
+            const counterEl = document.getElementById('counter');
+            const currentEl = document.getElementById('currentStreak');
+            const maxEl = document.getElementById('maxStreak');
+            const flame = document.getElementById('flameBtn');
+            const nextBtn = document.getElementById('nextDayBtn');
             const resetBtn = document.getElementById('resetBtn');
+            const feedback = document.getElementById('feedback');
 
-            // вспомогательная функция форматирования даты (YYYY-MM-DD)
-            function getTodayString() {
+            // состояние
+            let current = 0;      // текущая серия (дней подряд)
+            let max = 0;          // пик
+            let total = 0;        // число над огоньком (растёт с каждым днём клика)
+
+            // ===== утилиты =====
+            function getToday() {
                 const d = new Date();
+                return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            }
+
+            function getDateShifted(daysOffset) {
+                const d = new Date();
+                d.setDate(d.getDate() + daysOffset);
+                return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            }
+
+            // загрузка
+            function load() {
+                try {
+                    const s = localStorage.getItem(STREAK_KEY);
+                    const m = localStorage.getItem(MAX_KEY);
+                    const c = localStorage.getItem(COUNT_KEY);
+                    if (s !== null) current = parseInt(s, 10) || 0;
+                    if (m !== null) max = parseInt(m, 10) || 0;
+                    if (c !== null) total = parseInt(c, 10) || 0;
+                } catch (e) {}
+            }
+
+            // сохранение
+            function persist() {
+                localStorage.setItem(STREAK_KEY, current.toString());
+                localStorage.setItem(MAX_KEY, max.toString());
+                localStorage.setItem(COUNT_KEY, total.toString());
+            }
+
+            // обновить UI
+            function render() {
+                counterEl.textContent = total;
+                currentEl.textContent = current;
+                maxEl.textContent = max;
+            }
+
+            // показать тихое сообщение
+            function whisper(text) {
+                feedback.textContent = text;
+                feedback.classList.add('show');
+                clearTimeout(window.whisperTimer);
+                window.whisperTimer = setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 700);
+            }
+
+            // проверить и скорректировать серию при загрузке (если lastDate устарела)
+            function validateOnLoad() {
+                const last = localStorage.getItem(DATE_KEY);
+                if (!last) return; // никогда не кликали
+
+                const today = getToday();
+                const yesterday = getDateShifted(-1);
+
+                // если последний клик не сегодня и не вчера — серия оборвана
+                if (last !== today && last !== yesterday) {
+                    current = 0;   // серия прервана
+                    persist();
+                }
+                // если last === yesterday — серия жива, current оставляем
+                // если last === today — current оставляем (уже кликнули сегодня)
+            }
+
+            // главная логика: поддержать огонь (клик)
+            function supportFire(referenceDate = null) {
+                const today = referenceDate || getToday(); // для симуляции можем подменить дату
+                const last = localStorage.getItem(DATE_KEY);
+
+                // если уже кликали сегодня (в эту дату) — ничего не делаем
+                if (last === today) {
+                    whisper('уже сегодня');
+                    return;
+                }
+
+                const yesterday = getDateShifted(-1); // всегда вчера относительно реального времени? 
+                // но для симуляции нужна подмена — поэтому вычисляем вчера относительно referenceDate
+                let realYesterday;
+                if (referenceDate) {
+                    const d = new Date(referenceDate + 'T12:00:00'); // костыль для парсинга
+                    d.setDate(d.getDate() - 1);
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth()+1).padStart(2,'0');
+                    const day = String(d.getDate()).padStart(2,'0');
+                    realYesterday = `${y}-${m}-${day}`;
+                } else {
+                    realYesterday = getDateShifted(-1);
+                }
+
+                // случай 1: первый клик вообще
+                if (!last) {
+                    current = 1;
+                    total = 1;
+                }
+                // случай 2: продолжение (клик был вчера)
+                else if (last === realYesterday) {
+                    current += 1;
+                    total += 1;
+                }
+                // случай 3: пропуск (кликали, но не вчера) — серия сбрасывается, но total растёт
+                else {
+                    current = 1;
+                    total += 1;
+                }
+
+                // обновить максимум
+                if (current > max) {
+                    max = current;
+                }
+
+                // сохранить дату (реальную или симулированную)
+                localStorage.setItem(DATE_KEY, today);
+                persist();
+                render();
+
+                whisper(`+1 · ${current}`);
+            }
+
+            // симуляция следующего дня — вручную сдвигаем дату
+            function simulateNextDay() {
+                const lastDate = localStorage.getItem(DATE_KEY);
+                let baseDate;
+
+                if (!lastDate) {
+                    // если ни разу не кликали — отсчитываем от сегодня
+                    baseDate = getToday();
+                } else {
+                    baseDate = lastDate;
+                }
+
+                // парсим и прибавляем 1 день
+                const d = new Date(baseDate + 'T12:00:00');
+                d.setDate(d.getDate() + 1);
                 const year = d.getFullYear();
                 const month = String(d.getMonth() + 1).padStart(2, '0');
                 const day = String(d.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
+                const nextDate = `${year}-${month}-${day}`;
+
+                // выполняем поддержку с этой будущей датой
+                supportFire(nextDate);
             }
 
-            // загрузка из localStorage
-            function loadData() {
-                try {
-                    const savedData = localStorage.getItem(STORAGE_KEY);
-                    if (savedData) {
-                        const parsed = JSON.parse(savedData);
-                        // валидные поля
-                        if (typeof parsed.currentStreak === 'number') currentStreak = parsed.currentStreak;
-                        if (typeof parsed.maxStreak === 'number') maxStreak = parsed.maxStreak;
-                        if (typeof parsed.seriesCounter === 'number') seriesCounter = parsed.seriesCounter;
-                    }
-
-                    // проверка последнего визита (чтобы при обновлении страницы не начислялся лишний день)
-                    // инит не начисляет автоматически — только при клике.
-                } catch (e) {
-                    console.warn('error loading data', e);
-                }
+            // сброс всего (без подтверждения, для минимализма)
+            function resetEverything() {
+                localStorage.removeItem(DATE_KEY);
+                current = 0;
+                max = 0;
+                total = 0;
+                persist();
+                render();
+                whisper('···');
             }
 
-            // сохраняем все данные
-            function saveData() {
-                const data = {
-                    currentStreak: currentStreak,
-                    maxStreak: maxStreak,
-                    seriesCounter: seriesCounter,
-                };
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            }
+            // ===== инициализация =====
+            load();
+            validateOnLoad();
+            render();
 
-            // сохраняем дату последнего клика
-            function saveLastClickDate(dateString) {
-                localStorage.setItem(LAST_DATE_KEY, dateString);
-            }
-
-            // получаем последнюю дату клика
-            function getLastClickDate() {
-                return localStorage.getItem(LAST_DATE_KEY);
-            }
-
-            // обновить интерфейс (число, статистика, миникальный текст)
-            function refreshUI() {
-                // число над огоньком
-                seriesEl.textContent = seriesCounter;
-
-                // отображение серии и пика
-                streakEl.textContent = currentStreak;
-                peakEl.textContent = maxStreak;
-
-                // следующий рубеж (ближайшее кратное 5, но не меньше currentStreak+1)
-                let nextStep = 5;
-                if (currentStreak < 5) {
-                    nextStep = 5;
-                } else {
-                    // ищем ближайшее кратное 5 больше текущей серии
-                    const remainder = currentStreak % 5;
-                    if (remainder === 0) {
-                        nextStep = currentStreak + 5;  // если ровно 5,10 — следующий через 5
-                    } else {
-                        nextStep = currentStreak + (5 - remainder);
-                    }
-                }
-                nextMilestoneEl.textContent = `⚡ до ${nextStep}`;
-
-                // динамическое изменение тона (в рамках ч/б)
-                // ничего не делаем, всё остаётся строгим.
-            }
-
-            // показать фидбек
-            function showFeedback(text) {
-                feedbackEl.textContent = text;
-                feedbackEl.classList.add('show');
-                clearTimeout(window.feedbackTimeout);
-                window.feedbackTimeout = setTimeout(() => {
-                    feedbackEl.classList.remove('show');
-                }, 1200);
-            }
-
-            // основная функция: поддержать серию (клик на огонёк)
-            function supportFire() {
-                const today = getTodayString();
-                const lastDate = getLastClickDate();
-
-                // если сегодня уже кликали
-                if (lastDate === today) {
-                    showFeedback('✧ уже сегодня поддерживал ✧');
-                    return;  // ничего не меняем
-                }
-
-                // проверяем, был ли клик вчера
-                let yesterday = '';
-                const d = new Date();
-                d.setDate(d.getDate() - 1);
-                const yYear = d.getFullYear();
-                const yMonth = String(d.getMonth() + 1).padStart(2, '0');
-                const yDay = String(d.getDate()).padStart(2, '0');
-                yesterday = `${yYear}-${yMonth}-${yDay}`;
-
-                // если lastDate отсутствует (первый клик вообще) или lastDate === yesterday → серия продолжается
-                if (!lastDate) {
-                    // первый запуск
-                    currentStreak = 1;
-                    seriesCounter = 1;   // начинаем с 1
-                } 
-                else if (lastDate === yesterday) {
-                    // продолжаем серию: увеличиваем и серию, и счётчик над огоньком
-                    currentStreak += 1;
-                    seriesCounter += 1;   // число над огоньком увеличивается каждый день поддержки
-                } 
-                else {
-                    // иначе — серия сброшена (пропущен хотя бы один день)
-                    currentStreak = 1;
-                    // однако seriesCounter: вы сказали "чем больше ежедневно поддерживаешь, тем больше число над огоньком"
-                    // логично, что при сбросе число не обнуляется полностью, а остаётся или уменьшается?
-                    // по здравому смыслу: если серия оборвалась, число над огоньком должно стать меньше? 
-                    // Но в описании: "чем больше ты ежедневно поддерживаешь серию тем больше число".
-                    // Т.е. число — это по сути награда за постоянство. При срыве число не растёт, но падать не должно? 
-                    // Я решаю так: при сбросе серии число над огоньком не сбрасывается, а остаётся прежним (как накопленный тотал поддержек),
-                    // но можно интерпретировать иначе. Давайте сделаем: при сбросе серии число над огоньком замораживается 
-                    // (остаётся тем же), а новая серия начинает копить уже поверх? Нет, лучше сохранить текущее число.
-                    // Чтобы сохранить мотивацию — оставим seriesCounter неизменным. 
-                    // (ни в коем случае не уменьшаем — это память о всех поддержках)
-                    // но серия (streak) сбрасывается на 1.
-                    // Для чистоты — серия сброшена, но число остается. Так что seriesCounter += 0? 
-                    // но тогда сегодня мы нажали — число должно вырасти? Все же клик есть.
-                    // При пропуске: мы кликаем сегодня, серия начинается заново с 1. А число увеличится на 1? логично.
-                    seriesCounter += 1;   // всё равно поддержка, число растёт всегда с каждым реальным днём клика
-                }
-
-                // дополнительно: если мы сегодня первый раз (независимо от условий), нужно увеличить счётчик?
-                // но мы уже увеличили в блоках. Проверим крайний случай: если lastDate существует, но не yesterday и не today.
-                // уже обработано: else увеличили seriesCounter и поставили серию = 1.
-                // Однако если серия сброшена, мы должны увеличить maxStreak? проверка ниже.
-
-                // обновляем пиковую серию
-                if (currentStreak > maxStreak) {
-                    maxStreak = currentStreak;
-                }
-
-                // записываем сегодняшнюю дату клика
-                saveLastClickDate(today);
-                // сохраняем данные
-                saveData();
-
-                // обновляем интерфейс
-                refreshUI();
-
-                // фидбек
-                showFeedback(`🔥 серия ${currentStreak} день`);
-            }
-
-            // сброс (для тестирования, работает мягко: обнуляет серию и счётчик, но можно сбросить всё)
-            function resetSeries() {
-                if (confirm('Обнулить всю статистику и серию? число над огоньком станет 0.')) {
-                    currentStreak = 0;
-                    maxStreak = 0;
-                    seriesCounter = 0;
-                    // очищаем дату последнего клика, чтобы начать с чистого листа
-                    localStorage.removeItem(LAST_DATE_KEY);
-                    saveData();  // сохранили нули
-                    refreshUI();
-                    showFeedback('⚪ серия обнулена');
-                }
-            }
-
-            // инициализация: загрузить данные, восстановить дату, проверить, не устарела ли серия при загрузке (если юзер не заходил вчера, но открыл страницу — серия должна быть сброшена? 
-            // однако логичнее, что при загрузке страницы без клика мы не должны автоматически сбрасывать серию.
-            // серия меняется только при клике. Поэтому просто показываем сохранённые цифры.
-            // Но нужно учесть: если последний клик был 3 дня назад, то currentStreak (например 5) остаётся в интерфейсе, 
-            // но это ложь, так как серия уже прервана. Поэтому при загрузке необходимо проверить lastDate и сбросить streak, если был пропуск.
-            // корректно: при загрузке сравниваем lastDate с сегодня и вчера.
-            function checkAndFixStreakOnLoad() {
-                const lastDate = getLastClickDate();
-                if (!lastDate) return; // никогда не кликали — ок
-
-                const today = getTodayString();
-                const d = new Date();
-                d.setDate(d.getDate() - 1);
-                const y = d.getFullYear();
-                const m = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                const yesterday = `${y}-${m}-${day}`;
-
-                // если lastDate не сегодня и не вчера, то серия прервана
-                if (lastDate !== today && lastDate !== yesterday) {
-                    // серия сброшена, но число остается (память)
-                    currentStreak = 0;  // пока не кликнули заново, серия 0
-                    maxStreak = Math.max(maxStreak, currentStreak); // но пик сохраняется 
-                    // но currentStreak стал 0. сохраняем.
-                    saveData(); 
-                }
-                // если lastDate === yesterday, то серия ещё актуальна (сегодня ещё не кликали, но если кликнут — увеличится)
-                // если lastDate === today — значит сегодня уже кликали, но при перезагрузке оставляем currentStreak как есть.
-                // дополнительные действия не нужны.
-            }
-
-            // первоначальная загрузка
-            loadData();
-            checkAndFixStreakOnLoad();
-            refreshUI();
-
-            // слушатель клика на огонёк
-            flameBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                supportFire();
-            });
-
-            // поддержка клавиатуры (Enter или пробел)
-            flameBtn.addEventListener('keydown', function(e) {
+            // слушатели
+            flame.addEventListener('click', () => supportFire());
+            flame.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     supportFire();
                 }
             });
+            flame.setAttribute('tabindex', '0');
 
-            // кнопка сброса
-            resetBtn.addEventListener('click', function() {
-                resetSeries();
-            });
-
-            // сделать кнопку фокусируемой
-            flameBtn.setAttribute('tabindex', '0');
+            nextBtn.addEventListener('click', simulateNextDay);
+            resetBtn.addEventListener('click', resetEverything);
         })();
     </script>
 </body>
