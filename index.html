@@ -3,628 +3,558 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>монохром • mellстрока</title>
+    <title>огонёк · серия</title>
     <style>
+        /* Чёрно-белая эстетика — минимум оттенков, только свет и тень */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: #000000;
+            background: #000000;  /* глубокий чёрный фон */
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            padding: 12px;
-        }
-
-        /* главная карточка — имитация экрана телефона */
-        .phone-frame {
-            max-width: 420px;
-            width: 100%;
-            background: #0a0a0a;
-            border-radius: 38px;
-            box-shadow: 0 25px 60px -15px rgba(255, 255, 255, 0.08),
-                        0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-            overflow: hidden;
-            backdrop-filter: blur(2px);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .phone-frame:hover {
-            box-shadow: 0 30px 70px -10px rgba(255, 255, 255, 0.12),
-                        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-        }
-
-        /* контейнер контента */
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            min-height: 700px;
-            background: #0a0a0a;
-            color: #f0f0f0;
-            transition: background 0.2s;
-            position: relative;
-        }
-
-        /* хедер с логотипом / плавная линия */
-        .header {
-            padding: 20px 20px 12px 20px;
-            border-bottom: 1px solid #2a2a2a;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #0a0a0a;
-            letter-spacing: -0.02em;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 500;
             color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .logo span {
-            font-weight: 300;
-            color: #a0a0a0;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 18px;
-            color: #bbb;
-        }
-
-        .header-icons svg {
-            width: 22px;
-            height: 22px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.8;
-            transition: stroke 0.2s, transform 0.1s;
-        }
-
-        .header-icons svg:hover {
-            stroke: #fff;
-            transform: scale(1.02);
-            cursor: default;
-        }
-
-        /* навигация вкладок (лента / профиль) */
-        .tabs {
-            display: flex;
-            padding: 16px 20px 8px 20px;
-            gap: 24px;
-            border-bottom: 1px solid #202020;
-            background: #0a0a0a;
-        }
-
-        .tab {
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: #6a6a6a;
-            padding-bottom: 8px;
-            border-bottom: 2px solid transparent;
-            transition: color 0.25s ease, border-color 0.3s ease, transform 0.15s;
-            cursor: pointer;
-            letter-spacing: -0.2px;
-        }
-
-        .tab.active {
-            color: #ffffff;
-            border-bottom: 2px solid #ffffff;
-            font-weight: 450;
-        }
-
-        .tab:not(.active):hover {
-            color: #c0c0c0;
-            transform: translateY(-1px);
-        }
-
-        /* основной контент — scroll smooth */
-        .content {
-            flex: 1;
-            padding: 16px 16px 24px 16px;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            background: #0a0a0a;
-            /* скрываем скролл для эстетики, но оставляем функционал */
-            scrollbar-width: thin;
-            scrollbar-color: #3a3a3a #0a0a0a;
-        }
-
-        .content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .content::-webkit-scrollbar-track {
-            background: #0a0a0a;
-        }
-
-        .content::-webkit-scrollbar-thumb {
-            background-color: #3a3a3a;
-            border-radius: 20px;
-        }
-
-        /* лента (feed) — анимация появления */
-        .feed, .profile {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            transition: opacity 0.3s ease, transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* карточка поста — плавная, ч/б, элегантная */
-        .post {
-            background: #121212;
-            border-radius: 26px;
-            padding: 16px 18px 16px 18px;
-            border: 1px solid #262626;
-            box-shadow: 0 10px 20px -12px rgba(255,255,255,0.03);
-            transition: background 0.2s, border-color 0.2s, transform 0.2s ease, box-shadow 0.3s;
-            backdrop-filter: blur(2px);
-        }
-
-        .post:hover {
-            background: #161616;
-            border-color: #3f3f3f;
-            transform: scale(1.002);
-            box-shadow: 0 16px 24px -14px rgba(255,255,255,0.08);
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 44px;
-            background: #2b2b2b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #d0d0d0;
-            border: 1px solid #3f3f3f;
-            transition: border 0.2s;
-            font-size: 1.6rem;
-            font-weight: 300;
-        }
-
-        .post-author {
-            font-weight: 520;
-            font-size: 1rem;
-            color: #f0f0f0;
-            letter-spacing: -0.2px;
-        }
-
-        .post-time {
-            font-size: 0.8rem;
-            color: #6e6e6e;
-            margin-top: 2px;
-        }
-
-        .post-content {
-            font-size: 1rem;
-            line-height: 1.45;
-            color: #ddd;
-            margin-bottom: 16px;
-            padding: 4px 0;
-            font-weight: 350;
-            transition: color 0.2s;
-        }
-
-        .post-image-placeholder {
-            width: 100%;
-            aspect-ratio: 1.4 / 1;
-            background: linear-gradient(145deg, #1e1e1e, #151515);
-            border-radius: 20px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #4a4a4a;
-            font-size: 0.9rem;
-            border: 1px solid #2b2b2b;
-            transition: background 0.2s, border 0.2s;
-        }
-
-        .post-image-placeholder:hover {
-            background: #212121;
-            border-color: #4a4a4a;
-        }
-
-        .post-stats {
-            display: flex;
-            gap: 28px;
-            color: #7a7a7a;
-            font-size: 0.9rem;
-            border-top: 1px solid #262626;
-            padding-top: 14px;
-            margin-top: 4px;
-            transition: color 0.2s;
-        }
-
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: color 0.2s;
-        }
-
-        .stat:hover {
-            color: #dddddd;
-        }
-
-        .stat svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.8;
-        }
-
-        /* профиль */
-        .profile-header {
-            background: #121212;
-            border-radius: 32px;
-            padding: 26px 20px 22px 20px;
-            border: 1px solid #2a2a2a;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: background 0.2s, border 0.2s;
-        }
-
-        .profile-avatar-large {
-            width: 96px;
-            height: 96px;
-            border-radius: 96px;
-            background: #232323;
-            border: 2px solid #4f4f4f;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.8rem;
-            color: #ccc;
-            transition: border 0.3s;
-        }
-
-        .profile-name {
-            font-size: 1.8rem;
-            font-weight: 470;
-            color: white;
-            line-height: 1.2;
-            margin-bottom: 4px;
-            letter-spacing: -0.5px;
-        }
-
-        .profile-handle {
-            font-size: 1rem;
-            color: #7a7a7a;
-            margin-bottom: 16px;
-        }
-
-        .profile-bio {
-            font-size: 1rem;
-            color: #b0b0b0;
-            max-width: 280px;
-            margin: 8px auto 16px;
-            font-weight: 340;
             line-height: 1.5;
+            padding: 1.25rem;
         }
 
-        .profile-stats-row {
-            display: flex;
-            gap: 36px;
-            justify-content: center;
-            margin: 16px 0 8px;
-            color: #d0d0d0;
+        .card {
+            background: #0f0f0f;  /* почти чёрный, но с лёгкой текстурой */
+            border: 2px solid #2a2a2a;
+            box-shadow: 0 25px 50px -12px rgba(255, 255, 255, 0.05);
+            max-width: 680px;
+            width: 100%;
+            padding: 2.5rem 2rem;
+            border-radius: 64px 64px 48px 48px;
+            transition: border 0.2s ease;
         }
 
-        .profile-stat-item {
-            display: flex;
-            flex-direction: column;
-            font-size: 1.2rem;
-            font-weight: 420;
-        }
-
-        .profile-stat-label {
-            font-size: 0.8rem;
-            color: #777;
-            margin-top: 4px;
-            font-weight: 350;
-        }
-
-        .edit-profile-btn {
-            background: transparent;
-            border: 1px solid #4a4a4a;
-            color: #eeeeee;
-            padding: 12px 24px;
-            border-radius: 36px;
-            font-size: 1rem;
-            font-weight: 440;
-            margin-top: 16px;
-            width: fit-content;
-            transition: background 0.2s, border-color 0.2s, color 0.2s;
-            cursor: default;
-        }
-
-        .edit-profile-btn:hover {
-            background: #1f1f1f;
+        /* Лёгкое свечение при фокусе / ховере — только белое */
+        .card:focus-within {
             border-color: #7a7a7a;
         }
 
-        /* галерея постов в профиле */
-        .profile-gallery {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 10px;
+        /* заголовок и описание */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px dashed #2f2f2f;
+            padding-bottom: 1.8rem;
         }
 
-        .gallery-item {
-            aspect-ratio: 1 / 1;
-            background: #1c1c1c;
-            border-radius: 20px;
-            border: 1px solid #2c2c2c;
-            transition: all 0.2s ease;
+        .header h1 {
+            font-size: 3.2rem;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            color: #f0f0f0;
+            margin-bottom: 0.4rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+
+        .header .sub {
+            font-size: 1rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            color: #7a7a7a;
+            margin-top: 0.2rem;
+            word-spacing: 2px;
+        }
+
+        /* центр — огонёк и число */
+        .fire-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0 2.5rem 0;
+        }
+
+        .flame-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s cubic-bezier(0.2, 1.2, 0.8, 1);
+        }
+
+        .flame-wrapper:active {
+            transform: scale(0.94);
+        }
+
+        /* большое число над огоньком */
+        .series-count {
+            font-size: 7rem;
+            font-weight: 500;
+            line-height: 1;
+            color: #f5f5f5;
+            margin-bottom: 0.2rem;
+            font-feature-settings: "tnum";
+            letter-spacing: -4px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            transition: text-shadow 0.2s;
+        }
+
+        /* сам огонёк – графичный, чёрно-белый, похож на пламя/иконку */
+        .flame-icon {
+            width: 110px;
+            height: 110px;
+            background: #1f1f1f;
+            border-radius: 50% 30% 50% 30% / 40% 40% 40% 40%;
+            border: 3px solid #5a5a5a;
+            box-shadow: 
+                0 0 0 2px #0a0a0a,
+                0 0 0 5px #2a2a2a,
+                inset 0 -6px 0 #2d2d2d;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #5a5a5a;
-            font-size: 0.9rem;
+            transition: all 0.15s ease;
+            position: relative;
         }
 
-        .gallery-item:hover {
-            background: #252525;
-            border-color: #5a5a5a;
-            transform: scale(1.01);
+        /* стилизованное изображение языка пламени (чистая геометрия) */
+        .flame-icon::before {
+            content: "";
+            display: block;
+            width: 40px;
+            height: 55px;
+            background: #e0e0e0;
+            border-radius: 70% 20% 60% 30% / 50% 40% 50% 30%;
+            transform: rotate(-5deg) translateY(-4px);
+            box-shadow: 0 0 15px #9f9f9f;
+            border: 1px solid #b0b0b0;
+            transition: background 0.2s, box-shadow 0.2s;
         }
 
-        /* мелкие детали и адаптив */
-        .muted {
+        /* дополнительная искра (маленький блик) */
+        .flame-icon::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            width: 14px;
+            height: 14px;
+            background: transparent;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #6a6a6a;
+            opacity: 0.5;
+        }
+
+        /* ежедневная подсказка */
+        .daily-note {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6f6f6f;
+            border: 1px solid #2b2b2b;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            margin-top: 2.5rem;
+            display: inline-block;
+            background: #0a0a0a;
+            font-weight: 300;
+        }
+
+        /* прогресс и статистика */
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #242424;
+            padding-top: 2rem;
+            margin-top: 1rem;
+            font-size: 1.25rem;
+            font-weight: 350;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
             color: #6b6b6b;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
         }
 
-        hr {
-            border: none;
-            border-top: 1px solid #222;
-            margin: 16px 0 8px;
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 400;
+            color: #f0f0f0;
+            line-height: 1;
         }
 
-        .footer-note {
-            font-size: 0.7rem;
-            color: #3b3b3b;
+        .reminder {
+            font-size: 0.9rem;
+            color: #5a5a5a;
+            background: #0c0c0c;
+            padding: 0.4rem 0.9rem;
+            border-radius: 100px;
+            border: 1px solid #303030;
+        }
+
+        /* кнопка сброса (малозаметная, чисто для демо) */
+        .reset-button {
+            background: none;
+            border: 1px solid #3a3a3a;
+            color: #8a8a8a;
+            padding: 0.4rem 1.2rem;
+            border-radius: 36px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.1s;
+            margin-top: 1.8rem;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .reset-button:hover {
+            border-color: #a0a0a0;
+            color: #dddddd;
+            background: #1b1b1b;
+        }
+
+        /* сообщение о поддержке */
+        .toast-message {
+            background: #1d1d1d;
+            border: 1px solid #4a4a4a;
+            color: #cccccc;
+            padding: 0.6rem 1.8rem;
+            border-radius: 120px;
+            font-size: 0.9rem;
             text-align: center;
-            padding: 24px 0 8px;
-            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            height: 2.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* имитация иконок через символы, если не грузятся svg */
-        .icon-emoji {
-            font-size: 1.2rem;
-            filter: grayscale(1);
+        .toast-message.show {
+            opacity: 1;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #3d3d3d;
+            margin-top: 2rem;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
-    <div class="phone-frame">
-        <div class="app-container">
-            <!-- шапка -->
-            <div class="header">
-                <div class="logo">
-                    <span>⌘</span> монохром <span>mell</span>
-                </div>
-                <div class="header-icons">
-                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="20" cy="12" r="2"/><circle cx="4" cy="12" r="2"/></svg>
-                </div>
-            </div>
-
-            <!-- плавные табы (лента / профиль) -->
-            <div class="tabs" id="tabsContainer">
-                <div class="tab active" id="tabFeed">лента</div>
-                <div class="tab" id="tabProfile">профиль</div>
-            </div>
-
-            <!-- контентная область -->
-            <div class="content" id="contentArea">
-                <!-- ЛЕНТА (feed) -->
-                <div class="feed" id="feedSection">
-                    <!-- пост 1 -->
-                    <div class="post">
-                        <div class="post-header">
-                            <div class="avatar">☾</div>
-                            <div>
-                                <div class="post-author">меллстрой official</div>
-                                <div class="post-time">41 мин назад • топчик</div>
-                            </div>
-                        </div>
-                        <div class="post-content">
-                            сегодня такой вайб, просто пушка-гонка. задув моментально 🌀
-                        </div>
-                        <div class="post-image-placeholder">
-                            <span class="icon-emoji">♟️</span> ч/б кадр
-                        </div>
-                        <div class="post-stats">
-                            <div class="stat"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 1.2k</div>
-                            <div class="stat"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> 88</div>
-                            <div class="stat"><svg viewBox="0 0 24 24"><path d="M20 12H4M12 4v16"/></svg> 44</div>
-                        </div>
-                    </div>
-
-                    <!-- пост 2 с цитатой меллстроя -->
-                    <div class="post">
-                        <div class="post-header">
-                            <div class="avatar">♫</div>
-                            <div>
-                                <div class="post-author">мемный цех</div>
-                                <div class="post-time">2 ч назад • кринж?</div>
-                            </div>
-                        </div>
-                        <div class="post-content">
-                            «ты гений или балерина?» — великое. нарезал момент с последнего стрима.
-                        </div>
-                        <div class="post-image-placeholder">
-                            <span class="icon-emoji">🎞️</span> нарезка / мем
-                        </div>
-                        <div class="post-stats">
-                            <div class="stat"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 812</div>
-                            <div class="stat"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> 31</div>
-                            <div class="stat"><svg viewBox="0 0 24 24"><path d="M20 12H4M12 4v16"/></svg> 12</div>
-                        </div>
-                    </div>
-
-                    <!-- пост 3 от лица фаната -->
-                    <div class="post">
-                        <div class="post-header">
-                            <div class="avatar">◐</div>
-                            <div>
-                                <div class="post-author">svoy_v_teme</div>
-                                <div class="post-time">5 ч назад • хейт?</div>
-                            </div>
-                        </div>
-                        <div class="post-content">
-                            свайп вправо — если тоже ждешь новый стрим с мемами
-                        </div>
-                        <div class="post-stats" style="margin-top: 8px;">
-                            <div class="stat"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 2.3k</div>
-                            <div class="stat"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> 150</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ПРОФИЛЬ (profile) скрыт по умолчанию -->
-                <div class="profile hidden" id="profileSection">
-                    <div class="profile-header">
-                        <div class="profile-avatar-large">♟️</div>
-                        <div class="profile-name">меллстрой</div>
-                        <div class="profile-handle">@mellstroy_real</div>
-                        <div class="profile-bio">
-                            создаю моменты, мемы, нарезки. говорят «топчик», «краш», «задув». тут первый.
-                        </div>
-                        <div class="profile-stats-row">
-                            <div class="profile-stat-item">1.4M <span class="profile-stat-label">подписчики</span></div>
-                            <div class="profile-stat-item">128 <span class="profile-stat-label">подписки</span></div>
-                            <div class="profile-stat-item">342 <span class="profile-stat-label">публикации</span></div>
-                        </div>
-                        <div class="edit-profile-btn">✦ редактировать</div>
-                    </div>
-
-                    <!-- мини-галерея постов в профиле -->
-                    <div style="margin: 8px 0 0 10px; color: #aaa; font-size: 0.9rem;">недавние мемы</div>
-                    <div class="profile-gallery">
-                        <div class="gallery-item">🎬</div>
-                        <div class="gallery-item">📸</div>
-                        <div class="gallery-item">🎞️</div>
-                        <div class="gallery-item">♟️</div>
-                        <div class="gallery-item">🌀</div>
-                        <div class="gallery-item">⚫️</div>
-                    </div>
-
-                    <div style="margin-top: 24px;">
-                        <div class="post" style="margin-bottom: 12px;">
-                            <div class="post-header">
-                                <div class="avatar" style="background:#333;">♟️</div>
-                                <div>
-                                    <div class="post-author">меллстрой</div>
-                                    <div class="post-time">вчера • эксклюзив</div>
-                                </div>
-                            </div>
-                            <div class="post-content">
-                                свайп влево — не зашло, свайп вправо — топчик. а вы как думаете?
-                            </div>
-                            <div class="post-stats">
-                                <div class="stat">❤️ 5.2k</div>
-                                <div class="stat">💬 88</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- минималистичный footer (плавность) -->
-            <div class="footer-note">монохромная плавность ✦ mell софт</div>
+    <div class="card">
+        <div class="header">
+            <h1>СЕРИЯ</h1>
+            <div class="sub">ЕЖЕДНЕВНЫЙ ОГОНЬ</div>
         </div>
+
+        <!-- зона огня и числа -->
+        <div class="fire-container">
+            <!-- число над огоньком (растёт с каждым днём) -->
+            <div class="series-count" id="seriesCounter">0</div>
+
+            <!-- кликабельная зона огонька -->
+            <div class="flame-wrapper" id="flameButton" role="button" tabindex="0" aria-label="поддержать серию">
+                <div class="flame-icon"></div>
+            </div>
+
+            <!-- сообщение-фидбек после клика -->
+            <div class="toast-message" id="feedbackMessage">➕ огонь поддержан</div>
+
+            <div class="daily-note">✦ заходи каждый день ✦</div>
+        </div>
+
+        <!-- небольшая статистика: текущая серия и сколько осталось до новой ступени -->
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">дней подряд</span>
+                <span class="stat-value" id="streakDisplay">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">пик</span>
+                <span class="stat-value" id="peakDisplay">0</span>
+            </div>
+            <div class="reminder" id="nextMilestone">⚡ до 5</div>
+        </div>
+
+        <!-- скромная кнопка сброса (для тестирования; обнуляет серию) -->
+        <button class="reset-button" id="resetBtn">⟲ обнулить серию</button>
+        <footer>BLACK & WHITE · СЕРИЯ</footer>
     </div>
 
     <script>
         (function() {
-            // плавное переключение ленты / профиля без скачков
-            const tabFeed = document.getElementById('tabFeed');
-            const tabProfile = document.getElementById('tabProfile');
-            const feedSection = document.getElementById('feedSection');
-            const profileSection = document.getElementById('profileSection');
+            // ------------------------- ЧЁРНО-БЕЛАЯ ЛОГИКА -------------------------
+            // ключи для localStorage
+            const STORAGE_KEY = 'fire_series_data';
+            const LAST_DATE_KEY = 'fire_last_click_date';
 
-            function setActiveTab(active) {
-                // сброс классов у табов
-                tabFeed.classList.remove('active');
-                tabProfile.classList.remove('active');
+            // данные по умолчанию
+            let currentStreak = 0;         // текущая серия (сколько дней подряд жали)
+            let maxStreak = 0;              // рекордная серия
+            let seriesCounter = 0;           // число над огоньком (может расти с каждым подтверждённым днём)
 
-                if (active === 'feed') {
-                    tabFeed.classList.add('active');
-                    // плавно скрываем профиль, показываем ленту
-                    profileSection.classList.add('hidden');
-                    feedSection.classList.remove('hidden');
-                } else {
-                    tabProfile.classList.add('active');
-                    feedSection.classList.add('hidden');
-                    profileSection.classList.remove('hidden');
-                }
+            // элементы интерфейса
+            const seriesEl = document.getElementById('seriesCounter');
+            const streakEl = document.getElementById('streakDisplay');
+            const peakEl = document.getElementById('peakDisplay');
+            const nextMilestoneEl = document.getElementById('nextMilestone');
+            const flameBtn = document.getElementById('flameButton');
+            const feedbackEl = document.getElementById('feedbackMessage');
+            const resetBtn = document.getElementById('resetBtn');
 
-                // маленькая анимация — чуть изменим прозрачность контента (опционально)
-                // просто добавим эффект "мерцания"
-                const content = document.getElementById('contentArea');
-                content.style.transition = 'opacity 0.15s';
-                content.style.opacity = '0.97';
-                setTimeout(() => { content.style.opacity = '1'; }, 50);
-                setTimeout(() => { content.style.transition = ''; }, 200);
+            // вспомогательная функция форматирования даты (YYYY-MM-DD)
+            function getTodayString() {
+                const d = new Date();
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             }
 
-            tabFeed.addEventListener('click', function(e) {
+            // загрузка из localStorage
+            function loadData() {
+                try {
+                    const savedData = localStorage.getItem(STORAGE_KEY);
+                    if (savedData) {
+                        const parsed = JSON.parse(savedData);
+                        // валидные поля
+                        if (typeof parsed.currentStreak === 'number') currentStreak = parsed.currentStreak;
+                        if (typeof parsed.maxStreak === 'number') maxStreak = parsed.maxStreak;
+                        if (typeof parsed.seriesCounter === 'number') seriesCounter = parsed.seriesCounter;
+                    }
+
+                    // проверка последнего визита (чтобы при обновлении страницы не начислялся лишний день)
+                    // инит не начисляет автоматически — только при клике.
+                } catch (e) {
+                    console.warn('error loading data', e);
+                }
+            }
+
+            // сохраняем все данные
+            function saveData() {
+                const data = {
+                    currentStreak: currentStreak,
+                    maxStreak: maxStreak,
+                    seriesCounter: seriesCounter,
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            // сохраняем дату последнего клика
+            function saveLastClickDate(dateString) {
+                localStorage.setItem(LAST_DATE_KEY, dateString);
+            }
+
+            // получаем последнюю дату клика
+            function getLastClickDate() {
+                return localStorage.getItem(LAST_DATE_KEY);
+            }
+
+            // обновить интерфейс (число, статистика, миникальный текст)
+            function refreshUI() {
+                // число над огоньком
+                seriesEl.textContent = seriesCounter;
+
+                // отображение серии и пика
+                streakEl.textContent = currentStreak;
+                peakEl.textContent = maxStreak;
+
+                // следующий рубеж (ближайшее кратное 5, но не меньше currentStreak+1)
+                let nextStep = 5;
+                if (currentStreak < 5) {
+                    nextStep = 5;
+                } else {
+                    // ищем ближайшее кратное 5 больше текущей серии
+                    const remainder = currentStreak % 5;
+                    if (remainder === 0) {
+                        nextStep = currentStreak + 5;  // если ровно 5,10 — следующий через 5
+                    } else {
+                        nextStep = currentStreak + (5 - remainder);
+                    }
+                }
+                nextMilestoneEl.textContent = `⚡ до ${nextStep}`;
+
+                // динамическое изменение тона (в рамках ч/б)
+                // ничего не делаем, всё остаётся строгим.
+            }
+
+            // показать фидбек
+            function showFeedback(text) {
+                feedbackEl.textContent = text;
+                feedbackEl.classList.add('show');
+                clearTimeout(window.feedbackTimeout);
+                window.feedbackTimeout = setTimeout(() => {
+                    feedbackEl.classList.remove('show');
+                }, 1200);
+            }
+
+            // основная функция: поддержать серию (клик на огонёк)
+            function supportFire() {
+                const today = getTodayString();
+                const lastDate = getLastClickDate();
+
+                // если сегодня уже кликали
+                if (lastDate === today) {
+                    showFeedback('✧ уже сегодня поддерживал ✧');
+                    return;  // ничего не меняем
+                }
+
+                // проверяем, был ли клик вчера
+                let yesterday = '';
+                const d = new Date();
+                d.setDate(d.getDate() - 1);
+                const yYear = d.getFullYear();
+                const yMonth = String(d.getMonth() + 1).padStart(2, '0');
+                const yDay = String(d.getDate()).padStart(2, '0');
+                yesterday = `${yYear}-${yMonth}-${yDay}`;
+
+                // если lastDate отсутствует (первый клик вообще) или lastDate === yesterday → серия продолжается
+                if (!lastDate) {
+                    // первый запуск
+                    currentStreak = 1;
+                    seriesCounter = 1;   // начинаем с 1
+                } 
+                else if (lastDate === yesterday) {
+                    // продолжаем серию: увеличиваем и серию, и счётчик над огоньком
+                    currentStreak += 1;
+                    seriesCounter += 1;   // число над огоньком увеличивается каждый день поддержки
+                } 
+                else {
+                    // иначе — серия сброшена (пропущен хотя бы один день)
+                    currentStreak = 1;
+                    // однако seriesCounter: вы сказали "чем больше ежедневно поддерживаешь, тем больше число над огоньком"
+                    // логично, что при сбросе число не обнуляется полностью, а остаётся или уменьшается?
+                    // по здравому смыслу: если серия оборвалась, число над огоньком должно стать меньше? 
+                    // Но в описании: "чем больше ты ежедневно поддерживаешь серию тем больше число".
+                    // Т.е. число — это по сути награда за постоянство. При срыве число не растёт, но падать не должно? 
+                    // Я решаю так: при сбросе серии число над огоньком не сбрасывается, а остаётся прежним (как накопленный тотал поддержек),
+                    // но можно интерпретировать иначе. Давайте сделаем: при сбросе серии число над огоньком замораживается 
+                    // (остаётся тем же), а новая серия начинает копить уже поверх? Нет, лучше сохранить текущее число.
+                    // Чтобы сохранить мотивацию — оставим seriesCounter неизменным. 
+                    // (ни в коем случае не уменьшаем — это память о всех поддержках)
+                    // но серия (streak) сбрасывается на 1.
+                    // Для чистоты — серия сброшена, но число остается. Так что seriesCounter += 0? 
+                    // но тогда сегодня мы нажали — число должно вырасти? Все же клик есть.
+                    // При пропуске: мы кликаем сегодня, серия начинается заново с 1. А число увеличится на 1? логично.
+                    seriesCounter += 1;   // всё равно поддержка, число растёт всегда с каждым реальным днём клика
+                }
+
+                // дополнительно: если мы сегодня первый раз (независимо от условий), нужно увеличить счётчик?
+                // но мы уже увеличили в блоках. Проверим крайний случай: если lastDate существует, но не yesterday и не today.
+                // уже обработано: else увеличили seriesCounter и поставили серию = 1.
+                // Однако если серия сброшена, мы должны увеличить maxStreak? проверка ниже.
+
+                // обновляем пиковую серию
+                if (currentStreak > maxStreak) {
+                    maxStreak = currentStreak;
+                }
+
+                // записываем сегодняшнюю дату клика
+                saveLastClickDate(today);
+                // сохраняем данные
+                saveData();
+
+                // обновляем интерфейс
+                refreshUI();
+
+                // фидбек
+                showFeedback(`🔥 серия ${currentStreak} день`);
+            }
+
+            // сброс (для тестирования, работает мягко: обнуляет серию и счётчик, но можно сбросить всё)
+            function resetSeries() {
+                if (confirm('Обнулить всю статистику и серию? число над огоньком станет 0.')) {
+                    currentStreak = 0;
+                    maxStreak = 0;
+                    seriesCounter = 0;
+                    // очищаем дату последнего клика, чтобы начать с чистого листа
+                    localStorage.removeItem(LAST_DATE_KEY);
+                    saveData();  // сохранили нули
+                    refreshUI();
+                    showFeedback('⚪ серия обнулена');
+                }
+            }
+
+            // инициализация: загрузить данные, восстановить дату, проверить, не устарела ли серия при загрузке (если юзер не заходил вчера, но открыл страницу — серия должна быть сброшена? 
+            // однако логичнее, что при загрузке страницы без клика мы не должны автоматически сбрасывать серию.
+            // серия меняется только при клике. Поэтому просто показываем сохранённые цифры.
+            // Но нужно учесть: если последний клик был 3 дня назад, то currentStreak (например 5) остаётся в интерфейсе, 
+            // но это ложь, так как серия уже прервана. Поэтому при загрузке необходимо проверить lastDate и сбросить streak, если был пропуск.
+            // корректно: при загрузке сравниваем lastDate с сегодня и вчера.
+            function checkAndFixStreakOnLoad() {
+                const lastDate = getLastClickDate();
+                if (!lastDate) return; // никогда не кликали — ок
+
+                const today = getTodayString();
+                const d = new Date();
+                d.setDate(d.getDate() - 1);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const yesterday = `${y}-${m}-${day}`;
+
+                // если lastDate не сегодня и не вчера, то серия прервана
+                if (lastDate !== today && lastDate !== yesterday) {
+                    // серия сброшена, но число остается (память)
+                    currentStreak = 0;  // пока не кликнули заново, серия 0
+                    maxStreak = Math.max(maxStreak, currentStreak); // но пик сохраняется 
+                    // но currentStreak стал 0. сохраняем.
+                    saveData(); 
+                }
+                // если lastDate === yesterday, то серия ещё актуальна (сегодня ещё не кликали, но если кликнут — увеличится)
+                // если lastDate === today — значит сегодня уже кликали, но при перезагрузке оставляем currentStreak как есть.
+                // дополнительные действия не нужны.
+            }
+
+            // первоначальная загрузка
+            loadData();
+            checkAndFixStreakOnLoad();
+            refreshUI();
+
+            // слушатель клика на огонёк
+            flameBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                setActiveTab('feed');
+                supportFire();
             });
 
-            tabProfile.addEventListener('click', function(e) {
-                e.preventDefault();
-                setActiveTab('profile');
+            // поддержка клавиатуры (Enter или пробел)
+            flameBtn.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    supportFire();
+                }
             });
 
-            // дополнительная плавность при загрузке (чтоб точно не было видно оба)
-            // по умолчанию profile скрыт классом hidden (уже в html), но на всякий случай:
-            profileSection.classList.add('hidden');
-            feedSection.classList.remove('hidden');
-            tabFeed.classList.add('active');
-            tabProfile.classList.remove('active');
+            // кнопка сброса
+            resetBtn.addEventListener('click', function() {
+                resetSeries();
+            });
 
-            // добавим плавности при наведении на карточки (уже в css)
-            // и микро-эффект для эстетики
+            // сделать кнопку фокусируемой
+            flameBtn.setAttribute('tabindex', '0');
         })();
     </script>
-
-    <!-- маленькая заглушка для эмодзи/символов в стиле монохром -->
 </body>
 </html>
