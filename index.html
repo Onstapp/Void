@@ -1,489 +1,794 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Муринская Лентость</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Helvetica', sans-serif;
-        }
-        body {
-            background: #f0f2f5;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background: white;
-            min-height: 100vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        /* шапка */
-        .header {
-            background: #2b2d42;
-            color: white;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 3px solid #ef233c;
-        }
-        .logo {
-            font-weight: 800;
-            font-size: 24px;
-            letter-spacing: 1px;
-        }
-        .logo span {
-            color: #ef233c;
-            font-size: 14px;
-            margin-left: 4px;
-        }
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .avatar {
-            width: 40px;
-            height: 40px;
-            background: #8d99ae;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            border: 2px solid #ef233c;
-        }
-        /* форма создания поста */
-        .post-creator {
-            padding: 16px;
-            background: white;
-            border-bottom: 10px solid #f0f2f5;
-        }
-        .post-creator textarea {
-            width: 100%;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 16px;
-            font-size: 16px;
-            resize: none;
-            height: 100px;
-            transition: 0.2s;
-        }
-        .post-creator textarea:focus {
-            outline: none;
-            border-color: #2b2d42;
-        }
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 12px;
-        }
-        .hint {
-            font-size: 13px;
-            color: #666;
-            background: #f8f9fa;
-            padding: 6px 12px;
-            border-radius: 30px;
-        }
-        .hint strong {
-            color: #ef233c;
-        }
-        .publish-btn {
-            background: #2b2d42;
-            color: white;
-            border: none;
-            padding: 10px 28px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 4px 0 #0b0c14;
-        }
-        .publish-btn:active {
-            transform: translateY(4px);
-            box-shadow: none;
-        }
-        /* лента */
-        .feed {
-            padding: 0 16px 20px 16px;
-        }
-        .post {
-            background: white;
-            border-radius: 20px;
-            padding: 18px;
-            margin-top: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            border: 1px solid #eee;
-        }
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-        .post-avatar {
-            width: 44px;
-            height: 44px;
-            background: #8d99ae;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-        }
-        .post-author {
-            font-weight: 700;
-            font-size: 16px;
-        }
-        .post-author small {
-            font-weight: 400;
-            color: #777;
-            font-size: 13px;
-            margin-left: 6px;
-        }
-        .post-time {
-            font-size: 12px;
-            color: #999;
-            margin-top: 2px;
-        }
-        .post-content {
-            font-size: 17px;
-            line-height: 1.5;
-            margin-bottom: 16px;
-            background: #f8fafc;
-            padding: 16px;
-            border-radius: 18px;
-            border-left: 4px solid #ef233c;
-            word-break: break-word;
-        }
-        .post-stats {
-            display: flex;
-            gap: 20px;
-            padding: 8px 0;
-            border-top: 1px solid #e9e9e9;
-            border-bottom: 1px solid #e9e9e9;
-            margin-bottom: 12px;
-        }
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #555;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        .post-footer {
-            display: flex;
-            gap: 24px;
-        }
-        .footer-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #2b2d42;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            padding: 4px 0;
-            transition: 0.1s;
-        }
-        .footer-btn:hover {
-            color: #ef233c;
-        }
-        /* муринский переводчик */
-        .translator-badge {
-            background: #2b2d42;
-            color: white;
-            padding: 12px 16px;
-            border-radius: 40px;
-            margin: 8px 16px 0 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 14px;
-        }
-        .badge-icon {
-            background: #ef233c;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-weight: 700;
-        }
-        .footer {
-            text-align: center;
-            color: #aaa;
-            font-size: 13px;
-            margin: 30px 0 20px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>🍞 ТОСТЕР: ХЛЕБНАЯ ЛОТЕРЕЯ 🍞</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(145deg, #2b1b0e 0%, #4a3620 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+      padding: 12px;
+    }
+
+    .game-container {
+      max-width: 480px;
+      width: 100%;
+      background: #f5e6d3;
+      border-radius: 48px 48px 32px 32px;
+      box-shadow: 0 20px 30px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,240,0.6);
+      overflow: hidden;
+      padding: 20px 16px 24px;
+      border: 2px solid #c9a87c;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+
+    .header h1 {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #4a2c1a;
+      text-shadow: 3px 3px 0 #e7cba5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .collection-badge {
+      background: #6b3f1f;
+      padding: 8px 16px;
+      border-radius: 40px;
+      color: #ffefd1;
+      font-weight: bold;
+      box-shadow: inset 0 -2px 0 #3e2a14, 0 4px 0 #3a281a;
+      cursor: pointer;
+      transition: 0.1s ease;
+      border: 1px solid #b38b60;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .collection-badge:active {
+      transform: translateY(3px);
+      box-shadow: inset 0 -1px 0 #3e2a14, 0 1px 0 #3a281a;
+    }
+
+    /* Тостер блок */
+    .toaster-section {
+      background: #d6b07a;
+      padding: 24px 16px 30px;
+      border-radius: 60px 60px 30px 30px;
+      box-shadow: inset 0 -8px 0 #7a5a3a, 0 10px 0 #3f2e1d, inset 0 4px 8px #ffeac2;
+      margin-bottom: 20px;
+      border: 2px solid #a5835a;
+      position: relative;
+    }
+
+    .toaster-display {
+      background: #1e1e1e;
+      border-radius: 30px 30px 20px 20px;
+      padding: 30px 20px 20px;
+      box-shadow: inset 0 0 0 4px #3d3d3d, inset 0 6px 6px rgba(0,0,0,0.6), 0 6px 0 #2b1f12;
+      border-bottom: 4px solid #6b4f33;
+      margin-bottom: 20px;
+    }
+
+    .slot-area {
+      background: #151515;
+      min-height: 130px;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 4px 8px #00000066, 0 2px 0 #4d3822;
+      margin-bottom: 12px;
+      padding: 16px;
+      transition: 0.2s;
+    }
+
+    .toast-preview {
+      font-size: 6rem;
+      filter: drop-shadow(0 8px 6px #00000050);
+      transition: transform 0.2s;
+    }
+
+    .shake-animation {
+      animation: shake 0.15s infinite;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      25% { transform: translate(-2px, 0px) rotate(1deg); }
+      50% { transform: translate(2px, -1px) rotate(-1deg); }
+      75% { transform: translate(-1px, 2px) rotate(1deg); }
+      100% { transform: translate(0px, 0px) rotate(0deg); }
+    }
+
+    .toast-fly {
+      animation: flyOut 0.5s ease-out;
+    }
+
+    @keyframes flyOut {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      50% { transform: translateY(-30px) scale(1.3); opacity: 0.9; }
+      100% { transform: translateY(-80px) scale(0.2); opacity: 0; }
+    }
+
+    .timer-indicator {
+      color: #ffb56b;
+      font-weight: bold;
+      font-size: 1.2rem;
+      text-align: center;
+      letter-spacing: 4px;
+      background: #1e1a14;
+      width: fit-content;
+      margin: 6px auto 0;
+      padding: 4px 20px;
+      border-radius: 30px;
+      box-shadow: inset 0 1px 4px black;
+    }
+
+    /* Кнопки тостера */
+    .toaster-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+
+    .addon-selector {
+      background: #4a3723;
+      padding: 12px 12px;
+      border-radius: 40px;
+      box-shadow: inset 0 2px 5px #1e140e, 0 5px 0 #2d1f14;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #ab8a62;
+    }
+
+    .addon-btn {
+      background: #7c5f3f;
+      border: none;
+      font-size: 2.2rem;
+      width: 64px;
+      height: 64px;
+      border-radius: 30px;
+      box-shadow: inset 0 -4px 0 #4d3722, 0 5px 0 #3d2b1b, 0 2px 8px black;
+      color: #faeacb;
+      cursor: pointer;
+      transition: 0.05s linear;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #bc9a6b;
+    }
+
+    .addon-btn:active {
+      transform: translateY(4px);
+      box-shadow: inset 0 -2px 0 #4d3722, 0 1px 0 #3d2b1b;
+    }
+
+    .addon-btn:disabled {
+      opacity: 0.5;
+      transform: none;
+      box-shadow: inset 0 -4px 0 #4d3722, 0 5px 0 #3d2b1b;
+      cursor: not-allowed;
+    }
+
+    .addon-name {
+      color: #ffddb0;
+      font-weight: bold;
+      min-width: 70px;
+      text-align: center;
+      text-shadow: 2px 2px 0 #382715;
+    }
+
+    .toast-btn {
+      background: #e05a2c;
+      border: none;
+      font-size: 1.7rem;
+      font-weight: bold;
+      padding: 16px 24px;
+      border-radius: 50px;
+      box-shadow: inset 0 -6px 0 #913a1a, 0 8px 0 #6d2e16, 0 4px 8px black;
+      color: white;
+      text-shadow: 2px 2px 0 #712e12;
+      cursor: pointer;
+      transition: 0.05s;
+      border: 2px solid #ffb28b;
+      letter-spacing: 2px;
+      flex: 1;
+      margin-left: 12px;
+    }
+
+    .toast-btn:active {
+      transform: translateY(5px);
+      box-shadow: inset 0 -3px 0 #913a1a, 0 3px 0 #6d2e16;
+    }
+
+    .toast-btn:disabled {
+      opacity: 0.6;
+      transform: none;
+      box-shadow: inset 0 -6px 0 #913a1a, 0 8px 0 #6d2e16;
+      cursor: not-allowed;
+    }
+
+    /* ресурсы */
+    .resources-panel {
+      display: flex;
+      justify-content: space-between;
+      background: #b49167;
+      padding: 12px 16px;
+      border-radius: 40px;
+      box-shadow: inset 0 2px 5px #6a4f33, 0 5px 0 #5a3f28;
+      margin: 16px 0 12px;
+      color: #251b10;
+      font-weight: bold;
+    }
+
+    .burned-resource {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #372713;
+      padding: 6px 18px;
+      border-radius: 30px;
+      color: #d4b185;
+      box-shadow: inset 0 1px 4px black;
+    }
+
+    .exchange-btn {
+      background: #3d7840;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: bold;
+      color: #f7ffe0;
+      box-shadow: inset 0 -3px 0 #1d421f, 0 5px 0 #1d3317;
+      cursor: pointer;
+      transition: 0.05s;
+      border: 1px solid #90b77d;
+      font-size: 1rem;
+    }
+
+    .exchange-btn:active {
+      transform: translateY(3px);
+      box-shadow: inset 0 -2px 0 #1d421f, 0 2px 0 #1d3317;
+    }
+
+    .exchange-btn:disabled {
+      opacity: 0.5;
+      transform: none;
+      cursor: default;
+    }
+
+    /* Коллекция модалка */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #000000b0;
+      backdrop-filter: blur(3px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .collection-modal {
+      background: #efe0cd;
+      max-width: 480px;
+      width: 90%;
+      max-height: 80vh;
+      border-radius: 48px;
+      padding: 22px 16px;
+      box-shadow: 0 20px 0 #644d37, 0 30px 30px black;
+      border: 3px solid #cbae8a;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 8px;
+      margin-bottom: 16px;
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: #3f2a18;
+    }
+
+    .close-btn {
+      background: #b1552c;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 30px;
+      font-size: 1.8rem;
+      color: white;
+      box-shadow: inset 0 -3px 0 #6d3119, 0 4px 0 #492212;
+      cursor: pointer;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      overflow-y: auto;
+      padding: 6px 4px;
+    }
+
+    .collection-card {
+      background: #fff2df;
+      border-radius: 20px;
+      padding: 10px 6px;
+      box-shadow: inset 0 1px 4px white, 0 5px 0 #846b4e, 0 2px 6px black;
+      text-align: center;
+      border: 1px solid #ba9e7a;
+    }
+
+    .card-emoji {
+      font-size: 3.2rem;
+      filter: drop-shadow(2px 4px 2px rgba(0,0,0,0.2));
+    }
+
+    .card-name {
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #412e1b;
+    }
+
+    .card-count {
+      background: #4a3622;
+      color: #ffdead;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .empty-note {
+      color: #624e38;
+      text-align: center;
+      padding: 30px;
+      font-style: italic;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Шапка (Муринская) -->
-        <div class="header">
-            <div class="logo">МУРИНСК<span>.ость</span></div>
-            <div class="user-menu">
-                <div class="avatar">Ч</div>
-                <span style="font-weight:600;">ч (Иваность)</span>
-            </div>
-        </div>
+<div class="game-container">
+  <div class="header">
+    <h1>🍞 ТОСТЕР</h1>
+    <div class="collection-badge" id="openCollectionBtn">
+      <span>📒 КОЛЛЕКЦИЯ</span>
+    </div>
+  </div>
 
-        <!-- Подсказка-переводчик -->
-        <div class="translator-badge">
-            <span>⚡ Твой текст муринизируется автоматически</span>
-            <span class="badge-icon">ость-режим</span>
-        </div>
-
-        <!-- Форма создания поста -->
-        <div class="post-creator">
-            <textarea id="postInput" placeholder="Напиши что-нибудь... (например: я и друг видели красивого кота)"></textarea>
-            <div class="post-actions">
-                <div class="hint">
-                    <strong>ость</strong> к сущ./прил./нареч. · <strong>ч</strong> · <strong>друн</strong> · <strong>сыр</strong>
-                </div>
-                <button class="publish-btn" id="publishBtn">Опубликоватьность</button>
-            </div>
-        </div>
-
-        <!-- Лента постов -->
-        <div class="feed" id="feed">
-            <!-- пример поста для демонстрации -->
-            <div class="post">
-                <div class="post-header">
-                    <div class="post-avatar">Д</div>
-                    <div>
-                        <div class="post-author">Друн Друнович <small>друн</small></div>
-                        <div class="post-time">5 минут назад · Муринск</div>
-                    </div>
-                </div>
-                <div class="post-content">
-                    🐱 вчера мой сыр и ч видели огромную котость. эта котость сидела на столе и смотрела на нас с преогромной важность. такое прелесть!
-                </div>
-                <div class="post-stats">
-                    <div class="stat-item">👍 24 нравитсяость</div>
-                    <div class="stat-item">💬 8 говорильность</div>
-                    <div class="stat-item">📨 3 разослатьность</div>
-                </div>
-                <div class="post-footer">
-                    <div class="footer-btn">👍 Нравитсяость</div>
-                    <div class="footer-btn">💬 Комментироватьность</div>
-                    <div class="footer-btn">📢 Разослатьность</div>
-                </div>
-            </div>
-        </div>
-        <div class="footer">
-            Муринская Лентость · вся власть ости
-        </div>
+  <!-- Тостер -->
+  <div class="toaster-section">
+    <div class="toaster-display">
+      <div class="slot-area" id="toastSlot">
+        <div class="toast-preview" id="toastEmoji">🍞</div>
+      </div>
+      <div class="timer-indicator" id="timerDisplay">⚡ ГОТОВ ⚡</div>
     </div>
 
-    <script>
-        (function() {
-            // ------------------ СЛОВАРЬ СПЕЦЗАМЕН (полный) -----------------
-            const SPECIAL_MAP = {
-                'я': 'ч',
-                'Я': 'Ч',
-                'друг': 'друн',
-                'Друг': 'Друн',
-                'сын': 'сыр',
-                'Сын': 'Сыр',
-                // учтём падежи/множ число (простейший случай для демо)
-                'друга': 'друна',
-                'другу': 'друну',
-                'другом': 'друном',
-                'сына': 'сыра',
-                'сыну': 'сыру',
-                'сыном': 'сыром',
-                'меня': 'меня',  // но 'я' уже заменили выше. важно: 'меня' не трогаем
-            };
+    <div class="toaster-controls">
+      <div class="addon-selector">
+        <button class="addon-btn" id="prevAddonBtn" aria-label="предыдущая">◀</button>
+        <div class="addon-name" id="currentAddonLabel">ПУСТО</div>
+        <button class="addon-btn" id="nextAddonBtn" aria-label="следующая">▶</button>
+      </div>
+      <button class="toast-btn" id="toastActionBtn">ЖАРИТЬ</button>
+    </div>
+  </div>
 
-            // Множество частей речи, к которым будем добавлять "ость"
-            // существительные, прилагательные, наречия (примерные окончания)
-            // это упрощённая эвристика для демо — в реальном проекте нужен морфологический анализ
-            function endsWithNounLike(word) {
-                if (word.length <= 3) return false; // короткие типа "кот" всё равно проверим отдельно
-                // типичные окончания существительных/прилагательных/наречий
-                const endings = ['а', 'я', 'о', 'е', 'ё', 'у', 'ю', 'и', 'ы', 'ь', 'й', 'ц', 'к', 'г', 'х', 'ж', 'ч', 'ш', 'щ'];
-                // также прилагательные на -ий, -ый, -ой, -ая, -ое и наречия на -о, -е
-                const lastChar = word.slice(-1);
-                // базовая проверка: слово заканчивается на типичную букву и длиннее 2 символов
-                if (endings.includes(lastChar) && word.length > 2) {
-                    // исключим очевидные глаголы (постфикс 'ть', 'ти', 'чь')
-                    if (word.endsWith('ть') || word.endsWith('ти') || word.endsWith('чь')) return false;
-                    return true;
-                }
-                return false;
+  <!-- Ресурсы и обмен -->
+  <div class="resources-panel">
+    <div class="burned-resource">
+      <span>🔥 Угольки:</span>
+      <span id="burnedCount">0</span>
+    </div>
+    <button class="exchange-btn" id="exchangeBtn">🔄 ОБМЕН 5 ➔ 1-2</button>
+  </div>
+
+  <!-- Инвентарь добавок (счетчики) -->
+  <div style="display: flex; gap: 12px; justify-content: space-around; background: #e5cfb5; padding: 8px; border-radius: 30px; box-shadow: inset 0 1px 5px #ac8f70;">
+    <div>🧈 <span id="countButter">3</span></div>
+    <div>🍓 <span id="countJam">2</span></div>
+    <div>✨ <span id="countGlitter">1</span></div>
+    <div>🧂 <span id="countSalt">2</span></div>
+  </div>
+</div>
+
+<!-- Модалка коллекции -->
+<div class="modal-overlay" id="collectionModal">
+  <div class="collection-modal">
+    <div class="modal-header">
+      <span>📚 АЛЬБОМ ТОСТОВ</span>
+      <button class="close-btn" id="closeModalBtn">✕</button>
+    </div>
+    <div class="collection-grid" id="collectionGrid">
+      <!-- Динамически заполняется -->
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // ---------- СОСТОЯНИЕ ----------
+    // Добавки и их счётчики
+    const addons = [
+      { id: 'none', name: 'ПУСТО', emoji: '🚫', color: '#aaa' },
+      { id: 'butter', name: 'МАСЛО', emoji: '🧈', color: '#FFD966' },
+      { id: 'jam', name: 'ДЖЕМ', emoji: '🍓', color: '#C44' },
+      { id: 'glitter', name: 'БЛЁСТКИ', emoji: '✨', color: '#DDA0DD' },
+      { id: 'salt', name: 'СОЛЬ', emoji: '🧂', color: '#B0C4DE' }
+    ];
+
+    let inventory = {
+      butter: 3,
+      jam: 2,
+      glitter: 1,
+      salt: 2
+    };
+
+    // Текущая выбранная добавка (индекс)
+    let currentAddonIndex = 0; // 0 = ПУСТО
+
+    // Коллекция: id тоста -> { name, emoji, count, rarity }
+    const collection = new Map();
+    
+    // Сгоревшие тосты
+    let burnedToastCount = 0;
+
+    // Флаги готовки
+    let isCooking = false;
+    let cookingTimer = null;
+    let timerInterval = null;
+    let countdown = 0;
+
+    // Элементы
+    const toastEmoji = document.getElementById('toastEmoji');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const currentAddonLabel = document.getElementById('currentAddonLabel');
+    const prevAddonBtn = document.getElementById('prevAddonBtn');
+    const nextAddonBtn = document.getElementById('nextAddonBtn');
+    const toastActionBtn = document.getElementById('toastActionBtn');
+    const burnedCountSpan = document.getElementById('burnedCount');
+    const exchangeBtn = document.getElementById('exchangeBtn');
+    
+    const countButter = document.getElementById('countButter');
+    const countJam = document.getElementById('countJam');
+    const countGlitter = document.getElementById('countGlitter');
+    const countSalt = document.getElementById('countSalt');
+
+    const modalOverlay = document.getElementById('collectionModal');
+    const collectionGrid = document.getElementById('collectionGrid');
+    const openCollectionBtn = document.getElementById('openCollectionBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
+    function updateInventoryUI() {
+      countButter.textContent = inventory.butter;
+      countJam.textContent = inventory.jam;
+      countGlitter.textContent = inventory.glitter;
+      countSalt.textContent = inventory.salt;
+    }
+
+    function updateBurnedUI() {
+      burnedCountSpan.textContent = burnedToastCount;
+    }
+
+    function updateAddonLabel() {
+      const addon = addons[currentAddonIndex];
+      currentAddonLabel.textContent = addon.name;
+    }
+
+    // Проверка, есть ли добавка в инвентаре (кроме ПУСТО)
+    function hasAddonInInventory(addonId) {
+      if (addonId === 'none') return true; // пусто всегда доступно
+      return inventory[addonId] > 0;
+    }
+
+    // Расход добавки
+    function consumeAddon(addonId) {
+      if (addonId === 'none') return true;
+      if (inventory[addonId] > 0) {
+        inventory[addonId]--;
+        updateInventoryUI();
+        return true;
+      }
+      return false;
+    }
+
+    // Переключение добавки с проверкой доступности
+    function shiftAddon(direction) {
+      if (isCooking) return;
+      let newIndex = currentAddonIndex;
+      let attempts = 0;
+      do {
+        newIndex = (newIndex + direction + addons.length) % addons.length;
+        attempts++;
+        if (attempts > addons.length) break; // всё заблокировано (кроме пусто)
+      } while (!hasAddonInInventory(addons[newIndex].id));
+      
+      currentAddonIndex = newIndex;
+      updateAddonLabel();
+    }
+
+    // Генерация результата тоста
+    function generateToastResult() {
+      const addon = addons[currentAddonIndex];
+      const addonId = addon.id;
+      
+      // База — обычный хлеб
+      let toastId = 'plain';
+      let toastName = 'Обычный';
+      let toastEmojiStr = '🍞';
+      let rarity = 'common';
+      
+      // Шанс сгореть ~15% (но зависит от добавок)
+      let burnChance = 0.15;
+      if (addonId === 'butter') burnChance = 0.1; // масло чуть снижает
+      if (addonId === 'jam') burnChance = 0.2;
+      
+      const isBurned = Math.random() < burnChance;
+      
+      if (isBurned) {
+        toastId = 'burned';
+        toastName = 'УГОЛЁК';
+        toastEmojiStr = '🔥🍞';
+        rarity = 'burned';
+      } else {
+        // В зависимости от добавки
+        if (addonId === 'none') {
+          toastId = 'plain';
+          toastName = 'ПРОСТОЙ';
+          toastEmojiStr = '🍞';
+        } else if (addonId === 'butter') {
+          toastId = 'butter_toast';
+          toastName = 'МАСЛЯНЫЙ';
+          toastEmojiStr = '🧈🍞';
+        } else if (addonId === 'jam') {
+          toastId = 'jam_toast';
+          toastName = 'ДЖЕМОВЫЙ';
+          toastEmojiStr = '🍓🍞';
+        } else if (addonId === 'glitter') {
+          toastId = 'glitter_toast';
+          toastName = 'БЛЕСТЯЩИЙ';
+          toastEmojiStr = '✨🍞';
+        } else if (addonId === 'salt') {
+          toastId = 'salt_toast';
+          toastName = 'СОЛЁНЫЙ';
+          toastEmojiStr = '🧂🍞';
+        }
+        
+        // Редкость (просто для коллекции)
+        if (addonId === 'glitter') rarity = 'rare';
+        else if (addonId === 'jam') rarity = 'uncommon';
+        else rarity = 'common';
+      }
+      
+      return { id: toastId, name: toastName, emoji: toastEmojiStr, rarity, isBurned };
+    }
+
+    // Добавление в коллекцию
+    function addToCollection(toastData) {
+      const { id, name, emoji, rarity, isBurned } = toastData;
+      
+      if (isBurned) {
+        burnedToastCount++;
+        updateBurnedUI();
+        // сгоревшие тоже в коллекции (отдельная карточка)
+      }
+      
+      if (collection.has(id)) {
+        const entry = collection.get(id);
+        entry.count++;
+      } else {
+        collection.set(id, {
+          name, emoji, rarity, count: 1
+        });
+      }
+      
+      renderCollectionGrid();
+    }
+
+    // Процесс готовки
+    function startCooking() {
+      if (isCooking) return;
+      
+      const addon = addons[currentAddonIndex];
+      if (!hasAddonInInventory(addon.id)) {
+        alert(`Нет добавки "${addon.name}"! Собери или обменяй угольки.`);
+        return;
+      }
+      
+      // Расходуем добавку (если не пусто)
+      if (addon.id !== 'none') {
+        consumeAddon(addon.id);
+      }
+      
+      isCooking = true;
+      toastActionBtn.disabled = true;
+      prevAddonBtn.disabled = true;
+      nextAddonBtn.disabled = true;
+      
+      countdown = 3;
+      timerDisplay.textContent = `⌛ ${countdown} сек...`;
+      toastEmoji.textContent = '🍞';
+      
+      // анимация тряски
+      const slot = document.getElementById('toastSlot');
+      slot.classList.add('shake-animation');
+      
+      timerInterval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          timerDisplay.textContent = `⌛ ${countdown} сек...`;
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          // ЗАВЕРШЕНИЕ
+          slot.classList.remove('shake-animation');
+          
+          const result = generateToastResult();
+          
+          // Показываем тост
+          toastEmoji.textContent = result.emoji;
+          timerDisplay.textContent = '✅ ГОТОВ!';
+          
+          // Добавляем в коллекцию
+          addToCollection(result);
+          
+          // Анимация вылета
+          toastEmoji.classList.add('toast-fly');
+          setTimeout(() => {
+            toastEmoji.classList.remove('toast-fly');
+            toastEmoji.textContent = '🍞'; // сброс
+          }, 500);
+          
+          // Разблокировка
+          isCooking = false;
+          toastActionBtn.disabled = false;
+          prevAddonBtn.disabled = false;
+          nextAddonBtn.disabled = false;
+          
+          // Если добавка кончилась, переключить на доступную
+          if (!hasAddonInInventory(addons[currentAddonIndex].id)) {
+            // перескочить на следующую доступную
+            for (let i=0; i<addons.length; i++) {
+              const nextIdx = (currentAddonIndex + i) % addons.length;
+              if (hasAddonInInventory(addons[nextIdx].id)) {
+                currentAddonIndex = nextIdx;
+                break;
+              }
             }
-
-            // Функция муринизации текста по строгим правилам
-            function murinizeText(inputText) {
-                if (!inputText.trim()) return '';
-
-                // 1. Разбиваем на слова и знаки препинания (очень упрощённо, сохраняем пробелы)
-                const tokens = inputText.split(/(\s+|[.,!?;:()"])/g); // разделители: пробелы и пунктуация
-                
-                const resultTokens = tokens.map(token => {
-                    // если это не слово (пробел или знак) — вернуть как есть
-                    if (!token.match(/[а-яА-ЯёЁ]+/)) {
-                        return token;
-                    }
-
-                    // Проверка на спец-замены из словаря (полные формы)
-                    let lowerToken = token.toLowerCase();
-                    if (SPECIAL_MAP.hasOwnProperty(token)) {
-                        return SPECIAL_MAP[token];
-                    }
-                    if (SPECIAL_MAP.hasOwnProperty(lowerToken)) {
-                        // сохраним регистр первой буквы если нужно (упрощённо)
-                        let replacement = SPECIAL_MAP[lowerToken];
-                        if (token[0] === token[0].toUpperCase() && token.length > 1) {
-                            replacement = replacement[0].toUpperCase() + replacement.slice(1);
-                        } else if (token.length === 1 && token === 'Я') {
-                            replacement = 'Ч';
-                        }
-                        return replacement;
-                    }
-
-                    // Проверка на слова, которые пишутся слитно со знаком (кот, — уже учли)
-                    // Теперь проверяем, нужно ли добавлять "ость"
-                    // Извлекаем "чистое" слово (без знаков препинания на конце)
-                    const cleanWordMatch = token.match(/^([а-яА-ЯёЁ]+)([.,!?;:()"]*)$/);
-                    if (!cleanWordMatch) return token;
-
-                    let wordBase = cleanWordMatch[1];
-                    let punctuation = cleanWordMatch[2] || '';
-
-                    // Применяем к основе решение о добавлении "ость"
-                    let transformedBase = wordBase;
-                    if (endsWithNounLike(wordBase) || wordBase.endsWith('ость') || wordBase.endsWith('ский') || wordBase.endsWith('ний') || wordBase.endsWith('ной')) {
-                        // НО: если слово уже оканчивается на "ость" — не дублируем
-                        if (!wordBase.toLowerCase().endsWith('ость')) {
-                            // избегаем добавлять ость к словам где уже есть что-то похожее на окончание 'ост'
-                            transformedBase = wordBase + 'ость';
-                        }
-                    } else {
-                        // редкие случаи: добавляем ость к некоторым коротким словам, которые явно существительные (кот, стол)
-                        const hardcodedNouns = ['кот', 'стол', 'пёс', 'дом', 'лес', 'сад', 'рот', 'лоб', 'пол', 'мир', 'год', 'час'];
-                        if (hardcodedNouns.includes(wordBase.toLowerCase())) {
-                            if (!wordBase.toLowerCase().endsWith('ость')) {
-                                transformedBase = wordBase + 'ость';
-                            }
-                        }
-                    }
-
-                    // дополнительная проверка на прилагательные (простейшая)
-                    if (wordBase.endsWith('ый') || wordBase.endsWith('ий') || wordBase.endsWith('ой') || wordBase.endsWith('ая') || wordBase.endsWith('ое')) {
-                        if (!wordBase.toLowerCase().endsWith('ость')) {
-                            transformedBase = wordBase + 'ость';
-                        }
-                    }
-
-                    // Наречия на о/е: быстро, весело
-                    if (wordBase.endsWith('о') && wordBase.length > 3 && !wordBase.endsWith('ость')) {
-                        // добавим ость, но не для глаголов в прошедшем времени (читал, делал)
-                        if (!wordBase.endsWith('ал') && !wordBase.endsWith('ил') && !wordBase.endsWith('ел')) {
-                            transformedBase = wordBase + 'ость';
-                        }
-                    }
-
-                    // сохраняем регистр первой буквы (грубо)
-                    if (wordBase[0] === wordBase[0].toUpperCase() && transformedBase.length > wordBase.length) {
-                        transformedBase = transformedBase[0].toUpperCase() + transformedBase.slice(1);
-                    }
-
-                    return transformedBase + punctuation;
-                });
-
-                return resultTokens.join('');
-            }
-
-            // Рендер нового поста
-            function renderPost(text, author = 'Иваность', avatarInitial = 'Ч') {
-                const feed = document.getElementById('feed');
-                const postDiv = document.createElement('div');
-                postDiv.className = 'post';
-
-                const now = new Date();
-                const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}`;
-
-                postDiv.innerHTML = `
-                    <div class="post-header">
-                        <div class="post-avatar">${avatarInitial}</div>
-                        <div>
-                            <div class="post-author">${author} <small>ч</small></div>
-                            <div class="post-time">только что · Муринск</div>
-                        </div>
-                    </div>
-                    <div class="post-content">
-                        ${text.replace(/\n/g, '<br>')}
-                    </div>
-                    <div class="post-stats">
-                        <div class="stat-item">👍 0 нравитсяость</div>
-                        <div class="stat-item">💬 0 говорильность</div>
-                        <div class="stat-item">📨 0 разослатьность</div>
-                    </div>
-                    <div class="post-footer">
-                        <div class="footer-btn">👍 Нравитсяость</div>
-                        <div class="footer-btn">💬 Комментироватьность</div>
-                        <div class="footer-btn">📢 Разослатьность</div>
-                    </div>
-                `;
-                feed.prepend(postDiv);
-            }
-
-            // обработчик публикации
-            document.getElementById('publishBtn').addEventListener('click', function() {
-                const input = document.getElementById('postInput');
-                const rawText = input.value.trim();
-                if (rawText === '') return;
-
-                // Муринизируем текст
-                const murinized = murinizeText(rawText);
-                // Рендерим пост
-                renderPost(murinized, 'ч (текущий)', 'Ч');
-                // Очищаем поле
-                input.value = '';
-            });
-
-            // Для демо: добавим ещё один пост при загрузке с примером работы правил
-            window.addEventListener('load', function() {
-                // уже есть один статичный, добавим второй живой пример
-                const sample = "Я и мой сын сегодня видели большого кота и доброго преподавателя. Это было красиво и смешно.";
-                const sampleMur = murinizeText(sample);
-                // отложим, чтобы не перебивать верстку
-                setTimeout(() => {
-                    renderPost(sampleMur, 'Системость', 'С');
-                }, 200);
-            });
-
-        })();
-    </script>
-    <!-- Дополнительные стили для красоты муринского -->
-    <style>
-        .post-content {
-            font-family: 'Segoe UI', 'Arial', sans-serif;
+            updateAddonLabel();
+          }
         }
-        .footer-btn {
-            user-select: none;
-        }
-        .footer-btn:active {
-            opacity: 0.6;
-        }
-        #feed .post:first-child {
-            border-left: 4px solid gold;
-        }
-        textarea::placeholder {
-            color: #aaa;
-            font-style: italic;
-        }
-    </style>
+      }, 1000);
+      
+      cookingTimer = setTimeout(() => {}, 3000); // фиктивный
+    }
+
+    // Обмен угольков
+    function exchangeBurned() {
+      if (burnedToastCount < 5) {
+        alert('Нужно 5 угольков для обмена!');
+        return;
+      }
+      
+      burnedToastCount -= 5;
+      updateBurnedUI();
+      
+      // рандом 1 или 2 добавки
+      const amount = Math.random() < 0.9 ? 1 : 2;
+      const possible = ['butter','jam','salt','glitter'];
+      
+      for (let i=0; i<amount; i++) {
+        const randAddon = possible[Math.floor(Math.random() * possible.length)];
+        inventory[randAddon]++;
+      }
+      
+      updateInventoryUI();
+      
+      // уведомление
+      alert(`✨ Обмен успешен! Получено добавок: ${amount} шт.`);
+      
+      // если текущая была недоступна, может стать доступна
+      if (!hasAddonInInventory(addons[currentAddonIndex].id)) {
+        shiftAddon(1); // пробуем переключить
+      }
+    }
+
+    // Рендер коллекции
+    function renderCollectionGrid() {
+      if (!collectionGrid) return;
+      
+      if (collection.size === 0) {
+        collectionGrid.innerHTML = '<div class="empty-note">Пока нет тостов. Жарь!</div>';
+        return;
+      }
+      
+      let html = '';
+      const sorted = Array.from(collection.entries()).sort((a,b) => b[1].count - a[1].count);
+      
+      for (let [id, data] of sorted) {
+        html += `
+          <div class="collection-card">
+            <div class="card-emoji">${data.emoji}</div>
+            <div class="card-name">${data.name}</div>
+            <div class="card-count">✕${data.count}</div>
+          </div>
+        `;
+      }
+      collectionGrid.innerHTML = html;
+    }
+
+    // Инициализация UI
+    function initialGame() {
+      updateInventoryUI();
+      updateBurnedUI();
+      updateAddonLabel();
+      renderCollectionGrid();
+    }
+
+    // Обработчики
+    prevAddonBtn.addEventListener('click', () => shiftAddon(-1));
+    nextAddonBtn.addEventListener('click', () => shiftAddon(1));
+    
+    toastActionBtn.addEventListener('click', startCooking);
+    
+    exchangeBtn.addEventListener('click', exchangeBurned);
+    
+    openCollectionBtn.addEventListener('click', () => {
+      renderCollectionGrid();
+      modalOverlay.style.display = 'flex';
+    });
+    
+    closeModalBtn.addEventListener('click', () => {
+      modalOverlay.style.display = 'none';
+    });
+    
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) modalOverlay.style.display = 'none';
+    });
+
+    // СТАРТ
+    initialGame();
+    
+    // Добавим пару тостов для демо
+    collection.set('plain', { name:'ПРОСТОЙ', emoji:'🍞', rarity:'common', count:2 });
+    collection.set('burned', { name:'УГОЛЁК', emoji:'🔥🍞', rarity:'burned', count:3 });
+    burnedToastCount = 3; updateBurnedUI();
+    renderCollectionGrid();
+    
+  })();
+</script>
 </body>
 </html>
