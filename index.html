@@ -1,794 +1,649 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>🍞 ТОСТЕР: ХЛЕБНАЯ ЛОТЕРЕЯ 🍞</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Числовой Коллекционер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+        }
 
-    body {
-      background: linear-gradient(145deg, #2b1b0e 0%, #4a3620 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
-      padding: 12px;
-    }
+        body {
+            min-height: 100vh;
+            background: #12121a;
+            background-image: radial-gradient(circle at 20% 30%, #1a1a2e 0%, #0f0f17 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
 
-    .game-container {
-      max-width: 480px;
-      width: 100%;
-      background: #f5e6d3;
-      border-radius: 48px 48px 32px 32px;
-      box-shadow: 0 20px 30px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,240,0.6);
-      overflow: hidden;
-      padding: 20px 16px 24px;
-      border: 2px solid #c9a87c;
-    }
+        .game-container {
+            max-width: 720px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(22, 22, 34, 0.75);
+            backdrop-filter: blur(4px);
+            border-radius: 42px;
+            padding: 28px 24px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            transition: all 0.2s ease;
+        }
 
-    /* Header */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding: 0 4px;
-    }
+        /* ----- главное число ----- */
+        .main-number-area {
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+        }
 
-    .header h1 {
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      color: #4a2c1a;
-      text-shadow: 3px 3px 0 #e7cba5;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+        .main-number {
+            font-size: 5.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            line-height: 1.2;
+            transition: text-shadow 0.2s, color 0.2s;
+            display: inline-block;
+            padding: 0 12px;
+            cursor: default;
+            transform: scale(1);
+        }
 
-    .collection-badge {
-      background: #6b3f1f;
-      padding: 8px 16px;
-      border-radius: 40px;
-      color: #ffefd1;
-      font-weight: bold;
-      box-shadow: inset 0 -2px 0 #3e2a14, 0 4px 0 #3a281a;
-      cursor: pointer;
-      transition: 0.1s ease;
-      border: 1px solid #b38b60;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+        .main-number.pop {
+            animation: popEffect 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+        }
 
-    .collection-badge:active {
-      transform: translateY(3px);
-      box-shadow: inset 0 -1px 0 #3e2a14, 0 1px 0 #3a281a;
-    }
+        @keyframes popEffect {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
 
-    /* Тостер блок */
-    .toaster-section {
-      background: #d6b07a;
-      padding: 24px 16px 30px;
-      border-radius: 60px 60px 30px 30px;
-      box-shadow: inset 0 -8px 0 #7a5a3a, 0 10px 0 #3f2e1d, inset 0 4px 8px #ffeac2;
-      margin-bottom: 20px;
-      border: 2px solid #a5835a;
-      position: relative;
-    }
+        .rarity-tag {
+            display: inline-block;
+            margin-top: 2px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            padding: 4px 16px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #b0b0d0;
+        }
 
-    .toaster-display {
-      background: #1e1e1e;
-      border-radius: 30px 30px 20px 20px;
-      padding: 30px 20px 20px;
-      box-shadow: inset 0 0 0 4px #3d3d3d, inset 0 6px 6px rgba(0,0,0,0.6), 0 6px 0 #2b1f12;
-      border-bottom: 4px solid #6b4f33;
-      margin-bottom: 20px;
-    }
+        /* ----- кнопки ----- */
+        .action-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 10px;
+            justify-content: center;
+            margin: 18px 0 26px;
+        }
 
-    .slot-area {
-      background: #151515;
-      min-height: 130px;
-      border-radius: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: inset 0 4px 8px #00000066, 0 2px 0 #4d3822;
-      margin-bottom: 12px;
-      padding: 16px;
-      transition: 0.2s;
-    }
+        .btn {
+            background: rgba(40, 42, 62, 0.7);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 12px 22px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.0rem;
+            color: #e4e4f0;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            flex: 1 0 auto;
+            min-width: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .toast-preview {
-      font-size: 6rem;
-      filter: drop-shadow(0 8px 6px #00000050);
-      transition: transform 0.2s;
-    }
+        .btn:hover {
+            background: rgba(60, 63, 95, 0.8);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
 
-    .shake-animation {
-      animation: shake 0.15s infinite;
-    }
+        .btn:active {
+            transform: scale(0.97);
+        }
 
-    @keyframes shake {
-      0% { transform: translate(1px, 1px) rotate(0deg); }
-      25% { transform: translate(-2px, 0px) rotate(1deg); }
-      50% { transform: translate(2px, -1px) rotate(-1deg); }
-      75% { transform: translate(-1px, 2px) rotate(1deg); }
-      100% { transform: translate(0px, 0px) rotate(0deg); }
-    }
+        .btn-collect {
+            background: #2a2f5a;
+            border-color: #5b6bc0;
+            color: #cfd9ff;
+        }
 
-    .toast-fly {
-      animation: flyOut 0.5s ease-out;
-    }
+        .btn-collect:hover {
+            background: #3d447a;
+            border-color: #7a8cff;
+        }
 
-    @keyframes flyOut {
-      0% { transform: translateY(0) scale(1); opacity: 1; }
-      50% { transform: translateY(-30px) scale(1.3); opacity: 0.9; }
-      100% { transform: translateY(-80px) scale(0.2); opacity: 0; }
-    }
+        .btn-random {
+            background: #2d3a3f;
+            border-color: #4d7a8c;
+            color: #b8e2f0;
+        }
 
-    .timer-indicator {
-      color: #ffb56b;
-      font-weight: bold;
-      font-size: 1.2rem;
-      text-align: center;
-      letter-spacing: 4px;
-      background: #1e1a14;
-      width: fit-content;
-      margin: 6px auto 0;
-      padding: 4px 20px;
-      border-radius: 30px;
-      box-shadow: inset 0 1px 4px black;
-    }
+        .btn-random:hover {
+            background: #3d525a;
+            border-color: #6aaac2;
+        }
 
-    /* Кнопки тостера */
-    .toaster-controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      margin-top: 10px;
-    }
+        /* ----- коллекция + сортировка ----- */
+        .collection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 18px 0 12px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
 
-    .addon-selector {
-      background: #4a3723;
-      padding: 12px 12px;
-      border-radius: 40px;
-      box-shadow: inset 0 2px 5px #1e140e, 0 5px 0 #2d1f14;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid #ab8a62;
-    }
+        .collection-header h3 {
+            color: #b6b6d8;
+            font-weight: 400;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
 
-    .addon-btn {
-      background: #7c5f3f;
-      border: none;
-      font-size: 2.2rem;
-      width: 64px;
-      height: 64px;
-      border-radius: 30px;
-      box-shadow: inset 0 -4px 0 #4d3722, 0 5px 0 #3d2b1b, 0 2px 8px black;
-      color: #faeacb;
-      cursor: pointer;
-      transition: 0.05s linear;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #bc9a6b;
-    }
+        .sort-select {
+            background: #1d1d2e;
+            border: 1px solid #3a3a58;
+            color: #d0d0ec;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+        }
 
-    .addon-btn:active {
-      transform: translateY(4px);
-      box-shadow: inset 0 -2px 0 #4d3722, 0 1px 0 #3d2b1b;
-    }
+        .sort-select:focus {
+            border-color: #6a7ac0;
+        }
 
-    .addon-btn:disabled {
-      opacity: 0.5;
-      transform: none;
-      box-shadow: inset 0 -4px 0 #4d3722, 0 5px 0 #3d2b1b;
-      cursor: not-allowed;
-    }
+        .collection-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 8px;
+            padding: 12px 6px;
+            min-height: 60px;
+            max-height: 260px;
+            overflow-y: auto;
+            background: rgba(10, 10, 18, 0.3);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            align-content: flex-start;
+            justify-content: flex-start;
+        }
 
-    .addon-name {
-      color: #ffddb0;
-      font-weight: bold;
-      min-width: 70px;
-      text-align: center;
-      text-shadow: 2px 2px 0 #382715;
-    }
+        .collection-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .collection-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .collection-grid::-webkit-scrollbar-thumb {
+            background: #4a4a6a;
+            border-radius: 10px;
+        }
 
-    .toast-btn {
-      background: #e05a2c;
-      border: none;
-      font-size: 1.7rem;
-      font-weight: bold;
-      padding: 16px 24px;
-      border-radius: 50px;
-      box-shadow: inset 0 -6px 0 #913a1a, 0 8px 0 #6d2e16, 0 4px 8px black;
-      color: white;
-      text-shadow: 2px 2px 0 #712e12;
-      cursor: pointer;
-      transition: 0.05s;
-      border: 2px solid #ffb28b;
-      letter-spacing: 2px;
-      flex: 1;
-      margin-left: 12px;
-    }
+        .collectible-item {
+            background: rgba(30, 30, 48, 0.7);
+            backdrop-filter: blur(2px);
+            padding: 6px 15px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            color: #c8c8e6;
+        }
 
-    .toast-btn:active {
-      transform: translateY(5px);
-      box-shadow: inset 0 -3px 0 #913a1a, 0 3px 0 #6d2e16;
-    }
+        .collectible-item:hover {
+            transform: scale(1.05);
+            background: rgba(50, 50, 80, 0.8);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
 
-    .toast-btn:disabled {
-      opacity: 0.6;
-      transform: none;
-      box-shadow: inset 0 -6px 0 #913a1a, 0 8px 0 #6d2e16;
-      cursor: not-allowed;
-    }
+        /* ----- история (лог) ----- */
+        .history-area {
+            margin: 24px 0 6px;
+        }
 
-    /* ресурсы */
-    .resources-panel {
-      display: flex;
-      justify-content: space-between;
-      background: #b49167;
-      padding: 12px 16px;
-      border-radius: 40px;
-      box-shadow: inset 0 2px 5px #6a4f33, 0 5px 0 #5a3f28;
-      margin: 16px 0 12px;
-      color: #251b10;
-      font-weight: bold;
-    }
+        .history-area h4 {
+            color: #9898b8;
+            font-weight: 400;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+        }
 
-    .burned-resource {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #372713;
-      padding: 6px 18px;
-      border-radius: 30px;
-      color: #d4b185;
-      box-shadow: inset 0 1px 4px black;
-    }
+        .history-list {
+            max-height: 100px;
+            overflow-y: auto;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding-right: 4px;
+        }
 
-    .exchange-btn {
-      background: #3d7840;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 40px;
-      font-weight: bold;
-      color: #f7ffe0;
-      box-shadow: inset 0 -3px 0 #1d421f, 0 5px 0 #1d3317;
-      cursor: pointer;
-      transition: 0.05s;
-      border: 1px solid #90b77d;
-      font-size: 1rem;
-    }
+        .history-list::-webkit-scrollbar {
+            width: 3px;
+        }
+        .history-list::-webkit-scrollbar-thumb {
+            background: #4a4a6a;
+            border-radius: 10px;
+        }
 
-    .exchange-btn:active {
-      transform: translateY(3px);
-      box-shadow: inset 0 -2px 0 #1d421f, 0 2px 0 #1d3317;
-    }
+        .history-item {
+            font-size: 0.85rem;
+            padding: 4px 10px 4px 14px;
+            border-left: 4px solid #7777aa;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 0 16px 16px 0;
+            color: #c8c8e0;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .exchange-btn:disabled {
-      opacity: 0.5;
-      transform: none;
-      cursor: default;
-    }
+        .history-item span {
+            opacity: 0.9;
+        }
 
-    /* Коллекция модалка */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: #000000b0;
-      backdrop-filter: blur(3px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+        /* ---- редкости (цвет + свечение) ---- */
+        .rarity-common {
+            color: #b0b8c8;
+            text-shadow: 0 0 4px rgba(160, 180, 200, 0.2);
+        }
+        .rarity-rare {
+            color: #5fc3e8;
+            text-shadow: 0 0 12px rgba(60, 180, 240, 0.4);
+        }
+        .rarity-epic {
+            color: #c58aff;
+            text-shadow: 0 0 18px rgba(160, 80, 255, 0.5);
+        }
+        .rarity-legendary {
+            color: #ffb347;
+            text-shadow: 0 0 22px rgba(255, 180, 40, 0.7);
+        }
+        .rarity-mythic {
+            color: #ff5e7c;
+            text-shadow: 0 0 30px #ff3f6b, 0 0 60px #ff2a5a;
+            animation: mythicPulse 2.2s ease-in-out infinite;
+        }
 
-    .collection-modal {
-      background: #efe0cd;
-      max-width: 480px;
-      width: 90%;
-      max-height: 80vh;
-      border-radius: 48px;
-      padding: 22px 16px;
-      box-shadow: 0 20px 0 #644d37, 0 30px 30px black;
-      border: 3px solid #cbae8a;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+        @keyframes mythicPulse {
+            0% { text-shadow: 0 0 20px #ff3f6b, 0 0 40px #ff2a5a; }
+            50% { text-shadow: 0 0 40px #ff6b8a, 0 0 80px #ff4d77; }
+            100% { text-shadow: 0 0 20px #ff3f6b, 0 0 40px #ff2a5a; }
+        }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      padding: 0 8px;
-      margin-bottom: 16px;
-      font-weight: bold;
-      font-size: 1.5rem;
-      color: #3f2a18;
-    }
+        .history-item .rarity-common { border-left-color: #6a7a8a; }
+        .history-item .rarity-rare { border-left-color: #3f9fd0; }
+        .history-item .rarity-epic { border-left-color: #a56be0; }
+        .history-item .rarity-legendary { border-left-color: #e09f3a; }
+        .history-item .rarity-mythic { border-left-color: #e05070; }
 
-    .close-btn {
-      background: #b1552c;
-      border: none;
-      width: 44px;
-      height: 44px;
-      border-radius: 30px;
-      font-size: 1.8rem;
-      color: white;
-      box-shadow: inset 0 -3px 0 #6d3119, 0 4px 0 #492212;
-      cursor: pointer;
-    }
-
-    .collection-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      overflow-y: auto;
-      padding: 6px 4px;
-    }
-
-    .collection-card {
-      background: #fff2df;
-      border-radius: 20px;
-      padding: 10px 6px;
-      box-shadow: inset 0 1px 4px white, 0 5px 0 #846b4e, 0 2px 6px black;
-      text-align: center;
-      border: 1px solid #ba9e7a;
-    }
-
-    .card-emoji {
-      font-size: 3.2rem;
-      filter: drop-shadow(2px 4px 2px rgba(0,0,0,0.2));
-    }
-
-    .card-name {
-      font-weight: 600;
-      font-size: 0.75rem;
-      color: #412e1b;
-    }
-
-    .card-count {
-      background: #4a3622;
-      color: #ffdead;
-      border-radius: 20px;
-      padding: 2px 8px;
-      font-size: 0.9rem;
-      margin-top: 5px;
-    }
-
-    .empty-note {
-      color: #624e38;
-      text-align: center;
-      padding: 30px;
-      font-style: italic;
-    }
-  </style>
+        /* адаптив */
+        @media (max-width: 480px) {
+            .main-number { font-size: 3.8rem; }
+            .btn { min-width: 90px; padding: 10px 14px; font-size: 0.9rem; }
+            .game-container { padding: 20px 16px; }
+        }
+    </style>
 </head>
 <body>
 <div class="game-container">
-  <div class="header">
-    <h1>🍞 ТОСТЕР</h1>
-    <div class="collection-badge" id="openCollectionBtn">
-      <span>📒 КОЛЛЕКЦИЯ</span>
-    </div>
-  </div>
-
-  <!-- Тостер -->
-  <div class="toaster-section">
-    <div class="toaster-display">
-      <div class="slot-area" id="toastSlot">
-        <div class="toast-preview" id="toastEmoji">🍞</div>
-      </div>
-      <div class="timer-indicator" id="timerDisplay">⚡ ГОТОВ ⚡</div>
+    <div class="main-number-area">
+        <div class="main-number" id="mainNumberDisplay">1</div>
+        <div class="rarity-tag" id="rarityTag">Обычное</div>
     </div>
 
-    <div class="toaster-controls">
-      <div class="addon-selector">
-        <button class="addon-btn" id="prevAddonBtn" aria-label="предыдущая">◀</button>
-        <div class="addon-name" id="currentAddonLabel">ПУСТО</div>
-        <button class="addon-btn" id="nextAddonBtn" aria-label="следующая">▶</button>
-      </div>
-      <button class="toast-btn" id="toastActionBtn">ЖАРИТЬ</button>
+    <div class="action-grid">
+        <button class="btn btn-random" id="randomStepBtn">🎲 Случайный шаг</button>
+        <button class="btn btn-collect" id="collectBtn">📥 В коллекцию</button>
     </div>
-  </div>
 
-  <!-- Ресурсы и обмен -->
-  <div class="resources-panel">
-    <div class="burned-resource">
-      <span>🔥 Угольки:</span>
-      <span id="burnedCount">0</span>
+    <div class="collection-header">
+        <h3>📚 Коллекция</h3>
+        <select class="sort-select" id="sortSelect">
+            <option value="newest">Сначала новые</option>
+            <option value="oldest">Сначала старые</option>
+            <option value="max">По убыванию (Max)</option>
+            <option value="min">По возрастанию (Min)</option>
+            <option value="rarity">По редкости</option>
+        </select>
     </div>
-    <button class="exchange-btn" id="exchangeBtn">🔄 ОБМЕН 5 ➔ 1-2</button>
-  </div>
+    <div class="collection-grid" id="collectionContainer"></div>
 
-  <!-- Инвентарь добавок (счетчики) -->
-  <div style="display: flex; gap: 12px; justify-content: space-around; background: #e5cfb5; padding: 8px; border-radius: 30px; box-shadow: inset 0 1px 5px #ac8f70;">
-    <div>🧈 <span id="countButter">3</span></div>
-    <div>🍓 <span id="countJam">2</span></div>
-    <div>✨ <span id="countGlitter">1</span></div>
-    <div>🧂 <span id="countSalt">2</span></div>
-  </div>
-</div>
-
-<!-- Модалка коллекции -->
-<div class="modal-overlay" id="collectionModal">
-  <div class="collection-modal">
-    <div class="modal-header">
-      <span>📚 АЛЬБОМ ТОСТОВ</span>
-      <button class="close-btn" id="closeModalBtn">✕</button>
+    <div class="history-area">
+        <h4>📜 История ходов (макс. 20)</h4>
+        <ul class="history-list" id="historyList"></ul>
     </div>
-    <div class="collection-grid" id="collectionGrid">
-      <!-- Динамически заполняется -->
-    </div>
-  </div>
 </div>
 
 <script>
-  (function(){
-    "use strict";
+    (function() {
+        "use strict";
 
-    // ---------- СОСТОЯНИЕ ----------
-    // Добавки и их счётчики
-    const addons = [
-      { id: 'none', name: 'ПУСТО', emoji: '🚫', color: '#aaa' },
-      { id: 'butter', name: 'МАСЛО', emoji: '🧈', color: '#FFD966' },
-      { id: 'jam', name: 'ДЖЕМ', emoji: '🍓', color: '#C44' },
-      { id: 'glitter', name: 'БЛЁСТКИ', emoji: '✨', color: '#DDA0DD' },
-      { id: 'salt', name: 'СОЛЬ', emoji: '🧂', color: '#B0C4DE' }
-    ];
+        // ------ состояние ------
+        let currentNumber = 1;
+        let collection = [];          // массив чисел (порядок добавления)
+        let history = [];            // массив строк: "45 + 12 = 57"
+        let historyRarities = [];    // параллельный массив с редкостью для границы
 
-    let inventory = {
-      butter: 3,
-      jam: 2,
-      glitter: 1,
-      salt: 2
-    };
+        // ------ DOM ------
+        const mainNumberEl = document.getElementById('mainNumberDisplay');
+        const rarityTag = document.getElementById('rarityTag');
+        const collectionContainer = document.getElementById('collectionContainer');
+        const historyList = document.getElementById('historyList');
+        const sortSelect = document.getElementById('sortSelect');
 
-    // Текущая выбранная добавка (индекс)
-    let currentAddonIndex = 0; // 0 = ПУСТО
-
-    // Коллекция: id тоста -> { name, emoji, count, rarity }
-    const collection = new Map();
-    
-    // Сгоревшие тосты
-    let burnedToastCount = 0;
-
-    // Флаги готовки
-    let isCooking = false;
-    let cookingTimer = null;
-    let timerInterval = null;
-    let countdown = 0;
-
-    // Элементы
-    const toastEmoji = document.getElementById('toastEmoji');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const currentAddonLabel = document.getElementById('currentAddonLabel');
-    const prevAddonBtn = document.getElementById('prevAddonBtn');
-    const nextAddonBtn = document.getElementById('nextAddonBtn');
-    const toastActionBtn = document.getElementById('toastActionBtn');
-    const burnedCountSpan = document.getElementById('burnedCount');
-    const exchangeBtn = document.getElementById('exchangeBtn');
-    
-    const countButter = document.getElementById('countButter');
-    const countJam = document.getElementById('countJam');
-    const countGlitter = document.getElementById('countGlitter');
-    const countSalt = document.getElementById('countSalt');
-
-    const modalOverlay = document.getElementById('collectionModal');
-    const collectionGrid = document.getElementById('collectionGrid');
-    const openCollectionBtn = document.getElementById('openCollectionBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-
-    // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
-    function updateInventoryUI() {
-      countButter.textContent = inventory.butter;
-      countJam.textContent = inventory.jam;
-      countGlitter.textContent = inventory.glitter;
-      countSalt.textContent = inventory.salt;
-    }
-
-    function updateBurnedUI() {
-      burnedCountSpan.textContent = burnedToastCount;
-    }
-
-    function updateAddonLabel() {
-      const addon = addons[currentAddonIndex];
-      currentAddonLabel.textContent = addon.name;
-    }
-
-    // Проверка, есть ли добавка в инвентаре (кроме ПУСТО)
-    function hasAddonInInventory(addonId) {
-      if (addonId === 'none') return true; // пусто всегда доступно
-      return inventory[addonId] > 0;
-    }
-
-    // Расход добавки
-    function consumeAddon(addonId) {
-      if (addonId === 'none') return true;
-      if (inventory[addonId] > 0) {
-        inventory[addonId]--;
-        updateInventoryUI();
-        return true;
-      }
-      return false;
-    }
-
-    // Переключение добавки с проверкой доступности
-    function shiftAddon(direction) {
-      if (isCooking) return;
-      let newIndex = currentAddonIndex;
-      let attempts = 0;
-      do {
-        newIndex = (newIndex + direction + addons.length) % addons.length;
-        attempts++;
-        if (attempts > addons.length) break; // всё заблокировано (кроме пусто)
-      } while (!hasAddonInInventory(addons[newIndex].id));
-      
-      currentAddonIndex = newIndex;
-      updateAddonLabel();
-    }
-
-    // Генерация результата тоста
-    function generateToastResult() {
-      const addon = addons[currentAddonIndex];
-      const addonId = addon.id;
-      
-      // База — обычный хлеб
-      let toastId = 'plain';
-      let toastName = 'Обычный';
-      let toastEmojiStr = '🍞';
-      let rarity = 'common';
-      
-      // Шанс сгореть ~15% (но зависит от добавок)
-      let burnChance = 0.15;
-      if (addonId === 'butter') burnChance = 0.1; // масло чуть снижает
-      if (addonId === 'jam') burnChance = 0.2;
-      
-      const isBurned = Math.random() < burnChance;
-      
-      if (isBurned) {
-        toastId = 'burned';
-        toastName = 'УГОЛЁК';
-        toastEmojiStr = '🔥🍞';
-        rarity = 'burned';
-      } else {
-        // В зависимости от добавки
-        if (addonId === 'none') {
-          toastId = 'plain';
-          toastName = 'ПРОСТОЙ';
-          toastEmojiStr = '🍞';
-        } else if (addonId === 'butter') {
-          toastId = 'butter_toast';
-          toastName = 'МАСЛЯНЫЙ';
-          toastEmojiStr = '🧈🍞';
-        } else if (addonId === 'jam') {
-          toastId = 'jam_toast';
-          toastName = 'ДЖЕМОВЫЙ';
-          toastEmojiStr = '🍓🍞';
-        } else if (addonId === 'glitter') {
-          toastId = 'glitter_toast';
-          toastName = 'БЛЕСТЯЩИЙ';
-          toastEmojiStr = '✨🍞';
-        } else if (addonId === 'salt') {
-          toastId = 'salt_toast';
-          toastName = 'СОЛЁНЫЙ';
-          toastEmojiStr = '🧂🍞';
+        // ------ Вспомогательные функции ------
+        function clampMinOne(value) {
+            return Math.max(1, Math.floor(value));
         }
-        
-        // Редкость (просто для коллекции)
-        if (addonId === 'glitter') rarity = 'rare';
-        else if (addonId === 'jam') rarity = 'uncommon';
-        else rarity = 'common';
-      }
-      
-      return { id: toastId, name: toastName, emoji: toastEmojiStr, rarity, isBurned };
-    }
 
-    // Добавление в коллекцию
-    function addToCollection(toastData) {
-      const { id, name, emoji, rarity, isBurned } = toastData;
-      
-      if (isBurned) {
-        burnedToastCount++;
-        updateBurnedUI();
-        // сгоревшие тоже в коллекции (отдельная карточка)
-      }
-      
-      if (collection.has(id)) {
-        const entry = collection.get(id);
-        entry.count++;
-      } else {
-        collection.set(id, {
-          name, emoji, rarity, count: 1
-        });
-      }
-      
-      renderCollectionGrid();
-    }
+        // Редкость
+        function getRarityForNumber(num) {
+            if (num <= 1) return 'common';
+            // красивые числа
+            const isBeauty = (num % 11 === 0) || num === 777 || num === 666 || num === 111 || num === 222 || num === 333 || num === 444 || num === 555 || num === 888 || num === 999;
+            if (num >= 500 || (isBeauty && num >= 250)) return 'mythic';
+            if (num >= 200 || (isBeauty && num >= 100)) return 'legendary';
+            if (num >= 80 || (isBeauty && num >= 40)) return 'epic';
+            if (num >= 30 || (isBeauty && num >= 15)) return 'rare';
+            return 'common';
+        }
 
-    // Процесс готовки
-    function startCooking() {
-      if (isCooking) return;
-      
-      const addon = addons[currentAddonIndex];
-      if (!hasAddonInInventory(addon.id)) {
-        alert(`Нет добавки "${addon.name}"! Собери или обменяй угольки.`);
-        return;
-      }
-      
-      // Расходуем добавку (если не пусто)
-      if (addon.id !== 'none') {
-        consumeAddon(addon.id);
-      }
-      
-      isCooking = true;
-      toastActionBtn.disabled = true;
-      prevAddonBtn.disabled = true;
-      nextAddonBtn.disabled = true;
-      
-      countdown = 3;
-      timerDisplay.textContent = `⌛ ${countdown} сек...`;
-      toastEmoji.textContent = '🍞';
-      
-      // анимация тряски
-      const slot = document.getElementById('toastSlot');
-      slot.classList.add('shake-animation');
-      
-      timerInterval = setInterval(() => {
-        countdown--;
-        if (countdown > 0) {
-          timerDisplay.textContent = `⌛ ${countdown} сек...`;
-        } else {
-          clearInterval(timerInterval);
-          timerInterval = null;
-          // ЗАВЕРШЕНИЕ
-          slot.classList.remove('shake-animation');
-          
-          const result = generateToastResult();
-          
-          // Показываем тост
-          toastEmoji.textContent = result.emoji;
-          timerDisplay.textContent = '✅ ГОТОВ!';
-          
-          // Добавляем в коллекцию
-          addToCollection(result);
-          
-          // Анимация вылета
-          toastEmoji.classList.add('toast-fly');
-          setTimeout(() => {
-            toastEmoji.classList.remove('toast-fly');
-            toastEmoji.textContent = '🍞'; // сброс
-          }, 500);
-          
-          // Разблокировка
-          isCooking = false;
-          toastActionBtn.disabled = false;
-          prevAddonBtn.disabled = false;
-          nextAddonBtn.disabled = false;
-          
-          // Если добавка кончилась, переключить на доступную
-          if (!hasAddonInInventory(addons[currentAddonIndex].id)) {
-            // перескочить на следующую доступную
-            for (let i=0; i<addons.length; i++) {
-              const nextIdx = (currentAddonIndex + i) % addons.length;
-              if (hasAddonInInventory(addons[nextIdx].id)) {
-                currentAddonIndex = nextIdx;
-                break;
-              }
+        function getRarityDisplay(rarity) {
+            const map = { common: 'Обычное', rare: 'Редкое', epic: 'Эпическое', legendary: 'Легендарное', mythic: 'Мифическое' };
+            return map[rarity] || 'Обычное';
+        }
+
+        function getRarityClass(rarity) {
+            return 'rarity-' + rarity;
+        }
+
+        function applyRarityToElement(el, rarity) {
+            el.className = 'main-number ' + getRarityClass(rarity);
+            // дополнительно добавим pop анимацию
+        }
+
+        function getRarityForNum(num) {
+            return getRarityForNumber(num);
+        }
+
+        // обновить главное число + тег
+        function updateMainDisplay() {
+            const rarity = getRarityForNum(currentNumber);
+            mainNumberEl.textContent = currentNumber;
+            applyRarityToElement(mainNumberEl, rarity);
+            rarityTag.textContent = getRarityDisplay(rarity);
+            // анимация pop
+            mainNumberEl.classList.remove('pop');
+            // принудительный reflow
+            void mainNumberEl.offsetWidth;
+            mainNumberEl.classList.add('pop');
+        }
+
+        // ------ Логика случайного шага ------
+        function randomStep() {
+            // модификатор: масштабирование
+            let base = currentNumber;
+            let modifier;
+            if (base < 5) modifier = Math.floor(Math.random() * 4) + 1;       // 1-4
+            else if (base < 20) modifier = Math.floor(Math.random() * 6) + 3; // 3-8
+            else if (base < 100) modifier = Math.floor(Math.random() * 15) + 8; // 8-22
+            else if (base < 500) modifier = Math.floor(Math.random() * 40) + 20; // 20-60
+            else if (base < 2000) modifier = Math.floor(Math.random() * 90) + 50; // 50-140
+            else modifier = Math.floor(Math.random() * 180) + 80; // 80-260
+
+            // Выбираем операцию
+            const ops = ['+', '-', '*', '/'];
+            const op = ops[Math.floor(Math.random() * ops.length)];
+
+            let newVal = currentNumber;
+            let operationSymbol = op;
+            let displayMod = modifier;
+
+            // ограничения для * и /
+            if (op === '*') {
+                // не более чем x2.2 от текущего, и не больше 2000
+                let maxMul = Math.min(2.2, 2000 / Math.max(1, currentNumber));
+                let factor = 1 + (modifier / 100);
+                if (factor > maxMul) factor = maxMul;
+                if (factor < 1.05) factor = 1.05;
+                newVal = Math.floor(currentNumber * factor);
+                displayMod = factor.toFixed(2);
+                operationSymbol = '×';
+            } else if (op === '/') {
+                // деление: не уйти в 0, от 0.3 до 0.9
+                let minDiv = 0.3;
+                let maxDiv = 0.9;
+                let divFactor = 0.3 + (modifier / 200);
+                if (divFactor > maxDiv) divFactor = maxDiv;
+                if (divFactor < minDiv) divFactor = minDiv;
+                let candidate = Math.floor(currentNumber * divFactor);
+                if (candidate < 1) candidate = 1;
+                newVal = candidate;
+                displayMod = divFactor.toFixed(2);
+                operationSymbol = '÷';
+            } else if (op === '+') {
+                newVal = currentNumber + modifier;
+                displayMod = modifier;
+            } else if (op === '-') {
+                newVal = currentNumber - modifier;
+                if (newVal < 1) newVal = 1;
+                displayMod = modifier;
             }
-            updateAddonLabel();
-          }
+
+            // принудительно не менее 1
+            newVal = clampMinOne(newVal);
+
+            // запись в историю
+            const oldVal = currentNumber;
+            const newRarity = getRarityForNum(newVal);
+            let logStr = '';
+            if (op === '*') {
+                logStr = `${oldVal} ${operationSymbol} ${displayMod} = ${newVal}`;
+            } else if (op === '/') {
+                logStr = `${oldVal} ${operationSymbol} ${displayMod} = ${newVal}`;
+            } else {
+                logStr = `${oldVal} ${operationSymbol} ${displayMod} = ${newVal}`;
+            }
+
+            history.push(logStr);
+            historyRarities.push(newRarity);
+            if (history.length > 20) {
+                history.shift();
+                historyRarities.shift();
+            }
+
+            currentNumber = newVal;
+            updateMainDisplay();
+            renderHistory();
+            saveToStorage();
         }
-      }, 1000);
-      
-      cookingTimer = setTimeout(() => {}, 3000); // фиктивный
-    }
 
-    // Обмен угольков
-    function exchangeBurned() {
-      if (burnedToastCount < 5) {
-        alert('Нужно 5 угольков для обмена!');
-        return;
-      }
-      
-      burnedToastCount -= 5;
-      updateBurnedUI();
-      
-      // рандом 1 или 2 добавки
-      const amount = Math.random() < 0.9 ? 1 : 2;
-      const possible = ['butter','jam','salt','glitter'];
-      
-      for (let i=0; i<amount; i++) {
-        const randAddon = possible[Math.floor(Math.random() * possible.length)];
-        inventory[randAddon]++;
-      }
-      
-      updateInventoryUI();
-      
-      // уведомление
-      alert(`✨ Обмен успешен! Получено добавок: ${amount} шт.`);
-      
-      // если текущая была недоступна, может стать доступна
-      if (!hasAddonInInventory(addons[currentAddonIndex].id)) {
-        shiftAddon(1); // пробуем переключить
-      }
-    }
+        // ------ Коллекция ------
+        function addToCollection() {
+            collection.push(currentNumber);
+            renderCollection();
+            saveToStorage();
+        }
 
-    // Рендер коллекции
-    function renderCollectionGrid() {
-      if (!collectionGrid) return;
-      
-      if (collection.size === 0) {
-        collectionGrid.innerHTML = '<div class="empty-note">Пока нет тостов. Жарь!</div>';
-        return;
-      }
-      
-      let html = '';
-      const sorted = Array.from(collection.entries()).sort((a,b) => b[1].count - a[1].count);
-      
-      for (let [id, data] of sorted) {
-        html += `
-          <div class="collection-card">
-            <div class="card-emoji">${data.emoji}</div>
-            <div class="card-name">${data.name}</div>
-            <div class="card-count">✕${data.count}</div>
-          </div>
-        `;
-      }
-      collectionGrid.innerHTML = html;
-    }
+        function removeFromCollection(index) {
+            if (index >= 0 && index < collection.length) {
+                collection.splice(index, 1);
+                renderCollection();
+                saveToStorage();
+            }
+        }
 
-    // Инициализация UI
-    function initialGame() {
-      updateInventoryUI();
-      updateBurnedUI();
-      updateAddonLabel();
-      renderCollectionGrid();
-    }
+        function setCurrentFromCollection(value) {
+            if (typeof value === 'number' && value >= 1) {
+                currentNumber = value;
+                updateMainDisplay();
+                // история: клик по коллекции
+                history.push(`📌 Взято из коллекции: ${value}`);
+                historyRarities.push(getRarityForNum(value));
+                if (history.length > 20) {
+                    history.shift();
+                    historyRarities.shift();
+                }
+                renderHistory();
+                saveToStorage();
+            }
+        }
 
-    // Обработчики
-    prevAddonBtn.addEventListener('click', () => shiftAddon(-1));
-    nextAddonBtn.addEventListener('click', () => shiftAddon(1));
-    
-    toastActionBtn.addEventListener('click', startCooking);
-    
-    exchangeBtn.addEventListener('click', exchangeBurned);
-    
-    openCollectionBtn.addEventListener('click', () => {
-      renderCollectionGrid();
-      modalOverlay.style.display = 'flex';
-    });
-    
-    closeModalBtn.addEventListener('click', () => {
-      modalOverlay.style.display = 'none';
-    });
-    
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) modalOverlay.style.display = 'none';
-    });
+        // ------ Рендер коллекции с сортировкой ------
+        function renderCollection() {
+            const sortType = sortSelect.value;
+            let sorted = [...collection];
+            if (sortType === 'newest') {
+                sorted = sorted.slice().reverse();
+            } else if (sortType === 'oldest') {
+                // без изменений
+            } else if (sortType === 'max') {
+                sorted.sort((a, b) => b - a);
+            } else if (sortType === 'min') {
+                sorted.sort((a, b) => a - b);
+            } else if (sortType === 'rarity') {
+                sorted.sort((a, b) => {
+                    const ra = getRarityForNum(a);
+                    const rb = getRarityForNum(b);
+                    const order = { mythic: 5, legendary: 4, epic: 3, rare: 2, common: 1 };
+                    return (order[rb] || 0) - (order[ra] || 0);
+                });
+            }
 
-    // СТАРТ
-    initialGame();
-    
-    // Добавим пару тостов для демо
-    collection.set('plain', { name:'ПРОСТОЙ', emoji:'🍞', rarity:'common', count:2 });
-    collection.set('burned', { name:'УГОЛЁК', emoji:'🔥🍞', rarity:'burned', count:3 });
-    burnedToastCount = 3; updateBurnedUI();
-    renderCollectionGrid();
-    
-  })();
+            collectionContainer.innerHTML = '';
+            // для каждого элемента показываем его редкость и цвет
+            sorted.forEach((num) => {
+                const rarity = getRarityForNum(num);
+                const div = document.createElement('div');
+                div.className = `collectible-item ${getRarityClass(rarity)}`;
+                div.textContent = num;
+                // клик по числу
+                div.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    setCurrentFromCollection(num);
+                    // удаляем из коллекции?
+                    // по условию: клик по числу внутри коллекции возвращает его на главный экран.
+                    // можно удалить, но в ТЗ "возвращает его обратно на главный экран" – не сказано удалять.
+                    // поэтому не удаляем, просто устанавливаем.
+                });
+                // дополнительно можно удалять по двойному клику? нет, только одиночный клик для возврата.
+                collectionContainer.appendChild(div);
+            });
+        }
+
+        // ------ История ------
+        function renderHistory() {
+            historyList.innerHTML = '';
+            for (let i = 0; i < history.length; i++) {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                const rarity = historyRarities[i] || 'common';
+                li.classList.add(getRarityClass(rarity));
+                const span = document.createElement('span');
+                span.textContent = history[i];
+                li.appendChild(span);
+                historyList.appendChild(li);
+            }
+            // автоскролл вниз
+            if (historyList.scrollTop > historyList.scrollHeight - historyList.clientHeight - 20) {
+                historyList.scrollTop = historyList.scrollHeight;
+            }
+        }
+
+        // ------ LocalStorage ------
+        function saveToStorage() {
+            try {
+                const data = {
+                    current: currentNumber,
+                    collection: collection,
+                    history: history,
+                    historyRarities: historyRarities
+                };
+                localStorage.setItem('numberCollectorData', JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        function loadFromStorage() {
+            try {
+                const raw = localStorage.getItem('numberCollectorData');
+                if (!raw) return false;
+                const data = JSON.parse(raw);
+                if (typeof data.current === 'number' && data.current >= 1) {
+                    currentNumber = data.current;
+                }
+                if (Array.isArray(data.collection)) {
+                    collection = data.collection.filter(v => typeof v === 'number' && v >= 1);
+                }
+                if (Array.isArray(data.history)) {
+                    history = data.history.slice(0, 20);
+                }
+                if (Array.isArray(data.historyRarities)) {
+                    historyRarities = data.historyRarities.slice(0, 20);
+                }
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // ------ Инициализация ------
+        function init() {
+            const loaded = loadFromStorage();
+            if (!loaded) {
+                // стартовые значения
+                currentNumber = 1;
+                collection = [];
+                history = [];
+                historyRarities = [];
+            }
+            // синхронизация UI
+            updateMainDisplay();
+            renderCollection();
+            renderHistory();
+
+            // слушатели
+            document.getElementById('randomStepBtn').addEventListener('click', randomStep);
+            document.getElementById('collectBtn').addEventListener('click', addToCollection);
+
+            sortSelect.addEventListener('change', function() {
+                renderCollection();
+            });
+
+            // автосохранение при изменении
+            // уже вызываем save в нужных местах
+
+            // если коллекция пустая, можно добавить демо-числа? нет, оставляем пустым.
+        }
+
+        init();
+    })();
 </script>
 </body>
 </html>
