@@ -1,212 +1,404 @@
-Числовой Коллекционер
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Collector</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+    body{background:#0b0e14;color:#eaeef2;min-height:100vh;display:flex;justify-content:center;padding:16px}
+    #app{max-width:860px;width:100%;background:#141a24;border-radius:28px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+    .tabs{display:flex;gap:12px;margin-bottom:22px}
+    .tab-btn{flex:1;padding:12px 0;background:#1f2937;border:none;border-radius:60px;font-weight:700;font-size:18px;color:#9aa7b9;cursor:pointer;transition:.2s}
+    .tab-btn.active{background:#2d3b4f;color:#f0b34b;box-shadow:0 0 0 2px #f0b34b66}
+    .panel{display:none;animation:fade .25s}
+    .panel.active{display:block}
+    @keyframes fade{0%{opacity:0.3}100%{opacity:1}}
+    .main-display{background:#1e2838;border-radius:60px;padding:16px 24px;margin:8px 0 16px;display:flex;justify-content:space-between;align-items:center}
+    .num-big{font-size:42px;font-weight:800;letter-spacing:1px;transition:transform .15s cubic-bezier(0.2, 1.2, 0.5, 1);display:inline-block}
+    .num-big.pop{transform:scale(1.25)}
+    .btn-gold{background:#eab308;border:none;color:#0b0e14;font-weight:700;padding:12px 28px;border-radius:60px;font-size:18px;cursor:pointer;transition:.15s;box-shadow:0 4px 0 #8b6f0a}
+    .btn-gold:active{transform:translateY(3px);box-shadow:0 1px 0 #6b5508}
+    .btn-gold:disabled{opacity:0.4;transform:translateY(2px);box-shadow:0 2px 0 #6b5508;pointer-events:none}
+    .roulette-wrap{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}
+    .wheel{flex:1;min-width:180px;background:#0f1620;border-radius:40px;padding:12px 6px;position:relative;overflow:hidden}
+    .wheel-label{color:#9aa7b9;font-size:14px;font-weight:600;padding-left:8px;margin-bottom:2px}
+    .track{display:flex;gap:6px;padding:6px 0;overflow-x:auto;scrollbar-width:none;transition:transform 1.2s cubic-bezier(0.1,0.8,0.1,1)}
+    .track::-webkit-scrollbar{display:none}
+    .card{background:#1f2a3a;padding:14px 8px;min-width:56px;text-align:center;border-radius:20px;font-weight:700;font-size:20px;color:#d6dee9;flex-shrink:0;transition:border .2s,background .2s}
+    .card.win{border:3px solid #eab308;background:#2d3b4f}
+    .arrow-wrap{position:relative;height:24px;margin-top:4px}
+    .arrow{width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:18px solid #facc15;position:absolute;left:50%;transform:translateX(-50%);top:0;filter:drop-shadow(0 2px 4px #00000088)}
+    .history{background:#0f1620;border-radius:24px;padding:12px 10px;max-height:200px;overflow-y:auto;margin:16px 0;font-size:14px}
+    .history div{padding:6px 8px;border-left:4px solid #555;margin-bottom:4px;background:#19212e;border-radius:4px}
+    .history .err{color:#ff4d6d;border-left-color:#ff1744;background:#2a1720;font-weight:600}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+    .grid .cell{aspect-ratio:1/1;background:#1a2332;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;cursor:pointer;transition:.1s;box-shadow:0 2px 6px #00000044}
+    .grid .cell:active{transform:scale(0.94)}
+    .filter-bar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:8px 0 4px}
+    .filter-bar select{background:#1f2937;color:#eaeef2;border:1px solid #38475e;padding:8px 14px;border-radius:40px;font-size:15px}
+    .counter{font-size:18px;background:#1f2937;padding:4px 18px;border-radius:40px}
+    .glow-common{box-shadow:0 0 4px #6b7a8f;text-shadow:0 0 4px #6b7a8f}
+    .glow-rare{box-shadow:0 0 10px #3b82f6;text-shadow:0 0 8px #3b82f6;border-color:#3b82f6}
+    .glow-epic{box-shadow:0 0 16px #a855f7;text-shadow:0 0 12px #a855f7;border-color:#a855f7}
+    .glow-legendary{box-shadow:0 0 22px #f97316;text-shadow:0 0 16px #f97316;border-color:#f97316}
+    .glow-mystic{box-shadow:0 0 30px #ec4899;text-shadow:0 0 20px #ec4899;border-color:#ec4899;animation:pulse-glow 1.8s infinite}
+    @keyframes pulse-glow{0%{box-shadow:0 0 20px #ec4899}50%{box-shadow:0 0 44px #ec4899,0 0 80px #be185d}100%{box-shadow:0 0 20px #ec4899}}
+    .mt-2{margin-top:12px}
+    .flex-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+    @media(max-width:520px){.roulette-wrap{flex-direction:column}}
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="game">Игра</button>
+    <button class="tab-btn" data-tab="collection">Коллекция</button>
+  </div>
 
-:root {
---bg-color: #0f172a;
---panel-bg: #1e293b;
---text-color: #f8fafc;
---text-muted: #94a3b8;
---accent: #6366f1;
---border: #334155;
---rarity-1: #cbd5e1;
---rarity-2: #3b82f6;
---rarity-3: #a855f7;
---rarity-4: #eab308;
---rarity-5: #ef4444;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-body { background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-.game-container { width: 100%; max-width: 900px; background: var(--panel-bg); border-radius: 20px; border: 1px solid var(--border); padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
-@media (max-width: 768px) { .game-container { grid-template-columns: 1fr; } }
-.control-panel { display: flex; flex-direction: column; justify-content: space-between; gap: 20px; }
-.main-display { text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.2); border-radius: 15px; border: 1px solid var(--border); }
-.current-number { font-size: 4rem; font-weight: 800; margin-bottom: 10px; display: inline-block; transition: all 0.3s; }
-.rarity-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
-.buttons-group { display: flex; gap: 15px; }
-button { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; color: white; }
-.btn-action { background: var(--accent); box-shadow: 0 4px 14px rgba(99,102,241,0.4); }
-.btn-action:hover { background: #4f46e5; transform: translateY(-2px); }
-.btn-save { background: #10b981; box-shadow: 0 4px 14px rgba(16,185,129,0.4); }
-.btn-save:hover { background: #059669; transform: translateY(-2px); }
-.history-section { flex-grow: 1; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 15px; border: 1px solid var(--border); max-height: 180px; display: flex; flex-direction: column; }
-.history-title { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; }
-.history-list { list-style: none; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column-reverse; gap: 8px; }
-.history-item { font-size: 0.95rem; padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 6px; border-left: 3px solid var(--text-muted); }
-.collection-panel { display: flex; flex-direction: column; gap: 15px; height: 500px; }
-.collection-header { display: flex; justify-content: space-between; align-items: center; }
-.filter-select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; }
-.collection-grid { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 12px; align-content: start; }
-.collection-item { aspect-ratio: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.2s; }
-.collection-item:hover { transform: scale(1.08); z-index: 2; }
-.num-r1 { color: var(--rarity-1); }
-.num-r2 { color: var(--rarity-2); text-shadow: 0 0 10px rgba(59,130,246,0.5); }
-.num-r3 { color: var(--rarity-3); text-shadow: 0 0 15px rgba(168,85,247,0.6); }
-.num-r4 { color: var(--rarity-4); text-shadow: 0 0 20px rgba(234,179,8,0.7); }
-.num-r5 { color: var(--rarity-5); text-shadow: 0 0 25px rgba(239,68,68,0.9); animation: pulse 1.5s infinite alternate; }
-.bg-r1 { background: rgba(203,213,225,0.1); border-color: rgba(203,213,225,0.3); }
-.bg-r2 { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4); }
-.bg-r3 { background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); }
-.bg-r4 { background: rgba(234,179,8,0.15); border-color: rgba(234,179,8,0.4); }
-.bg-r5 { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); }
-@keyframes pulse { 0% { text-shadow: 0 0 15px rgba(239,68,68,0.6); } 100% { text-shadow: 0 0 30px rgba(239,68,68,1); transform: scale(1.02); } }
-.pop-animation { animation: pop 0.4s ease; }
-@keyframes pop { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+  <!-- Panel Игра -->
+  <div id="panel-game" class="panel active">
+    <div class="main-display">
+      <span style="color:#9aa7b9">Текущее</span>
+      <span id="currentDisplay" class="num-big">1</span>
+      <button class="btn-gold" id="collectBtn">В коллекцию</button>
+    </div>
 
+    <div class="roulette-wrap">
+      <div class="wheel" id="wheelA">
+        <div class="wheel-label">Операция</div>
+        <div class="track" id="trackA"></div>
+        <div class="arrow-wrap"><div class="arrow"></div></div>
+      </div>
+      <div class="wheel" id="wheelB">
+        <div class="wheel-label">Число</div>
+        <div class="track" id="trackB"></div>
+        <div class="arrow-wrap"><div class="arrow"></div></div>
+      </div>
+    </div>
 
+    <div class="flex-row">
+      <button class="btn-gold" id="spinBtn">Запустить рулетку</button>
+      <span style="color:#9aa7b9;font-size:14px" id="resultLabel">Ожидание</span>
+    </div>
 
+    <div class="history" id="historyLog"></div>
+  </div>
 
+  <!-- Panel Коллекция -->
+  <div id="panel-collection" class="panel">
+    <div class="filter-bar">
+      <select id="filterSelect">
+        <option value="new">Сначала новые</option>
+        <option value="old">Сначала старые</option>
+        <option value="desc">По убыванию (Max)</option>
+        <option value="asc">По возрастанию (Min)</option>
+        <option value="rarity">По редкости</option>
+      </select>
+      <span class="counter" id="collectionCounter">0</span>
+    </div>
+    <div class="grid" id="collectionGrid"></div>
+  </div>
+</div>
+<script>
+  (function(){
+    // STATE
+    let currentNumber = 1;
+    let collection = []; // {id,value,timestamp}
+    let historyLog = []; // макс 20
+    let spinning = false;
+    let wheelASpinning = false;
+    let wheelBSpinning = false;
+    let winOp = '+';
+    let winNum = 1;
 
+    // DOM refs
+    const currentDisplay = document.getElementById('currentDisplay');
+    const collectBtn = document.getElementById('collectBtn');
+    const spinBtn = document.getElementById('spinBtn');
+    const trackA = document.getElementById('trackA');
+    const trackB = document.getElementById('trackB');
+    const historyDiv = document.getElementById('historyLog');
+    const gridDiv = document.getElementById('collectionGrid');
+    const filterSelect = document.getElementById('filterSelect');
+    const counterSpan = document.getElementById('collectionCounter');
+    const resultLabel = document.getElementById('resultLabel');
 
-1
-Обычное
+    // helpers
+    function rarityOf(val){
+      if(val === 666 || val === 777 || (val % 11 === 0 && val>100)) return {name:'Мистический',cls:'mystic',color:'#ec4899'};
+      if(val > 500) return {name:'Легендарный',cls:'legendary',color:'#f97316'};
+      if(val > 150) return {name:'Эпический',cls:'epic',color:'#a855f7'};
+      if(val > 50) return {name:'Редкий',cls:'rare',color:'#3b82f6'};
+      return {name:'Обычный',cls:'common',color:'#6b7a8f'};
+    }
 
+    function getRarityClass(val){ return rarityOf(val).cls; }
+    function getRarityColor(val){ return rarityOf(val).color; }
 
-Случайный шаг
-В коллекцию
+    function saveState(){
+      localStorage.setItem('numCollectorState', JSON.stringify({
+        currentNumber, collection, historyLog
+      }));
+    }
 
+    function loadState(){
+      const raw = localStorage.getItem('numCollectorState');
+      if(!raw) return false;
+      try{
+        const data = JSON.parse(raw);
+        currentNumber = data.currentNumber ?? 1;
+        collection = data.collection || [];
+        historyLog = data.historyLog || [];
+        return true;
+      }catch(e){ return false; }
+    }
 
-История изменений
+    function renderCurrent(){
+      currentDisplay.textContent = currentNumber;
+      currentDisplay.classList.remove('pop');
+      requestAnimationFrame(()=>{ currentDisplay.classList.add('pop'); });
+      // также обновляем результат лейбл
+    }
 
-Игра началась! Стартовое число: 1
+    function renderHistory(){
+      historyDiv.innerHTML = '';
+      const entries = historyLog.slice(-20);
+      for(const e of entries){
+        const d = document.createElement('div');
+        d.textContent = e.text;
+        const color = e.value ? getRarityColor(e.value) : '#888';
+        d.style.borderLeftColor = color;
+        if(e.error){ d.classList.add('err'); }
+        historyDiv.appendChild(d);
+      }
+    }
 
+    function renderCollection(){
+      const filter = filterSelect.value;
+      let items = [...collection];
+      if(filter === 'new') items.sort((a,b)=>b.timestamp - a.timestamp);
+      else if(filter === 'old') items.sort((a,b)=>a.timestamp - b.timestamp);
+      else if(filter === 'desc') items.sort((a,b)=>b.value - a.value);
+      else if(filter === 'asc') items.sort((a,b)=>a.value - b.value);
+      else if(filter === 'rarity'){
+        const rank = {mystic:0,legendary:1,epic:2,rare:3,common:4};
+        items.sort((a,b)=> (rank[rarityOf(a.value).cls] || 5) - (rank[rarityOf(b.value).cls] || 5));
+      }
+      gridDiv.innerHTML = '';
+      for(const item of items){
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        const r = rarityOf(item.value);
+        cell.classList.add('glow-'+r.cls);
+        if(r.cls==='mystic') cell.style.animation = 'pulse-glow 1.8s infinite';
+        cell.textContent = item.value;
+        cell.dataset.id = item.id;
+        cell.addEventListener('click', ()=>{
+          currentNumber = item.value;
+          renderCurrent();
+          // переключить вкладку
+          switchTab('game');
+          saveState();
+        });
+        gridDiv.appendChild(cell);
+      }
+      counterSpan.textContent = collection.length;
+    }
 
+    function addHistory(text, value, error=false){
+      historyLog.push({text, value, error, timestamp:Date.now()});
+      if(historyLog.length > 20) historyLog.shift();
+      renderHistory();
+      saveState();
+    }
 
+    function collectNumber(){
+      if(collection.some(c=>c.value === currentNumber)){
+        addHistory(`❌ Ошибка: ${currentNumber} уже в коллекции`, currentNumber, true);
+        return;
+      }
+      const id = Date.now() + '_' + Math.random().toString(36).slice(2,6);
+      collection.push({id, value:currentNumber, timestamp:Date.now()});
+      addHistory(`➕ Добавлено ${currentNumber}`, currentNumber, false);
+      renderCollection();
+      saveState();
+    }
 
+    // Roulette wheels init
+    function buildWheelA(){
+      const symbols = ['+','-','*','/'];
+      trackA.innerHTML = '';
+      // 5 повторов для эффекта
+      for(let i=0;i<20;i++){
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.textContent = symbols[i % symbols.length];
+        trackA.appendChild(card);
+      }
+    }
 
-Коллекция (0)
+    function buildWheelB(){
+      const maxVal = Math.min(currentNumber * 2 + 5, 999);
+      const range = Math.min(currentNumber < 10 ? 5 : Math.floor(currentNumber * 1.5) + 3, 30);
+      const nums = [];
+      for(let i=1;i<=range;i++){
+        let v = Math.floor(Math.random() * maxVal) + 1;
+        if(v < 1) v=1;
+        nums.push(v);
+      }
+      // сделать более разнообразным
+      trackB.innerHTML = '';
+      for(let i=0;i<20;i++){
+        const card = document.createElement('div');
+        card.className = 'card';
+        const idx = i % nums.length;
+        card.textContent = nums[idx] || 1;
+        trackB.appendChild(card);
+      }
+    }
 
-Сначала новые
-Сначала старые
-По убыванию (Max)
-По возрастанию (Min)
-По редкости
+    function resetWheels(){
+      buildWheelA();
+      buildWheelB();
+      // убрать win классы
+      document.querySelectorAll('.card.win').forEach(c=>c.classList.remove('win'));
+    }
 
+    function spinRoulette(){
+      if(spinning) return;
+      spinning = true;
+      spinBtn.disabled = true;
+      resultLabel.textContent = 'Вращение...';
+      // подготовка: убрать win
+      document.querySelectorAll('.card.win').forEach(c=>c.classList.remove('win'));
+      // обновить wheelB под текущий currentNumber
+      buildWheelB();
 
+      // Запуск A
+      wheelASpinning = true;
+      const track = trackA;
+      const scrollDist = 800 + Math.random() * 600;
+      track.style.transition = 'transform 2.2s cubic-bezier(0.1, 0.8, 0.1, 1)';
+      track.style.transform = `translateX(-${scrollDist}px)`;
 
+      const onAEnd = ()=>{
+        track.removeEventListener('transitionend', onAEnd);
+        if(!wheelASpinning) return;
+        wheelASpinning = false;
+        // выбрать победный символ
+        const cards = trackA.querySelectorAll('.card');
+        const idx = Math.floor(Math.random() * cards.length);
+        const winCard = cards[idx];
+        winCard.classList.add('win');
+        winOp = winCard.textContent;
+        // Запуск B
+        wheelBSpinning = true;
+        const trackB2 = trackB;
+        const scrollDistB = 800 + Math.random() * 600;
+        trackB2.style.transition = 'transform 2.0s cubic-bezier(0.1, 0.8, 0.1, 1)';
+        trackB2.style.transform = `translateX(-${scrollDistB}px)`;
 
+        const onBEnd = ()=>{
+          trackB2.removeEventListener('transitionend', onBEnd);
+          if(!wheelBSpinning) return;
+          wheelBSpinning = false;
+          // выбрать число
+          const cardsB = trackB2.querySelectorAll('.card');
+          const idxB = Math.floor(Math.random() * cardsB.length);
+          const winCardB = cardsB[idxB];
+          winCardB.classList.add('win');
+          winNum = parseInt(winCardB.textContent,10) || 1;
+          // МАТЕМАТИКА
+          let result = currentNumber;
+          if(winOp === '+') result = currentNumber + winNum;
+          else if(winOp === '-') result = currentNumber - winNum;
+          else if(winOp === '*') {
+            const mult = Math.min(winNum, 3);
+            result = currentNumber * mult;
+          } else if(winOp === '/') {
+            const divisor = Math.max(winNum, 1);
+            result = Math.floor(currentNumber / divisor);
+          }
+          if(result < 1) result = 1;
+          if(result > 999) result = 999;
+          currentNumber = result;
+          renderCurrent();
+          const msg = `Выпало: ${winOp} и ${winNum} -> Итог: ${currentNumber}`;
+          addHistory(msg, currentNumber, false);
+          resultLabel.textContent = msg;
+          spinning = false;
+          spinBtn.disabled = false;
+          saveState();
+        };
+        trackB2.addEventListener('transitionend', onBEnd);
+      };
+      track.addEventListener('transitionend', onAEnd);
+    }
 
+    // Tab switching
+    function switchTab(tabId){
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.getElementById('panel-'+tabId).classList.add('active');
+      document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+      if(tabId === 'collection') renderCollection();
+    }
 
-let gameScore = { current: 1, list: [] };
-const DB_NUM = 'c_num_v3';
-const DB_COL = 'c_col_v3';
-const CONFIG = {
-1: { name: 'Обычное', class: 'num-r1', bg: 'bg-r1' },
-2: { name: 'Редкое', class: 'num-r2', bg: 'bg-r2' },
-3: { name: 'Эпическое', class: 'num-r3', bg: 'bg-r3' },
-4: { name: 'Легендарное', class: 'num-r4', bg: 'bg-r4' },
-5: { name: 'Мифическое', class: 'num-r5', bg: 'bg-r5' }
-};
-window.onload = function() {
-const sn = localStorage.getItem(DB_NUM);
-const sc = localStorage.getItem(DB_COL);
-if (sn !== null) gameScore.current = Number(sn);
-if (sc !== null) gameScore.list = JSON.parse(sc);
-updateDisplay();
-renderCollection();
-};
-function saveToStorage() {
-localStorage.setItem(DB_NUM, gameScore.current);
-localStorage.setItem(DB_COL, JSON.stringify(gameScore.list));
-}
-function getRarity(num) {
-if (num === 777 || num === 666 || num === 1000) return CONFIG[5];
-if (num > 500) return CONFIG[4];
-if (num > 150 || (num % 11 === 0 && num > 10)) return CONFIG[3];
-if (num > 50 || (num % 5 === 0 && num > 5)) return CONFIG[2];
-return CONFIG[1];
-}
-function updateDisplay() {
-const nEl = document.getElementById('currentNumber');
-const bEl = document.getElementById('rarityBadge');
-nEl.textContent = gameScore.current;
-const r = getRarity(gameScore.current);
-nEl.className = 'current-number ' + r.class;
-bEl.className = 'rarity-badge ' + r.class + ' ' + r.bg;
-bEl.textContent = r.name;
-}
-function addHistoryLog(text, rClass) {
-const hList = document.getElementById('historyList');
-const li = document.createElement('li');
-li.className = 'history-item';
-const cMap = { 'num-r1': '#cbd5e1', 'num-r2': '#3b82f6', 'num-r3': '#a855f7', 'num-r4': '#eab308', 'num-r5': '#ef4444' };
-li.style.borderLeftColor = cMap[rClass] || '#94a3b8';
-li.textContent = text;
-hList.appendChild(li);
-if (hList.children.length > 20) hList.removeChild(hList.firstChild);
-}
-function performOperation() {
-const ops = ['+', '-', '*', '/'];
-const op = ops[Math.floor(Math.random() * ops.length)];
-let mod = Math.floor(Math.random() * 5) + 1;
-if (gameScore.current >= 10 && gameScore.current < 100) mod = Math.floor(Math.random() * 20) + 2;
-if (gameScore.current >= 100) mod = Math.floor(Math.random() * 80) + 5;
-let prev = gameScore.current;
-let txt = '';
-if (op === '+') { gameScore.current += mod; txt = ${prev} + ${mod} = ${gameScore.current}; }
-else if (op === '-') {
-if (prev - mod < 1) { gameScore.current = 1; txt = ${prev} - ${mod} ➔ Сброс к 1; }
-else { gameScore.current -= mod; txt = ${prev} - ${mod} = ${gameScore.current}; }
-}
-else if (op === '*') {
-let m = Math.min(mod, 3);
-if (prev > 100) m = 2;
-gameScore.current = prev * m;
-txt = ${prev} × ${m} = ${gameScore.current};
-}
-else if (op === '/') {
-let d = Math.floor(Math.random() * 3) + 2;
-let res = Math.floor(prev / d);
-gameScore.current = res < 1 ? 1 : res;
-txt = ${prev} ÷ ${d} = ${gameScore.current};
-}
-const nEl = document.getElementById('currentNumber');
-nEl.classList.remove('pop-animation');
-void nEl.offsetWidth;
-nEl.classList.add('pop-animation');
-updateDisplay();
-addHistoryLog(txt, getRarity(gameScore.current).class);
-saveToStorage();
-}
-function saveToCollection() {
-const item = { id: Date.now() + Math.random(), value: gameScore.current, d: new Date().toLocaleTimeString() };
-gameScore.list.push(item);
-addHistoryLog(📥 Добавлено в архив: ${gameScore.current}, getRarity(gameScore.current).class);
-renderCollection();
-saveToStorage();
-}
-function renderCollection() {
-const grid = document.getElementById('collectionGrid');
-const f = document.getElementById('filterSelect').value;
-document.getElementById('collectionCount').textContent = gameScore.list.length;
-grid.innerHTML = '';
-let sList = [...gameScore.list];
-if (f === 'newest') sList.reverse();
-else if (f === 'highest') sList.sort((a, b) => b.value - a.value);
-else if (f === 'lowest') sList.sort((a, b) => a.value - b.value);
-else if (f === 'rarity') {
-const getW = (num) => {
-if (num === 777 || num === 666 || num === 1000) return 5;
-if (num > 500) return 4;
-if (num > 150 || (num % 11 === 0 && num > 10)) return 3;
-if (num > 50 || (num % 5 === 0 && num > 5)) return 2;
-return 1;
-};
-sList.sort((a, b) => getW(b.value) - getW(a.value));
-}
-sList.forEach(item => {
-const r = getRarity(item.value);
-const cell = document.createElement('div');
-cell.className = collection-item ${r.class} ${r.bg};
-cell.textContent = item.value;
-cell.title = Время: ${item.d};
-cell.onclick = () => {
-gameScore.current = item.value;
-updateDisplay();
-addHistoryLog(🔮 Загружено число ${item.value}, r.class);
-saveToStorage();
-};
-grid.appendChild(cell);
-});
-}
+    // init
+    function init(){
+      const loaded = loadState();
+      if(!loaded){
+        collection = [];
+        historyLog = [];
+        currentNumber = 1;
+      }
+      // корректировка currentNumber если <1
+      if(currentNumber < 1) currentNumber = 1;
+      renderCurrent();
+      resetWheels();
+      renderHistory();
+      renderCollection();
+
+      // tab listeners
+      document.querySelectorAll('.tab-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const tab = btn.dataset.tab;
+          switchTab(tab);
+        });
+      });
+
+      collectBtn.addEventListener('click', collectNumber);
+      spinBtn.addEventListener('click', spinRoulette);
+      filterSelect.addEventListener('change', renderCollection);
+
+      // Если коллекция пуста, добавить пример? нет
+      // авто сохранение уже в действиях
+    }
+
+    // переопределим сохранение при изменении currentNumber (через клик по гриду)
+    // дополнительно сохраняем после любой мутации
+    // уже сохраняется в collect, spin, клик по гриду
+
+    // Патч: при клике по ячейке сетки уже есть saveState + render
+    // но также сохраняем при изменении currentNumber через spin
+    // и при collect
+
+    // инициализация
+    init();
+
+    // также если currentNumber меняется извне (например через клик по сетке) - мы уже сохраняем
+    // добавим сохранение при загрузке? уже
+
+    // переопределим renderCurrent чтобы сохранять состояние при изменении цифры? но мы сохраняем в действиях
+
+    // + небольшая защита: если currentNumber изменился через клик, сохраняем
+    window.addEventListener('load', ()=>{
+      // дополнительно убедимся что все ок
+      renderCurrent();
+    });
+
+  })();
+</script>
+</body>
+</html>
