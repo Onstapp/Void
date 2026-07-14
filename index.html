@@ -1,649 +1,212 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Числовой Коллекционер</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            background: #12121a;
-            background-image: radial-gradient(circle at 20% 30%, #1a1a2e 0%, #0f0f17 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-        }
-
-        .game-container {
-            max-width: 720px;
-            width: 100%;
-            margin: 0 auto;
-            background: rgba(22, 22, 34, 0.75);
-            backdrop-filter: blur(4px);
-            border-radius: 42px;
-            padding: 28px 24px 32px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
-            transition: all 0.2s ease;
-        }
-
-        /* ----- главное число ----- */
-        .main-number-area {
-            text-align: center;
-            margin-bottom: 24px;
-            position: relative;
-        }
-
-        .main-number {
-            font-size: 5.2rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            line-height: 1.2;
-            transition: text-shadow 0.2s, color 0.2s;
-            display: inline-block;
-            padding: 0 12px;
-            cursor: default;
-            transform: scale(1);
-        }
-
-        .main-number.pop {
-            animation: popEffect 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
-        }
-
-        @keyframes popEffect {
-            0% { transform: scale(1); }
-            40% { transform: scale(1.25); }
-            100% { transform: scale(1); }
-        }
-
-        .rarity-tag {
-            display: inline-block;
-            margin-top: 2px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            padding: 4px 16px;
-            border-radius: 40px;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: #b0b0d0;
-        }
-
-        /* ----- кнопки ----- */
-        .action-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px 10px;
-            justify-content: center;
-            margin: 18px 0 26px;
-        }
-
-        .btn {
-            background: rgba(40, 42, 62, 0.7);
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 12px 22px;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 1.0rem;
-            color: #e4e4f0;
-            letter-spacing: 0.3px;
-            cursor: pointer;
-            transition: 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-            flex: 1 0 auto;
-            min-width: 120px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn:hover {
-            background: rgba(60, 63, 95, 0.8);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: scale(1.02);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-        }
-
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        .btn-collect {
-            background: #2a2f5a;
-            border-color: #5b6bc0;
-            color: #cfd9ff;
-        }
-
-        .btn-collect:hover {
-            background: #3d447a;
-            border-color: #7a8cff;
-        }
-
-        .btn-random {
-            background: #2d3a3f;
-            border-color: #4d7a8c;
-            color: #b8e2f0;
-        }
-
-        .btn-random:hover {
-            background: #3d525a;
-            border-color: #6aaac2;
-        }
-
-        /* ----- коллекция + сортировка ----- */
-        .collection-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 18px 0 12px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .collection-header h3 {
-            color: #b6b6d8;
-            font-weight: 400;
-            font-size: 1.1rem;
-            letter-spacing: 0.5px;
-        }
-
-        .sort-select {
-            background: #1d1d2e;
-            border: 1px solid #3a3a58;
-            color: #d0d0ec;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .sort-select:focus {
-            border-color: #6a7ac0;
-        }
-
-        .collection-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px 8px;
-            padding: 12px 6px;
-            min-height: 60px;
-            max-height: 260px;
-            overflow-y: auto;
-            background: rgba(10, 10, 18, 0.3);
-            border-radius: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            align-content: flex-start;
-            justify-content: flex-start;
-        }
-
-        .collection-grid::-webkit-scrollbar {
-            width: 4px;
-        }
-        .collection-grid::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .collection-grid::-webkit-scrollbar-thumb {
-            background: #4a4a6a;
-            border-radius: 10px;
-        }
-
-        .collectible-item {
-            background: rgba(30, 30, 48, 0.7);
-            backdrop-filter: blur(2px);
-            padding: 6px 15px;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            cursor: pointer;
-            transition: 0.15s ease;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            color: #c8c8e6;
-        }
-
-        .collectible-item:hover {
-            transform: scale(1.05);
-            background: rgba(50, 50, 80, 0.8);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        /* ----- история (лог) ----- */
-        .history-area {
-            margin: 24px 0 6px;
-        }
-
-        .history-area h4 {
-            color: #9898b8;
-            font-weight: 400;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-            margin-bottom: 6px;
-        }
-
-        .history-list {
-            max-height: 100px;
-            overflow-y: auto;
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            padding-right: 4px;
-        }
-
-        .history-list::-webkit-scrollbar {
-            width: 3px;
-        }
-        .history-list::-webkit-scrollbar-thumb {
-            background: #4a4a6a;
-            border-radius: 10px;
-        }
-
-        .history-item {
-            font-size: 0.85rem;
-            padding: 4px 10px 4px 14px;
-            border-left: 4px solid #7777aa;
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 0 16px 16px 0;
-            color: #c8c8e0;
-            font-weight: 400;
-            letter-spacing: 0.2px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .history-item span {
-            opacity: 0.9;
-        }
-
-        /* ---- редкости (цвет + свечение) ---- */
-        .rarity-common {
-            color: #b0b8c8;
-            text-shadow: 0 0 4px rgba(160, 180, 200, 0.2);
-        }
-        .rarity-rare {
-            color: #5fc3e8;
-            text-shadow: 0 0 12px rgba(60, 180, 240, 0.4);
-        }
-        .rarity-epic {
-            color: #c58aff;
-            text-shadow: 0 0 18px rgba(160, 80, 255, 0.5);
-        }
-        .rarity-legendary {
-            color: #ffb347;
-            text-shadow: 0 0 22px rgba(255, 180, 40, 0.7);
-        }
-        .rarity-mythic {
-            color: #ff5e7c;
-            text-shadow: 0 0 30px #ff3f6b, 0 0 60px #ff2a5a;
-            animation: mythicPulse 2.2s ease-in-out infinite;
-        }
-
-        @keyframes mythicPulse {
-            0% { text-shadow: 0 0 20px #ff3f6b, 0 0 40px #ff2a5a; }
-            50% { text-shadow: 0 0 40px #ff6b8a, 0 0 80px #ff4d77; }
-            100% { text-shadow: 0 0 20px #ff3f6b, 0 0 40px #ff2a5a; }
-        }
-
-        .history-item .rarity-common { border-left-color: #6a7a8a; }
-        .history-item .rarity-rare { border-left-color: #3f9fd0; }
-        .history-item .rarity-epic { border-left-color: #a56be0; }
-        .history-item .rarity-legendary { border-left-color: #e09f3a; }
-        .history-item .rarity-mythic { border-left-color: #e05070; }
-
-        /* адаптив */
-        @media (max-width: 480px) {
-            .main-number { font-size: 3.8rem; }
-            .btn { min-width: 90px; padding: 10px 14px; font-size: 0.9rem; }
-            .game-container { padding: 20px 16px; }
-        }
-    </style>
-</head>
-<body>
-<div class="game-container">
-    <div class="main-number-area">
-        <div class="main-number" id="mainNumberDisplay">1</div>
-        <div class="rarity-tag" id="rarityTag">Обычное</div>
-    </div>
-
-    <div class="action-grid">
-        <button class="btn btn-random" id="randomStepBtn">🎲 Случайный шаг</button>
-        <button class="btn btn-collect" id="collectBtn">📥 В коллекцию</button>
-    </div>
-
-    <div class="collection-header">
-        <h3>📚 Коллекция</h3>
-        <select class="sort-select" id="sortSelect">
-            <option value="newest">Сначала новые</option>
-            <option value="oldest">Сначала старые</option>
-            <option value="max">По убыванию (Max)</option>
-            <option value="min">По возрастанию (Min)</option>
-            <option value="rarity">По редкости</option>
-        </select>
-    </div>
-    <div class="collection-grid" id="collectionContainer"></div>
-
-    <div class="history-area">
-        <h4>📜 История ходов (макс. 20)</h4>
-        <ul class="history-list" id="historyList"></ul>
-    </div>
-</div>
-
-<script>
-    (function() {
-        "use strict";
-
-        // ------ состояние ------
-        let currentNumber = 1;
-        let collection = [];          // массив чисел (порядок добавления)
-        let history = [];            // массив строк: "45 + 12 = 57"
-        let historyRarities = [];    // параллельный массив с редкостью для границы
-
-        // ------ DOM ------
-        const mainNumberEl = document.getElementById('mainNumberDisplay');
-        const rarityTag = document.getElementById('rarityTag');
-        const collectionContainer = document.getElementById('collectionContainer');
-        const historyList = document.getElementById('historyList');
-        const sortSelect = document.getElementById('sortSelect');
-
-        // ------ Вспомогательные функции ------
-        function clampMinOne(value) {
-            return Math.max(1, Math.floor(value));
-        }
-
-        // Редкость
-        function getRarityForNumber(num) {
-            if (num <= 1) return 'common';
-            // красивые числа
-            const isBeauty = (num % 11 === 0) || num === 777 || num === 666 || num === 111 || num === 222 || num === 333 || num === 444 || num === 555 || num === 888 || num === 999;
-            if (num >= 500 || (isBeauty && num >= 250)) return 'mythic';
-            if (num >= 200 || (isBeauty && num >= 100)) return 'legendary';
-            if (num >= 80 || (isBeauty && num >= 40)) return 'epic';
-            if (num >= 30 || (isBeauty && num >= 15)) return 'rare';
-            return 'common';
-        }
-
-        function getRarityDisplay(rarity) {
-            const map = { common: 'Обычное', rare: 'Редкое', epic: 'Эпическое', legendary: 'Легендарное', mythic: 'Мифическое' };
-            return map[rarity] || 'Обычное';
-        }
-
-        function getRarityClass(rarity) {
-            return 'rarity-' + rarity;
-        }
-
-        function applyRarityToElement(el, rarity) {
-            el.className = 'main-number ' + getRarityClass(rarity);
-            // дополнительно добавим pop анимацию
-        }
-
-        function getRarityForNum(num) {
-            return getRarityForNumber(num);
-        }
-
-        // обновить главное число + тег
-        function updateMainDisplay() {
-            const rarity = getRarityForNum(currentNumber);
-            mainNumberEl.textContent = currentNumber;
-            applyRarityToElement(mainNumberEl, rarity);
-            rarityTag.textContent = getRarityDisplay(rarity);
-            // анимация pop
-            mainNumberEl.classList.remove('pop');
-            // принудительный reflow
-            void mainNumberEl.offsetWidth;
-            mainNumberEl.classList.add('pop');
-        }
-
-        // ------ Логика случайного шага ------
-        function randomStep() {
-            // модификатор: масштабирование
-            let base = currentNumber;
-            let modifier;
-            if (base < 5) modifier = Math.floor(Math.random() * 4) + 1;       // 1-4
-            else if (base < 20) modifier = Math.floor(Math.random() * 6) + 3; // 3-8
-            else if (base < 100) modifier = Math.floor(Math.random() * 15) + 8; // 8-22
-            else if (base < 500) modifier = Math.floor(Math.random() * 40) + 20; // 20-60
-            else if (base < 2000) modifier = Math.floor(Math.random() * 90) + 50; // 50-140
-            else modifier = Math.floor(Math.random() * 180) + 80; // 80-260
-
-            // Выбираем операцию
-            const ops = ['+', '-', '*', '/'];
-            const op = ops[Math.floor(Math.random() * ops.length)];
-
-            let newVal = currentNumber;
-            let operationSymbol = op;
-            let displayMod = modifier;
-
-            // ограничения для * и /
-            if (op === '*') {
-                // не более чем x2.2 от текущего, и не больше 2000
-                let maxMul = Math.min(2.2, 2000 / Math.max(1, currentNumber));
-                let factor = 1 + (modifier / 100);
-                if (factor > maxMul) factor = maxMul;
-                if (factor < 1.05) factor = 1.05;
-                newVal = Math.floor(currentNumber * factor);
-                displayMod = factor.toFixed(2);
-                operationSymbol = '×';
-            } else if (op === '/') {
-                // деление: не уйти в 0, от 0.3 до 0.9
-                let minDiv = 0.3;
-                let maxDiv = 0.9;
-                let divFactor = 0.3 + (modifier / 200);
-                if (divFactor > maxDiv) divFactor = maxDiv;
-                if (divFactor < minDiv) divFactor = minDiv;
-                let candidate = Math.floor(currentNumber * divFactor);
-                if (candidate < 1) candidate = 1;
-                newVal = candidate;
-                displayMod = divFactor.toFixed(2);
-                operationSymbol = '÷';
-            } else if (op === '+') {
-                newVal = currentNumber + modifier;
-                displayMod = modifier;
-            } else if (op === '-') {
-                newVal = currentNumber - modifier;
-                if (newVal < 1) newVal = 1;
-                displayMod = modifier;
-            }
-
-            // принудительно не менее 1
-            newVal = clampMinOne(newVal);
-
-            // запись в историю
-            const oldVal = currentNumber;
-            const newRarity = getRarityForNum(newVal);
-            let logStr = '';
-            if (op === '*') {
-                logStr = `${oldVal} ${operationSymbol} ${displayMod} = ${newVal}`;
-            } else if (op === '/') {
-                logStr = `${oldVal} ${operationSymbol} ${displayMod} = ${newVal}`;
-            } else {
-                logStr = `${oldVal} ${operationSymbol} ${displayMod} = ${newVal}`;
-            }
-
-            history.push(logStr);
-            historyRarities.push(newRarity);
-            if (history.length > 20) {
-                history.shift();
-                historyRarities.shift();
-            }
-
-            currentNumber = newVal;
-            updateMainDisplay();
-            renderHistory();
-            saveToStorage();
-        }
-
-        // ------ Коллекция ------
-        function addToCollection() {
-            collection.push(currentNumber);
-            renderCollection();
-            saveToStorage();
-        }
-
-        function removeFromCollection(index) {
-            if (index >= 0 && index < collection.length) {
-                collection.splice(index, 1);
-                renderCollection();
-                saveToStorage();
-            }
-        }
-
-        function setCurrentFromCollection(value) {
-            if (typeof value === 'number' && value >= 1) {
-                currentNumber = value;
-                updateMainDisplay();
-                // история: клик по коллекции
-                history.push(`📌 Взято из коллекции: ${value}`);
-                historyRarities.push(getRarityForNum(value));
-                if (history.length > 20) {
-                    history.shift();
-                    historyRarities.shift();
-                }
-                renderHistory();
-                saveToStorage();
-            }
-        }
-
-        // ------ Рендер коллекции с сортировкой ------
-        function renderCollection() {
-            const sortType = sortSelect.value;
-            let sorted = [...collection];
-            if (sortType === 'newest') {
-                sorted = sorted.slice().reverse();
-            } else if (sortType === 'oldest') {
-                // без изменений
-            } else if (sortType === 'max') {
-                sorted.sort((a, b) => b - a);
-            } else if (sortType === 'min') {
-                sorted.sort((a, b) => a - b);
-            } else if (sortType === 'rarity') {
-                sorted.sort((a, b) => {
-                    const ra = getRarityForNum(a);
-                    const rb = getRarityForNum(b);
-                    const order = { mythic: 5, legendary: 4, epic: 3, rare: 2, common: 1 };
-                    return (order[rb] || 0) - (order[ra] || 0);
-                });
-            }
-
-            collectionContainer.innerHTML = '';
-            // для каждого элемента показываем его редкость и цвет
-            sorted.forEach((num) => {
-                const rarity = getRarityForNum(num);
-                const div = document.createElement('div');
-                div.className = `collectible-item ${getRarityClass(rarity)}`;
-                div.textContent = num;
-                // клик по числу
-                div.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    setCurrentFromCollection(num);
-                    // удаляем из коллекции?
-                    // по условию: клик по числу внутри коллекции возвращает его на главный экран.
-                    // можно удалить, но в ТЗ "возвращает его обратно на главный экран" – не сказано удалять.
-                    // поэтому не удаляем, просто устанавливаем.
-                });
-                // дополнительно можно удалять по двойному клику? нет, только одиночный клик для возврата.
-                collectionContainer.appendChild(div);
-            });
-        }
-
-        // ------ История ------
-        function renderHistory() {
-            historyList.innerHTML = '';
-            for (let i = 0; i < history.length; i++) {
-                const li = document.createElement('li');
-                li.className = 'history-item';
-                const rarity = historyRarities[i] || 'common';
-                li.classList.add(getRarityClass(rarity));
-                const span = document.createElement('span');
-                span.textContent = history[i];
-                li.appendChild(span);
-                historyList.appendChild(li);
-            }
-            // автоскролл вниз
-            if (historyList.scrollTop > historyList.scrollHeight - historyList.clientHeight - 20) {
-                historyList.scrollTop = historyList.scrollHeight;
-            }
-        }
-
-        // ------ LocalStorage ------
-        function saveToStorage() {
-            try {
-                const data = {
-                    current: currentNumber,
-                    collection: collection,
-                    history: history,
-                    historyRarities: historyRarities
-                };
-                localStorage.setItem('numberCollectorData', JSON.stringify(data));
-            } catch (e) {}
-        }
-
-        function loadFromStorage() {
-            try {
-                const raw = localStorage.getItem('numberCollectorData');
-                if (!raw) return false;
-                const data = JSON.parse(raw);
-                if (typeof data.current === 'number' && data.current >= 1) {
-                    currentNumber = data.current;
-                }
-                if (Array.isArray(data.collection)) {
-                    collection = data.collection.filter(v => typeof v === 'number' && v >= 1);
-                }
-                if (Array.isArray(data.history)) {
-                    history = data.history.slice(0, 20);
-                }
-                if (Array.isArray(data.historyRarities)) {
-                    historyRarities = data.historyRarities.slice(0, 20);
-                }
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-
-        // ------ Инициализация ------
-        function init() {
-            const loaded = loadFromStorage();
-            if (!loaded) {
-                // стартовые значения
-                currentNumber = 1;
-                collection = [];
-                history = [];
-                historyRarities = [];
-            }
-            // синхронизация UI
-            updateMainDisplay();
-            renderCollection();
-            renderHistory();
-
-            // слушатели
-            document.getElementById('randomStepBtn').addEventListener('click', randomStep);
-            document.getElementById('collectBtn').addEventListener('click', addToCollection);
-
-            sortSelect.addEventListener('change', function() {
-                renderCollection();
-            });
-
-            // автосохранение при изменении
-            // уже вызываем save в нужных местах
-
-            // если коллекция пустая, можно добавить демо-числа? нет, оставляем пустым.
-        }
-
-        init();
-    })();
-</script>
-</body>
-</html>
+Числовой Коллекционер
+
+:root {
+--bg-color: #0f172a;
+--panel-bg: #1e293b;
+--text-color: #f8fafc;
+--text-muted: #94a3b8;
+--accent: #6366f1;
+--border: #334155;
+--rarity-1: #cbd5e1;
+--rarity-2: #3b82f6;
+--rarity-3: #a855f7;
+--rarity-4: #eab308;
+--rarity-5: #ef4444;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+.game-container { width: 100%; max-width: 900px; background: var(--panel-bg); border-radius: 20px; border: 1px solid var(--border); padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
+@media (max-width: 768px) { .game-container { grid-template-columns: 1fr; } }
+.control-panel { display: flex; flex-direction: column; justify-content: space-between; gap: 20px; }
+.main-display { text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.2); border-radius: 15px; border: 1px solid var(--border); }
+.current-number { font-size: 4rem; font-weight: 800; margin-bottom: 10px; display: inline-block; transition: all 0.3s; }
+.rarity-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
+.buttons-group { display: flex; gap: 15px; }
+button { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; color: white; }
+.btn-action { background: var(--accent); box-shadow: 0 4px 14px rgba(99,102,241,0.4); }
+.btn-action:hover { background: #4f46e5; transform: translateY(-2px); }
+.btn-save { background: #10b981; box-shadow: 0 4px 14px rgba(16,185,129,0.4); }
+.btn-save:hover { background: #059669; transform: translateY(-2px); }
+.history-section { flex-grow: 1; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 15px; border: 1px solid var(--border); max-height: 180px; display: flex; flex-direction: column; }
+.history-title { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; }
+.history-list { list-style: none; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column-reverse; gap: 8px; }
+.history-item { font-size: 0.95rem; padding: 6px 10px; background: rgba(255,255,255,0.03); border-radius: 6px; border-left: 3px solid var(--text-muted); }
+.collection-panel { display: flex; flex-direction: column; gap: 15px; height: 500px; }
+.collection-header { display: flex; justify-content: space-between; align-items: center; }
+.filter-select { background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.collection-grid { flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 12px; align-content: start; }
+.collection-item { aspect-ratio: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.2s; }
+.collection-item:hover { transform: scale(1.08); z-index: 2; }
+.num-r1 { color: var(--rarity-1); }
+.num-r2 { color: var(--rarity-2); text-shadow: 0 0 10px rgba(59,130,246,0.5); }
+.num-r3 { color: var(--rarity-3); text-shadow: 0 0 15px rgba(168,85,247,0.6); }
+.num-r4 { color: var(--rarity-4); text-shadow: 0 0 20px rgba(234,179,8,0.7); }
+.num-r5 { color: var(--rarity-5); text-shadow: 0 0 25px rgba(239,68,68,0.9); animation: pulse 1.5s infinite alternate; }
+.bg-r1 { background: rgba(203,213,225,0.1); border-color: rgba(203,213,225,0.3); }
+.bg-r2 { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4); }
+.bg-r3 { background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.4); }
+.bg-r4 { background: rgba(234,179,8,0.15); border-color: rgba(234,179,8,0.4); }
+.bg-r5 { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); }
+@keyframes pulse { 0% { text-shadow: 0 0 15px rgba(239,68,68,0.6); } 100% { text-shadow: 0 0 30px rgba(239,68,68,1); transform: scale(1.02); } }
+.pop-animation { animation: pop 0.4s ease; }
+@keyframes pop { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+
+
+
+
+
+1
+Обычное
+
+
+Случайный шаг
+В коллекцию
+
+
+История изменений
+
+Игра началась! Стартовое число: 1
+
+
+
+
+
+Коллекция (0)
+
+Сначала новые
+Сначала старые
+По убыванию (Max)
+По возрастанию (Min)
+По редкости
+
+
+
+
+
+
+let gameScore = { current: 1, list: [] };
+const DB_NUM = 'c_num_v3';
+const DB_COL = 'c_col_v3';
+const CONFIG = {
+1: { name: 'Обычное', class: 'num-r1', bg: 'bg-r1' },
+2: { name: 'Редкое', class: 'num-r2', bg: 'bg-r2' },
+3: { name: 'Эпическое', class: 'num-r3', bg: 'bg-r3' },
+4: { name: 'Легендарное', class: 'num-r4', bg: 'bg-r4' },
+5: { name: 'Мифическое', class: 'num-r5', bg: 'bg-r5' }
+};
+window.onload = function() {
+const sn = localStorage.getItem(DB_NUM);
+const sc = localStorage.getItem(DB_COL);
+if (sn !== null) gameScore.current = Number(sn);
+if (sc !== null) gameScore.list = JSON.parse(sc);
+updateDisplay();
+renderCollection();
+};
+function saveToStorage() {
+localStorage.setItem(DB_NUM, gameScore.current);
+localStorage.setItem(DB_COL, JSON.stringify(gameScore.list));
+}
+function getRarity(num) {
+if (num === 777 || num === 666 || num === 1000) return CONFIG[5];
+if (num > 500) return CONFIG[4];
+if (num > 150 || (num % 11 === 0 && num > 10)) return CONFIG[3];
+if (num > 50 || (num % 5 === 0 && num > 5)) return CONFIG[2];
+return CONFIG[1];
+}
+function updateDisplay() {
+const nEl = document.getElementById('currentNumber');
+const bEl = document.getElementById('rarityBadge');
+nEl.textContent = gameScore.current;
+const r = getRarity(gameScore.current);
+nEl.className = 'current-number ' + r.class;
+bEl.className = 'rarity-badge ' + r.class + ' ' + r.bg;
+bEl.textContent = r.name;
+}
+function addHistoryLog(text, rClass) {
+const hList = document.getElementById('historyList');
+const li = document.createElement('li');
+li.className = 'history-item';
+const cMap = { 'num-r1': '#cbd5e1', 'num-r2': '#3b82f6', 'num-r3': '#a855f7', 'num-r4': '#eab308', 'num-r5': '#ef4444' };
+li.style.borderLeftColor = cMap[rClass] || '#94a3b8';
+li.textContent = text;
+hList.appendChild(li);
+if (hList.children.length > 20) hList.removeChild(hList.firstChild);
+}
+function performOperation() {
+const ops = ['+', '-', '*', '/'];
+const op = ops[Math.floor(Math.random() * ops.length)];
+let mod = Math.floor(Math.random() * 5) + 1;
+if (gameScore.current >= 10 && gameScore.current < 100) mod = Math.floor(Math.random() * 20) + 2;
+if (gameScore.current >= 100) mod = Math.floor(Math.random() * 80) + 5;
+let prev = gameScore.current;
+let txt = '';
+if (op === '+') { gameScore.current += mod; txt = ${prev} + ${mod} = ${gameScore.current}; }
+else if (op === '-') {
+if (prev - mod < 1) { gameScore.current = 1; txt = ${prev} - ${mod} ➔ Сброс к 1; }
+else { gameScore.current -= mod; txt = ${prev} - ${mod} = ${gameScore.current}; }
+}
+else if (op === '*') {
+let m = Math.min(mod, 3);
+if (prev > 100) m = 2;
+gameScore.current = prev * m;
+txt = ${prev} × ${m} = ${gameScore.current};
+}
+else if (op === '/') {
+let d = Math.floor(Math.random() * 3) + 2;
+let res = Math.floor(prev / d);
+gameScore.current = res < 1 ? 1 : res;
+txt = ${prev} ÷ ${d} = ${gameScore.current};
+}
+const nEl = document.getElementById('currentNumber');
+nEl.classList.remove('pop-animation');
+void nEl.offsetWidth;
+nEl.classList.add('pop-animation');
+updateDisplay();
+addHistoryLog(txt, getRarity(gameScore.current).class);
+saveToStorage();
+}
+function saveToCollection() {
+const item = { id: Date.now() + Math.random(), value: gameScore.current, d: new Date().toLocaleTimeString() };
+gameScore.list.push(item);
+addHistoryLog(📥 Добавлено в архив: ${gameScore.current}, getRarity(gameScore.current).class);
+renderCollection();
+saveToStorage();
+}
+function renderCollection() {
+const grid = document.getElementById('collectionGrid');
+const f = document.getElementById('filterSelect').value;
+document.getElementById('collectionCount').textContent = gameScore.list.length;
+grid.innerHTML = '';
+let sList = [...gameScore.list];
+if (f === 'newest') sList.reverse();
+else if (f === 'highest') sList.sort((a, b) => b.value - a.value);
+else if (f === 'lowest') sList.sort((a, b) => a.value - b.value);
+else if (f === 'rarity') {
+const getW = (num) => {
+if (num === 777 || num === 666 || num === 1000) return 5;
+if (num > 500) return 4;
+if (num > 150 || (num % 11 === 0 && num > 10)) return 3;
+if (num > 50 || (num % 5 === 0 && num > 5)) return 2;
+return 1;
+};
+sList.sort((a, b) => getW(b.value) - getW(a.value));
+}
+sList.forEach(item => {
+const r = getRarity(item.value);
+const cell = document.createElement('div');
+cell.className = collection-item ${r.class} ${r.bg};
+cell.textContent = item.value;
+cell.title = Время: ${item.d};
+cell.onclick = () => {
+gameScore.current = item.value;
+updateDisplay();
+addHistoryLog(🔮 Загружено число ${item.value}, r.class);
+saveToStorage();
+};
+grid.appendChild(cell);
+});
+}
