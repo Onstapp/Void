@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>CS:GO Кейс-рулетка</title>
+  <title>Рулетка · Пиксельная точность</title>
   <style>
     * {
       margin: 0;
@@ -57,7 +57,6 @@
     .tab-content { display: block; }
     .tab-content.hidden { display: none; }
 
-    /* главное число */
     .main-number-panel {
       background: #0f172a;
       border-radius: 28px;
@@ -131,11 +130,14 @@
     }
     .roulette-reel {
       display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
       position: absolute;
       left: 0;
       top: 0;
       padding: 0;
       margin: 0;
+      transform-origin: left center;
       transform: translateX(0);
       width: max-content;
     }
@@ -383,9 +385,9 @@
     const CARD_W = 100;          // ширина карточки 100px
     const VIEWPORT_W = 300;      // окно 300px
     const TARGET_INDEX = 25;     // 26-я карточка
-    const TOTAL = 40;            // 40 карточек в ленте
-    // ФИКСИРОВАННЫЙ СДВИГ: -((25 * 100) - 100) = -2400px
-    const FIXED_OFFSET = -((TARGET_INDEX * CARD_W) - CARD_W);
+    const TOTAL = 50;            // 50 карточек в ленте
+    // ФИКСИРОВАННЫЙ СДВИГ: -((25 * 100) - 150 + 50) = -(2500 - 100) = -2400px
+    const FIXED_OFFSET = -((TARGET_INDEX * CARD_W) - (VIEWPORT_W / 2) + (CARD_W / 2));
     const OPERATORS = ['+', '−', '×', '÷'];
     const MAX_NUMBER = 99999;
     const MIN_MOD = 2, MAX_MOD = 10;
@@ -526,7 +528,7 @@
       if (tabId === 'collection') renderCollection();
     }
 
-    // ----- ГЕНЕРАЦИЯ ЛЕНТЫ (40 карт, индекс 25 = выигрыш) -----
+    // ----- ГЕНЕРАЦИЯ ЛЕНТЫ (50 карт, индекс 25 = выигрыш) -----
     function buildReel(container, items, isOperator = false) {
       container.innerHTML = '';
       items.forEach((val, idx) => {
@@ -613,7 +615,7 @@
       void reelA.offsetHeight;
       void reelB.offsetHeight;
 
-      // 4. Генерация 40 карт
+      // 4. Генерация 50 карт
       const opCards = generateOperatorCards(op);
       const numCards = generateNumberCards(num);
       buildReel(reelA, opCards, true);
