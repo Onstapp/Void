@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Плавная остановка</title>
+  <title>Рулетка · Честная прокрутка</title>
   <style>
     * {
       margin: 0;
@@ -93,7 +93,6 @@
       border: 1px solid #334155;
     }
 
-    /* РУЛЕТКА — 300px вьюпорт, карты 100px */
     .roulette-container {
       background: #0f172a;
       border-radius: 24px;
@@ -213,7 +212,6 @@
     }
     .log-item .log-number { font-weight: 700; }
 
-    /* КОЛЛЕКЦИЯ — 3 В РЯД */
     .filter-bar {
       display: flex;
       gap: 6px;
@@ -276,7 +274,6 @@
       font-size: 0.9rem;
     }
 
-    /* === РЕДКОСТИ + НЕОН === */
     .rarity-common { color: #94a3b8; text-shadow: none; }
     .rarity-rare { color: #60a5fa; text-shadow: 0 0 20px #3b82f6, 0 0 40px #3b82f688; }
     .rarity-epic { color: #a78bfa; text-shadow: 0 0 30px #8b5cf6, 0 0 60px #8b5cf688; }
@@ -337,7 +334,6 @@
     <button class="tab-btn" data-tab="collection">Коллекция</button>
   </div>
 
-  <!-- ИГРА -->
   <div id="tab-game" class="tab-content">
     <div class="main-number-panel" id="mainPanel">
       <div class="number-badge">
@@ -365,7 +361,6 @@
     </div>
   </div>
 
-  <!-- КОЛЛЕКЦИЯ -->
   <div id="tab-collection" class="tab-content hidden">
     <div class="filter-bar" id="filterBar">
       <button class="filter-btn active" data-filter="new">Сначала новые</button>
@@ -380,7 +375,6 @@
 
 <script>
   (function() {
-    // ----- КОНФИГ (ЖЁСТКАЯ ГЕОМЕТРИЯ) -----
     const CARD_W = 100;
     const VIEWPORT_W = 300;
     const TOTAL = 60;
@@ -388,15 +382,11 @@
     const MAX_NUMBER = 99999;
     const SPIN_DURATION = 4000;
 
-    // ----- СОСТОЯНИЕ -----
     let currentNumber = 1;
     let collection = [];
     let history = [];
     let isSpinning = false;
-    let targetIndexA = 25;
-    let targetIndexB = 25;
 
-    // DOM
     const displayNumber = document.getElementById('displayNumber');
     const rarityBadge = document.getElementById('rarityBadge');
     const mainPanel = document.getElementById('mainPanel');
@@ -411,7 +401,6 @@
     const filterBtns = document.querySelectorAll('.filter-btn');
     const tabBtns = document.querySelectorAll('.tab-btn');
 
-    // ----- УТИЛИТЫ РЕДКОСТИ -----
     function getRarity(num) {
       if (num >= 99999 || num === 77777 || (num % 111 === 0 && num > 1000)) return 'mythic';
       if (num > 5000 || num === 9999) return 'legendary';
@@ -431,7 +420,6 @@
     function getBgClass(r) { return 'bg-rarity-' + r; }
     function getMainBg(r) { return 'main-bg-' + r; }
 
-    // ----- LOCALSTORAGE -----
     function saveState() {
       localStorage.setItem('rn_number', JSON.stringify(currentNumber));
       localStorage.setItem('rn_collection', JSON.stringify(collection));
@@ -453,7 +441,6 @@
       history = history.slice(0,20);
     }
 
-    // ----- ОТРИСОВКА -----
     function renderNumber() {
       const r = getRarity(currentNumber);
       displayNumber.textContent = currentNumber;
@@ -522,46 +509,32 @@
       if (tabId === 'collection') renderCollection();
     }
 
-    // ----- ГЕНЕРАЦИЯ ЛЕНТЫ -----
-    function buildReel(container, items, isOperator = false, targetIdx) {
+    function buildReel(container, items, isOperator = false) {
       container.innerHTML = '';
-      items.forEach((val, idx) => {
+      items.forEach((val) => {
         const card = document.createElement('div');
         card.className = `roulette-card ${isOperator ? 'operator' : ''}`;
-        if (idx === targetIdx) card.classList.add('winner-highlight');
         card.textContent = val;
         container.appendChild(card);
       });
     }
 
-    function generateOperatorCards(winOp, targetIdx) {
+    function generateOperatorCards() {
       const cards = [];
       for (let i = 0; i < TOTAL; i++) {
-        if (i === targetIdx) {
-          cards.push(winOp);
-        } else {
-          const rand = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
-          cards.push(rand);
-        }
+        const rand = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
+        cards.push(rand);
       }
       return cards;
     }
 
-    function generateNumberCards(winNum, targetIdx, isLargeRange) {
+    function generateNumberCards(isLargeRange) {
       const cards = [];
-      let min, max;
-      if (isLargeRange) {
-        min = 2; max = 50;
-      } else {
-        min = 2; max = 10;
-      }
+      const min = 2;
+      const max = isLargeRange ? 50 : 10;
       for (let i = 0; i < TOTAL; i++) {
-        if (i === targetIdx) {
-          cards.push(winNum);
-        } else {
-          const rand = Math.floor(Math.random() * (max - min + 1)) + min;
-          cards.push(rand);
-        }
+        const rand = Math.floor(Math.random() * (max - min + 1)) + min;
+        cards.push(rand);
       }
       return cards;
     }
@@ -571,26 +544,32 @@
         .forEach(c => c.classList.remove('winner-highlight'));
     }
 
-    // ----- ОСНОВНОЙ СПИН (Случайный индекс 22-35) -----
+    function getOffset(index) {
+      return -((index * CARD_W) - (VIEWPORT_W / 2) + (CARD_W / 2));
+    }
+
     function spinRoulette() {
       if (isSpinning) return;
       isSpinning = true;
       spinBtn.disabled = true;
       collectBtn.disabled = true;
 
-      // 1. Выбираем случайный индекс для A (22-35)
-      targetIndexA = Math.floor(Math.random() * (35 - 22 + 1)) + 22;
-      targetIndexB = Math.floor(Math.random() * (35 - 22 + 1)) + 22;
-
-      // 2. Выбираем операцию
-      const op = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
-      const isLargeRange = (op === '+' || op === '−');
-      const minMod = isLargeRange ? 2 : 2;
-      const maxMod = isLargeRange ? 50 : 10;
-      const num = Math.floor(Math.random() * (maxMod - minMod + 1)) + minMod;
-
-      // 3. Сброс подсветки и лент
       clearHighlights();
+
+      // 1. Генерируем случайные ленты
+      const opCards = generateOperatorCards();
+      const isLargeRange = Math.random() < 0.5;
+      const numCards = generateNumberCards(isLargeRange);
+
+      // 2. Выбираем случайный индекс остановки (22-35)
+      const stopIndexA = Math.floor(Math.random() * (35 - 22 + 1)) + 22;
+      const stopIndexB = Math.floor(Math.random() * (35 - 22 + 1)) + 22;
+
+      // 3. Строим ленты
+      buildReel(reelA, opCards, true);
+      buildReel(reelB, numCards, false);
+
+      // 4. Сброс позиции
       reelA.style.transition = 'none';
       reelA.style.transform = 'translateX(0)';
       reelB.style.transition = 'none';
@@ -598,46 +577,36 @@
       void reelA.offsetHeight;
       void reelB.offsetHeight;
 
-      // 4. Генерация лент
-      const opCards = generateOperatorCards(op, targetIndexA);
-      const numCards = generateNumberCards(num, targetIndexB, isLargeRange);
-      buildReel(reelA, opCards, true, targetIndexA);
-      buildReel(reelB, numCards, false, targetIndexB);
+      const offsetA = getOffset(stopIndexA);
+      const offsetB = getOffset(stopIndexB);
 
-      // 5. Вычисляем сдвиг для A
-      const offsetA = -((targetIndexA * CARD_W) - (VIEWPORT_W / 2) + (CARD_W / 2));
-      const offsetB = -((targetIndexB * CARD_W) - (VIEWPORT_W / 2) + (CARD_W / 2));
-
-      // 6. Запуск А через 50мс
+      // 5. Запуск А
       setTimeout(() => {
         reelA.style.transition = 'transform 4.0s cubic-bezier(0.1, 0.8, 0.15, 1)';
         reelA.style.transform = `translateX(${offsetA}px)`;
 
-        // Через 4.1 сек — остановка А, подсветка, запуск B
         setTimeout(() => {
-          // Подсветка победителя в A
+          // Подсвечиваем то, что остановилось под стрелкой в А
           clearHighlights();
           const aCards = reelA.querySelectorAll('.roulette-card');
-          if (aCards[targetIndexA]) aCards[targetIndexA].classList.add('winner-highlight');
+          if (aCards[stopIndexA]) aCards[stopIndexA].classList.add('winner-highlight');
+          const winOp = aCards[stopIndexA]?.textContent || '+';
 
           // Запуск B
           setTimeout(() => {
             reelB.style.transition = 'transform 4.0s cubic-bezier(0.1, 0.8, 0.15, 1)';
             reelB.style.transform = `translateX(${offsetB}px)`;
 
-            // Через 4.1 сек — финал
             setTimeout(() => {
-              // Подсветка победителя в B
+              // Подсвечиваем то, что остановилось под стрелкой в B
               clearHighlights();
               const bCards = reelB.querySelectorAll('.roulette-card');
-              if (bCards[targetIndexB]) bCards[targetIndexB].classList.add('winner-highlight');
-              // также подсветка A
-              if (aCards[targetIndexA]) aCards[targetIndexA].classList.add('winner-highlight');
+              if (bCards[stopIndexB]) bCards[stopIndexB].classList.add('winner-highlight');
+              if (aCards[stopIndexA]) aCards[stopIndexA].classList.add('winner-highlight');
 
-              // ЧТЕНИЕ РЕЗУЛЬТАТА
-              const winOp = aCards[targetIndexA]?.textContent || '+';
-              const winNum = parseInt(bCards[targetIndexB]?.textContent) || 2;
+              const winNum = parseInt(bCards[stopIndexB]?.textContent) || 2;
 
+              // Вычисляем результат
               let result = currentNumber;
               switch(winOp) {
                 case '+': result = currentNumber + winNum; break;
@@ -674,7 +643,6 @@
       }, 50);
     }
 
-    // ----- КОЛЛЕКЦИЯ (ДУБЛИКАТЫ БЛОКИРУЮТСЯ) -----
     function collectNumber() {
       if (collection.includes(currentNumber)) {
         const div = document.createElement('div');
@@ -698,7 +666,6 @@
       if (historyLog.children.length > 20) historyLog.removeChild(historyLog.lastChild);
     }
 
-    // ----- ИНИЦИАЛИЗАЦИЯ -----
     function init() {
       loadState();
       renderNumber();
@@ -706,20 +673,15 @@
       renderCollection();
       updateCollectButton();
 
-      // Стартовые ленты
-      const initOp = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
-      const initNum = Math.floor(Math.random() * 9) + 2;
-      const idxA = 25, idxB = 25;
-      const opCards = generateOperatorCards(initOp, idxA);
-      const numCards = generateNumberCards(initNum, idxB, false);
-      buildReel(reelA, opCards, true, idxA);
-      buildReel(reelB, numCards, false, idxB);
-      const offA = -((idxA * CARD_W) - (VIEWPORT_W / 2) + (CARD_W / 2));
-      const offB = -((idxB * CARD_W) - (VIEWPORT_W / 2) + (CARD_W / 2));
+      const initOpCards = generateOperatorCards();
+      const initNumCards = generateNumberCards(false);
+      buildReel(reelA, initOpCards, true);
+      buildReel(reelB, initNumCards, false);
+      const off = getOffset(25);
       reelA.style.transition = 'none';
       reelB.style.transition = 'none';
-      reelA.style.transform = `translateX(${offA}px)`;
-      reelB.style.transform = `translateX(${offB}px)`;
+      reelA.style.transform = `translateX(${off}px)`;
+      reelB.style.transform = `translateX(${off}px)`;
 
       spinBtn.addEventListener('click', spinRoulette);
       collectBtn.addEventListener('click', collectNumber);
