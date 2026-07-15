@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Точная остановка</title>
+  <title>Рулетка · Чтение под стрелкой</title>
   <style>
     * {
       margin: 0;
@@ -548,6 +548,41 @@
       return -((index * CARD_W) - (VIEWPORT_W / 2) + (CARD_W / 2));
     }
 
+    // Функция для определения индекса карточки, которая находится ближе всего к центру (под стрелкой)
+    function getClosestToCenterIndex(reelElement) {
+      const cards = reelElement.querySelectorAll('.roulette-card');
+      if (cards.length === 0) return 0;
+      
+      // Получаем текущее смещение ленты (translateX)
+      const transform = reelElement.style.transform;
+      let translateX = 0;
+      if (transform) {
+        const match = transform.match(/translateX\(([-\d.]+)px\)/);
+        if (match) {
+          translateX = parseFloat(match[1]);
+        }
+      }
+      
+      // Позиция центра окна (стрелка) в координатах ленты
+      const centerX = -translateX + VIEWPORT_W / 2;
+      
+      // Находим карточку, центр которой ближе всего к centerX
+      let closestIndex = 0;
+      let closestDist = Infinity;
+      
+      for (let i = 0; i < cards.length; i++) {
+        // Центр карточки: i * CARD_W + CARD_W/2
+        const cardCenter = i * CARD_W + CARD_W / 2;
+        const dist = Math.abs(cardCenter - centerX);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestIndex = i;
+        }
+      }
+      
+      return closestIndex;
+    }
+
     function spinRoulette() {
       if (isSpinning) return;
       isSpinning = true;
@@ -586,12 +621,17 @@
         reelA.style.transform = `translateX(${offsetA}px)`;
 
         setTimeout(() => {
-          // Подсвечиваем то, что остановилось под стрелкой в А
-          clearHighlights();
+          // Находим карточку ближайшую к центру (под стрелкой) в А
+          const closestIndexA = getClosestToCenterIndex(reelA);
           const aCards = reelA.querySelectorAll('.roulette-card');
-          if (aCards[stopIndexA]) aCards[stopIndexA].classList.add('winner-highlight');
-          // Читаем операцию прямо из карточки под стрелкой
-          const winOp = aCards[stopIndexA]?.textContent || '+';
+          
+          // Подсвечиваем найденную карточку
+          clearHighlights();
+          if (aCards[closestIndexA]) {
+            aCards[closestIndexA].classList.add('winner-highlight');
+          }
+          // Читаем операцию из карточки под стрелкой
+          const winOp = aCards[closestIndexA]?.textContent || '+';
 
           // Запуск B
           setTimeout(() => {
@@ -599,14 +639,21 @@
             reelB.style.transform = `translateX(${offsetB}px)`;
 
             setTimeout(() => {
-              // Подсвечиваем то, что остановилось под стрелкой в B
-              clearHighlights();
+              // Находим карточку ближайшую к центру (под стрелкой) в B
+              const closestIndexB = getClosestToCenterIndex(reelB);
               const bCards = reelB.querySelectorAll('.roulette-card');
-              if (bCards[stopIndexB]) bCards[stopIndexB].classList.add('winner-highlight');
-              if (aCards[stopIndexA]) aCards[stopIndexA].classList.add('winner-highlight');
+              
+              // Подсвечиваем найденные карточки
+              clearHighlights();
+              if (aCards[closestIndexA]) {
+                aCards[closestIndexA].classList.add('winner-highlight');
+              }
+              if (bCards[closestIndexB]) {
+                bCards[closestIndexB].classList.add('winner-highlight');
+              }
 
-              // Читаем число прямо из карточки под стрелкой
-              const winNum = parseInt(bCards[stopIndexB]?.textContent) || 2;
+              // Читаем число из карточки под стрелкой
+              const winNum = parseInt(bCards[closestIndexB]?.textContent) || 2;
 
               // Вычисляем результат
               let result = currentNumber;
