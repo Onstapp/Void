@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Динамические модификаторы</title>
+  <title>Рулетка · Плавная остановка</title>
   <style>
     * {
       margin: 0;
@@ -584,7 +584,6 @@
 
       // 2. Выбираем операцию
       const op = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
-      // Определяем диапазон для B
       const isLargeRange = (op === '+' || op === '−');
       const minMod = isLargeRange ? 2 : 2;
       const maxMod = isLargeRange ? 50 : 10;
