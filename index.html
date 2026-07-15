@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Синхронизация</title>
+  <title>Рулетка · Идеальное выравнивание</title>
   <style>
     * {
       margin: 0;
@@ -128,6 +128,9 @@
       pointer-events: none;
     }
     .roulette-reel {
+      position: absolute;
+      left: 0;
+      top: 0;
       display: flex;
       padding: 0;
       margin: 0;
@@ -157,7 +160,7 @@
       transition: border 0.15s;
     }
     .roulette-card.operator { background: #2f3d56; font-size: 1.8rem; }
-    .roulette-card.winning-card { border: 3px solid #eab308; box-shadow: 0 0 30px #eab30888; }
+    .roulette-card.winner-highlight { border: 3px solid #eab308; box-shadow: 0 0 30px #eab30888; }
 
     .controls {
       display: flex;
@@ -384,7 +387,10 @@
     const OPERATORS = ['+', '−', '×', '÷'];
     const MAX_NUMBER = 99999;
     const MIN_MOD = 2, MAX_MOD = 10;
-    const SPIN_DURATION = 3000;   // 3.0 секунды — чётко и с гарантированной остановкой
+    const SPIN_DURATION = 3000;   // 3.0 секунды
+
+    // БУЛЛЕТПРУФ ФОРМУЛА: -((30 * 90) - 225 + 45) = -2520
+    const OFFSET = -((WIN_IDX * CARD_W) - (VIEWPORT_W / 2) + (CARD_W / 2));
 
     // ----- СОСТОЯНИЕ -----
     let currentNumber = 1;
@@ -527,15 +533,10 @@
       items.forEach((val, idx) => {
         const card = document.createElement('div');
         card.className = `roulette-card ${isOperator ? 'operator' : ''}`;
-        if (idx === WIN_IDX) card.classList.add('winning-card');
+        if (idx === WIN_IDX) card.classList.add('winner-highlight');
         card.textContent = val;
         container.appendChild(card);
       });
-    }
-
-    function getTranslateX() {
-      // -((30 * 90) + (90/2) - (450/2)) = -(2700 + 45 - 225) = -2520
-      return -((WIN_IDX * CARD_W) + (CARD_W / 2) - (VIEWPORT_W / 2));
     }
 
     function generateOperatorCards(winOp) {
@@ -560,6 +561,11 @@
         }
       }
       return cards;
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('#reelA .roulette-card, #reelB .roulette-card')
+        .forEach(c => c.classList.remove('winner-highlight'));
     }
 
     // ----- ОСНОВНОЙ СПИН (С setTimeout) -----
@@ -595,7 +601,10 @@
       }
       pendingResult = result;
 
-      // 2. Шаг 1: Абсолютный сброс (без анимации)
+      // 2. Шаг 1: Сброс подсветки
+      clearHighlights();
+
+      // 3. Шаг 2: Абсолютный сброс (без анимации)
       reelA.style.transition = 'none';
       reelA.style.transform = 'translateX(0px)';
       reelB.style.transition = 'none';
@@ -604,33 +613,29 @@
       void reelA.offsetHeight;
       void reelB.offsetHeight;
 
-      // 3. Генерация 50 карт
+      // 4. Генерация 50 карт
       const opCards = generateOperatorCards(op);
       const numCards = generateNumberCards(num);
       buildReel(reelA, opCards, true);
       buildReel(reelB, numCards, false);
 
-      const offset = getTranslateX();
-
-      // 4. Шаг 2: Отложенный запуск через setTimeout (50ms)
+      // 5. Шаг 3: Отложенный запуск через setTimeout (50ms)
       setTimeout(() => {
-        // Шаг 3: применяем переход и сдвиг (3.0 сек, надёжная кривая)
+        // применяем переход и сдвиг (3.0 сек)
         reelA.style.transition = 'transform 3.0s cubic-bezier(0.2, 0.8, 0.2, 1)';
-        reelA.style.transform = `translateX(${offset}px)`;
+        reelA.style.transform = `translateX(${OFFSET}px)`;
 
-        // Запуск B через 3.0 сек
+        // Запуск B через 3.0 сек + 100ms запас
         setTimeout(() => {
           reelB.style.transition = 'transform 3.0s cubic-bezier(0.2, 0.8, 0.2, 1)';
-          reelB.style.transform = `translateX(${offset}px)`;
+          reelB.style.transform = `translateX(${OFFSET}px)`;
 
-          // Финал через ещё 3.0 сек
+          // Финал через ещё 3.0 сек + 100ms
           setTimeout(() => {
-            // Убираем подсветку со всех карт, затем подсвечиваем выигрышную
-            document.querySelectorAll('#reelA .roulette-card, #reelB .roulette-card')
-              .forEach(c => c.classList.remove('winning-card'));
-            // Подсветка в B
+            // Убираем все подсветки, затем подсвечиваем только индекс 30
+            clearHighlights();
             const bCards = reelB.querySelectorAll('.roulette-card');
-            if (bCards[WIN_IDX]) bCards[WIN_IDX].classList.add('winning-card');
+            if (bCards[WIN_IDX]) bCards[WIN_IDX].classList.add('winner-highlight');
 
             currentNumber = pendingResult;
             renderNumber();
@@ -642,8 +647,8 @@
             spinBtn.disabled = false;
             collectBtn.disabled = false;
             updateCollectButton();
-          }, SPIN_DURATION);
-        }, SPIN_DURATION);
+          }, SPIN_DURATION + 100);
+        }, SPIN_DURATION + 100);
       }, 50);
     }
 
@@ -688,9 +693,8 @@
       buildReel(reelB, numCards, false);
       reelA.style.transition = 'none';
       reelB.style.transition = 'none';
-      const offset = getTranslateX();
-      reelA.style.transform = `translateX(${offset}px)`;
-      reelB.style.transform = `translateX(${offset}px)`;
+      reelA.style.transform = `translateX(${OFFSET}px)`;
+      reelB.style.transform = `translateX(${OFFSET}px)`;
 
       // события
       spinBtn.addEventListener('click', spinRoulette);
