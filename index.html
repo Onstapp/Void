@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Медленная анимация</title>
+  <title>Рулетка · Медленный спин</title>
   <style>
     * {
       margin: 0;
@@ -57,7 +57,6 @@
     .tab-content { display: block; }
     .tab-content.hidden { display: none; }
 
-    /* главное число */
     .main-number-panel {
       background: #0f172a;
       border-radius: 28px;
@@ -94,7 +93,7 @@
       border: 1px solid #334155;
     }
 
-    /* РУЛЕТКА — 150 КАРТ, 450px вьюпорт */
+    /* РУЛЕТКА — 50 КАРТ, 450px вьюпорт */
     .roulette-container {
       background: #0f172a;
       border-radius: 24px;
@@ -131,7 +130,7 @@
     .roulette-track {
       display: flex;
       gap: 4px;
-      transition: transform 5s cubic-bezier(0.1, 0.8, 0.1, 1);
+      transition: transform 5.5s cubic-bezier(0.05, 0.7, 0.1, 1);
       will-change: transform;
       width: max-content;
       padding: 6px 0;
@@ -375,15 +374,15 @@
 
 <script>
   (function() {
-    // ----- КОНФИГ (150 КАРТ) -----
+    // ----- КОНФИГ (50 КАРТ, ЦЕЛЬ — ИНДЕКС 30) -----
     const CARD_W = 90;
     const VIEWPORT_W = 450;
-    const TOTAL = 150;
-    const WIN_IDX = 120;          // 121-я карта
+    const TOTAL = 50;
+    const WIN_IDX = 30;           // 31-я карта
     const OPERATORS = ['+', '−', '×', '÷'];
     const MAX_NUMBER = 99999;
     const MIN_MOD = 2, MAX_MOD = 10;
-    const SPIN_DURATION = 5000;   // 5 секунд — медленно и плавно
+    const SPIN_DURATION = 5500;   // 5.5 секунд — медленно и с нарастающим ожиданием
 
     // ----- СОСТОЯНИЕ -----
     let currentNumber = 1;
@@ -533,7 +532,7 @@
     }
 
     function getTranslateX() {
-      // -((120 * 90) + (90/2) - (450/2)) = -(10800 + 45 - 225) = -10620
+      // -((30 * 90) + (90/2) - (450/2)) = -(2700 + 45 - 225) = -2520
       return -((WIN_IDX * CARD_W) + (CARD_W / 2) - (VIEWPORT_W / 2));
     }
 
@@ -603,7 +602,7 @@
       void trackA.offsetHeight;
       void trackB.offsetHeight;
 
-      // 3. Генерация 150 карт
+      // 3. Генерация 50 карт
       const opCards = generateOperatorCards(op);
       const numCards = generateNumberCards(num);
       buildTrack(trackA, opCards, true);
@@ -613,16 +612,16 @@
 
       // 4. Шаг 2: Отложенный запуск через setTimeout (50ms)
       setTimeout(() => {
-        // Шаг 3: применяем переход и сдвиг
-        trackA.style.transition = 'transform 5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+        // Шаг 3: применяем переход и сдвиг (5.5 сек, экстремальное замедление)
+        trackA.style.transition = 'transform 5.5s cubic-bezier(0.05, 0.7, 0.1, 1)';
         trackA.style.transform = `translateX(${offset}px)`;
 
-        // Запуск B через 5 сек
+        // Запуск B через 5.5 сек
         setTimeout(() => {
-          trackB.style.transition = 'transform 5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+          trackB.style.transition = 'transform 5.5s cubic-bezier(0.05, 0.7, 0.1, 1)';
           trackB.style.transform = `translateX(${offset}px)`;
 
-          // Финал через ещё 5 сек
+          // Финал через ещё 5.5 сек
           setTimeout(() => {
             // Убираем подсветку со всех карт, затем подсвечиваем выигрышную
             document.querySelectorAll('#trackA .roulette-card, #trackB .roulette-card')
@@ -678,7 +677,7 @@
       renderCollection();
       updateCollectButton();
 
-      // начальные ленты (150 карт, корректная позиция)
+      // начальные ленты (50 карт, корректная позиция)
       const initOp = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
       const initNum = Math.floor(Math.random() * 9) + 2;
       const opCards = generateOperatorCards(initOp);
