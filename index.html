@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Трофеи</title>
+  <title>Рулетка · Исправленная</title>
   <style>
     * {
       margin: 0;
@@ -21,14 +21,13 @@
       margin: 0;
     }
     .app {
-      max-width: 480px;
+      max-width: 520px;
       width: 100%;
       background: #1a2332;
       border-radius: 36px;
       padding: 20px 16px 28px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.7);
       color: #f1f5f9;
-      transition: all 0.2s;
     }
     .tabs {
       display: flex;
@@ -67,6 +66,7 @@
       margin-bottom: 18px;
       position: relative;
       box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+      transition: box-shadow 0.3s, background 0.3s;
     }
     .number-badge {
       display: flex;
@@ -94,7 +94,7 @@
       border: 1px solid #334155;
     }
 
-    /* рулетки */
+    /* РУЛЕТКА — ЖЕСТКИЙ ФИКС */
     .roulette-container {
       background: #0f172a;
       border-radius: 24px;
@@ -103,13 +103,16 @@
       position: relative;
       overflow: hidden;
     }
-    .roulette-wrapper {
+    .roulette-viewport {
+      width: 450px;
+      max-width: 100%;
       position: relative;
       overflow: hidden;
-      margin: 0 2px;
+      height: 100px;
+      border: 2px solid #2d3b4f;
       border-radius: 16px;
       background: #1e293b;
-      padding: 6px 0;
+      margin: 0 auto;
     }
     .arrow-pointer {
       width: 0;
@@ -121,32 +124,37 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 20;
+      z-index: 30;
       filter: drop-shadow(0 0 8px #eab308aa);
+      pointer-events: none;
     }
     .roulette-track {
       display: flex;
-      gap: 6px;
-      transition: transform 2.5s cubic-bezier(0.08, 0.82, 0.17, 1);
+      gap: 4px;
+      transition: transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1);
       will-change: transform;
       width: max-content;
-      padding: 4px 0;
+      padding: 6px 0;
     }
     .roulette-card {
-      min-width: 68px;
-      height: 68px;
+      min-width: 90px;
+      width: 90px;
+      max-width: 90px;
+      box-sizing: border-box;
+      height: 80px;
       background: #2a3548;
-      border-radius: 16px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: #f1f5f9;
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
       flex-shrink: 0;
+      border: 1px solid #3d4b60;
     }
-    .roulette-card.operator { background: #2f3d56; font-size: 1.6rem; }
+    .roulette-card.operator { background: #2f3d56; font-size: 1.8rem; }
 
     .controls {
       display: flex;
@@ -195,7 +203,7 @@
     }
     .log-item .log-number { font-weight: 700; }
 
-    /* КОЛЛЕКЦИЯ — ИСПРАВЛЕННАЯ СЕТКА */
+    /* КОЛЛЕКЦИЯ — СТРОГО 3 В РЯД */
     .filter-bar {
       display: flex;
       gap: 6px;
@@ -248,6 +256,7 @@
       color: #f1f5f9;
       padding: 0 4px;
       word-break: break-all;
+      cursor: default;
     }
     .empty-collection {
       grid-column: 1 / -1;
@@ -257,45 +266,61 @@
       font-size: 0.9rem;
     }
 
-    /* РЕДКОСТИ + СВЕЧЕНИЯ */
-    .rarity-common { color: #94a3b8; }
-    .rarity-rare { color: #60a5fa; text-shadow: 0 0 14px rgba(59,130,246,0.5); }
-    .rarity-epic { color: #a78bfa; text-shadow: 0 0 20px rgba(168,85,247,0.7); }
-    .rarity-legendary { color: #fbbf24; text-shadow: 0 0 28px rgba(234,179,8,0.8); }
-    .rarity-mythic { color: #f87171; text-shadow: 0 0 35px rgba(239,68,68,0.9); animation: pulseGlow 1.5s infinite alternate; }
+    /* === РЕДКОСТИ + МОЩНЫЙ НЕОН === */
+    .rarity-common { color: #94a3b8; text-shadow: none; }
+    .rarity-rare { color: #60a5fa; text-shadow: 0 0 20px #3b82f6, 0 0 40px #3b82f688; }
+    .rarity-epic { color: #a78bfa; text-shadow: 0 0 30px #8b5cf6, 0 0 60px #8b5cf688; }
+    .rarity-legendary { color: #fbbf24; text-shadow: 0 0 40px #fbbf24, 0 0 80px #fbbf2488; }
+    .rarity-mythic { 
+      color: #f87171; 
+      text-shadow: 0 0 50px #ef4444, 0 0 100px #ef4444aa;
+      animation: pulseGlow 1.5s infinite alternate;
+    }
 
     @keyframes pulseGlow {
-      0% { text-shadow: 0 0 20px #ef4444, 0 0 40px #ef444488; }
-      100% { text-shadow: 0 0 45px #ef4444, 0 0 80px #ef4444cc, 0 0 120px #ef444466; }
+      0% { text-shadow: 0 0 30px #ef4444, 0 0 60px #ef444488; }
+      100% { text-shadow: 0 0 80px #ef4444, 0 0 150px #ef4444cc, 0 0 200px #ef444466; }
     }
 
     /* фоны и боксы для коллекции + главного */
     .bg-rarity-common { background: #1e293b; border-color: #334155; box-shadow: none; }
-    .bg-rarity-rare { background: #1a2a4a; border-color: #3b82f6; box-shadow: 0 0 15px rgba(59,130,246,0.3); }
-    .bg-rarity-epic { background: #2d1f4a; border-color: #a78bfa; box-shadow: 0 0 20px rgba(168,85,247,0.5); }
-    .bg-rarity-legendary { background: #4a3a1a; border-color: #fbbf24; box-shadow: 0 0 25px rgba(234,179,8,0.6); }
-    .bg-rarity-mythic { background: #4a1a1a; border-color: #ef4444; box-shadow: 0 0 35px rgba(239,68,68,0.7); animation: pulseBox 1.5s infinite alternate; }
-
-    @keyframes pulseBox {
-      0% { box-shadow: 0 0 20px #ef444488; }
-      100% { box-shadow: 0 0 50px #ef4444cc, 0 0 80px #ef444466; }
+    .bg-rarity-rare { background: #1a2a4a; border-color: #3b82f6; box-shadow: 0 0 20px #3b82f666, inset 0 0 20px #3b82f633; }
+    .bg-rarity-epic { background: #2d1f4a; border-color: #a78bfa; box-shadow: 0 0 30px #8b5cf688, inset 0 0 30px #8b5cf644; }
+    .bg-rarity-legendary { background: #4a3a1a; border-color: #fbbf24; box-shadow: 0 0 40px #fbbf2488, inset 0 0 40px #fbbf2444; }
+    .bg-rarity-mythic { 
+      background: #4a1a1a; 
+      border-color: #ef4444; 
+      box-shadow: 0 0 50px #ef444488, inset 0 0 50px #ef444444;
+      animation: pulseBox 1.5s infinite alternate;
     }
 
-    /* для главного числа также фон */
+    @keyframes pulseBox {
+      0% { box-shadow: 0 0 30px #ef444488, inset 0 0 30px #ef444433; }
+      100% { box-shadow: 0 0 80px #ef4444cc, 0 0 120px #ef444466, inset 0 0 60px #ef444466; }
+    }
+
     .main-bg-common { background: #0f172a; }
-    .main-bg-rare { background: #0f1a2f; }
-    .main-bg-epic { background: #1a0f2f; }
-    .main-bg-legendary { background: #2f1f0a; }
-    .main-bg-mythic { background: #2f0a0a; }
+    .main-bg-rare { background: #0f1a2f; box-shadow: inset 0 0 40px #3b82f622; }
+    .main-bg-epic { background: #1a0f2f; box-shadow: inset 0 0 50px #8b5cf633; }
+    .main-bg-legendary { background: #2f1f0a; box-shadow: inset 0 0 60px #fbbf2444; }
+    .main-bg-mythic { background: #2f0a0a; box-shadow: inset 0 0 80px #ef444466; animation: pulseBg 1.5s infinite alternate; }
+    @keyframes pulseBg {
+      0% { box-shadow: inset 0 0 40px #ef444444; }
+      100% { box-shadow: inset 0 0 120px #ef4444aa; }
+    }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: #0f172a; border-radius: 10px; }
     ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
 
-    @media (max-width: 440px) {
-      .roulette-card { min-width: 58px; height: 58px; font-size: 1rem; }
+    @media (max-width: 480px) {
+      .roulette-viewport { width: 100%; height: 90px; }
+      .roulette-card { min-width: 70px; width: 70px; max-width: 70px; height: 70px; font-size: 1.1rem; }
       .current-number { font-size: 3.2rem; }
       .collection-item { font-size: 1rem; }
+    }
+    @media (max-width: 380px) {
+      .roulette-card { min-width: 60px; width: 60px; max-width: 60px; height: 60px; font-size: 0.9rem; }
     }
   </style>
 </head>
@@ -317,11 +342,11 @@
 
     <div class="roulette-container" id="rouletteA">
       <div class="arrow-pointer"></div>
-      <div class="roulette-wrapper"><div class="roulette-track" id="trackA"></div></div>
+      <div class="roulette-viewport"><div class="roulette-track" id="trackA"></div></div>
     </div>
     <div class="roulette-container" id="rouletteB">
       <div class="arrow-pointer"></div>
-      <div class="roulette-wrapper"><div class="roulette-track" id="trackB"></div></div>
+      <div class="roulette-viewport"><div class="roulette-track" id="trackB"></div></div>
     </div>
 
     <div class="controls">
@@ -349,8 +374,11 @@
 
 <script>
   (function() {
-    // ----- КОНФИГ -----
-    const CARD_W = 68, GAP = 6, TOTAL = 80, WIN_IDX = 69;
+    // ----- КОНФИГ (ЖЕСТКИЙ) -----
+    const CARD_W = 90;            // фикс
+    const VIEWPORT_W = 450;       // фикс
+    const TOTAL = 80;
+    const WIN_IDX = 69;           // 70-я карта
     const OPERATORS = ['+', '−', '×', '÷'];
     const MAX_NUMBER = 99999;
     const MIN_MOD = 2, MAX_MOD = 10;
@@ -469,7 +497,7 @@
         const div = document.createElement('div');
         div.className = `collection-item ${getBgClass(r)} ${getRarityClass(r)}`;
         div.textContent = num;
-        // клик ничего не делает
+        // клик не делает ничего (трофей)
         collectionGrid.appendChild(div);
       });
     }
@@ -491,7 +519,7 @@
       if (tabId === 'collection') renderCollection();
     }
 
-    // ----- РУЛЕТКА (ГЕНЕРАЦИЯ, СДВИГ) -----
+    // ----- РУЛЕТКА (ФИКСИРОВАННАЯ МАТЕМАТИКА) -----
     function buildTrack(container, items, isOperator = false) {
       container.innerHTML = '';
       items.forEach(val => {
@@ -502,31 +530,30 @@
       });
     }
 
-    function getTranslateX(winIndex) {
-      const wrapper = document.querySelector('.roulette-wrapper');
-      const containerWidth = wrapper ? wrapper.offsetWidth : 340;
-      const totalWidth = (CARD_W + GAP) * winIndex + CARD_W/2;
-      const centerOffset = containerWidth / 2;
-      return - (totalWidth - centerOffset);
+    // ФОРМУЛА ФИКС: ИДЕАЛЬНЫЙ ЦЕНТР
+    function getTranslateX() {
+      return -((WIN_IDX * CARD_W) + (CARD_W / 2) - (VIEWPORT_W / 2));
     }
 
-    function generateCards(operator, num) {
+    function generateOperatorCards(winOp) {
       const cards = [];
-      if (operator) {
-        for (let i = 0; i < TOTAL; i++) {
-          if (i === WIN_IDX) cards.push(operator);
-          else {
-            const randOp = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
-            cards.push(randOp);
-          }
+      for (let i = 0; i < TOTAL; i++) {
+        if (i === WIN_IDX) cards.push(winOp);
+        else {
+          const rand = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
+          cards.push(rand);
         }
-      } else {
-        for (let i = 0; i < TOTAL; i++) {
-          if (i === WIN_IDX) cards.push(num);
-          else {
-            const rand = Math.floor(Math.random() * 30) + 1;
-            cards.push(rand);
-          }
+      }
+      return cards;
+    }
+
+    function generateNumberCards(winNum) {
+      const cards = [];
+      for (let i = 0; i < TOTAL; i++) {
+        if (i === WIN_IDX) cards.push(winNum);
+        else {
+          const rand = Math.floor(Math.random() * (MAX_MOD - MIN_MOD + 1)) + MIN_MOD;
+          cards.push(rand);
         }
       }
       return cards;
@@ -541,19 +568,20 @@
       void trackB.offsetHeight;
     }
 
-    // ----- ОСНОВНОЙ СПИН -----
+    // ----- ОСНОВНОЙ СПИН (ПОСЛЕДОВАТЕЛЬНЫЙ) -----
     function spinRoulette() {
       if (isSpinning) return;
       isSpinning = true;
       spinBtn.disabled = true;
       collectBtn.disabled = true;
 
-      // 1. операция и число (2..10)
+      // 1. выбрать операцию и число (2..10)
       const op = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
       const num = Math.floor(Math.random() * (MAX_MOD - MIN_MOD + 1)) + MIN_MOD;
       pendingOp = op;
       pendingNum = num;
 
+      // вычислить результат
       let result = currentNumber;
       switch(op) {
         case '+': result = currentNumber + num; break;
@@ -564,7 +592,6 @@
       if (result < 1) result = 1;
       if (result > MAX_NUMBER) {
         result = MAX_NUMBER;
-        // лог
         const msg = '🎉 Достигнут абсолютный максимум: 99999!';
         const div = document.createElement('div');
         div.className = 'log-item';
@@ -575,27 +602,26 @@
       }
       pendingResult = result;
 
-      // 2. сброс
+      // 2. сброс (без анимации)
       resetTracks();
 
-      // 3. генерация лент
-      const opCards = generateCards(op, null);
-      const numCards = generateCards(null, num);
+      // 3. генерация лент с принудительной вставкой на WIN_IDX
+      const opCards = generateOperatorCards(op);
+      const numCards = generateNumberCards(num);
       buildTrack(trackA, opCards, true);
       buildTrack(trackB, numCards, false);
 
-      const translateA = getTranslateX(WIN_IDX);
-      const translateB = getTranslateX(WIN_IDX);
+      const offset = getTranslateX(); // фикс формула
 
-      trackA.style.transition = 'transform 2.5s cubic-bezier(0.08, 0.82, 0.17, 1)';
-      trackB.style.transition = 'transform 2.5s cubic-bezier(0.08, 0.82, 0.17, 1)';
-
-      // 4. анимация А -> Б
-      trackA.style.transform = `translateX(${translateA}px)`;
+      // 4. анимация А
+      trackA.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+      trackA.style.transform = `translateX(${offset}px)`;
 
       const onAEnd = () => {
         trackA.removeEventListener('transitionend', onAEnd);
-        trackB.style.transform = `translateX(${translateB}px)`;
+        // 5. анимация Б
+        trackB.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+        trackB.style.transform = `translateX(${offset}px)`;
 
         const onBEnd = () => {
           trackB.removeEventListener('transitionend', onBEnd);
@@ -616,7 +642,7 @@
       trackA.addEventListener('transitionend', onAEnd);
     }
 
-    // ----- КОЛЛЕКЦИЯ (ДОБАВЛЕНИЕ) -----
+    // ----- КОЛЛЕКЦИЯ (ДОБАВЛЕНИЕ С ЗАЩИТОЙ) -----
     function collectNumber() {
       if (collection.includes(currentNumber)) {
         const div = document.createElement('div');
@@ -648,19 +674,19 @@
       renderCollection();
       updateCollectButton();
 
-      // начальные ленты
+      // начальные ленты (с корректной позицией)
       const initOp = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
       const initNum = Math.floor(Math.random() * 9) + 2;
-      const opCards = generateCards(initOp, null);
-      const numCards = generateCards(null, initNum);
+      const opCards = generateOperatorCards(initOp);
+      const numCards = generateNumberCards(initNum);
       buildTrack(trackA, opCards, true);
       buildTrack(trackB, numCards, false);
       resetTracks();
-      const tr = getTranslateX(WIN_IDX);
+      const offset = getTranslateX();
       trackA.style.transition = 'none';
       trackB.style.transition = 'none';
-      trackA.style.transform = `translateX(${tr}px)`;
-      trackB.style.transform = `translateX(${tr}px)`;
+      trackA.style.transform = `translateX(${offset}px)`;
+      trackB.style.transform = `translateX(${offset}px)`;
 
       // события
       spinBtn.addEventListener('click', spinRoulette);
