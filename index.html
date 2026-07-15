@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Исправленная</title>
+  <title>Рулетка 150 карт</title>
   <style>
     * {
       margin: 0;
@@ -94,7 +94,7 @@
       border: 1px solid #334155;
     }
 
-    /* РУЛЕТКА — ЖЕСТКИЙ ФИКС */
+    /* РУЛЕТКА — 150 КАРТ, 450px вьюпорт */
     .roulette-container {
       background: #0f172a;
       border-radius: 24px;
@@ -140,6 +140,7 @@
       min-width: 90px;
       width: 90px;
       max-width: 90px;
+      flex-shrink: 0;
       box-sizing: border-box;
       height: 80px;
       background: #2a3548;
@@ -151,10 +152,11 @@
       font-weight: 700;
       color: #f1f5f9;
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      flex-shrink: 0;
       border: 1px solid #3d4b60;
+      transition: border 0.15s;
     }
     .roulette-card.operator { background: #2f3d56; font-size: 1.8rem; }
+    .roulette-card.winning-card { border: 3px solid #fbbf24; box-shadow: 0 0 20px #fbbf2488; }
 
     .controls {
       display: flex;
@@ -203,7 +205,7 @@
     }
     .log-item .log-number { font-weight: 700; }
 
-    /* КОЛЛЕКЦИЯ — СТРОГО 3 В РЯД */
+    /* КОЛЛЕКЦИЯ — 3 В РЯД */
     .filter-bar {
       display: flex;
       gap: 6px;
@@ -266,7 +268,7 @@
       font-size: 0.9rem;
     }
 
-    /* === РЕДКОСТИ + МОЩНЫЙ НЕОН === */
+    /* === РЕДКОСТИ + НЕОН === */
     .rarity-common { color: #94a3b8; text-shadow: none; }
     .rarity-rare { color: #60a5fa; text-shadow: 0 0 20px #3b82f6, 0 0 40px #3b82f688; }
     .rarity-epic { color: #a78bfa; text-shadow: 0 0 30px #8b5cf6, 0 0 60px #8b5cf688; }
@@ -282,7 +284,6 @@
       100% { text-shadow: 0 0 80px #ef4444, 0 0 150px #ef4444cc, 0 0 200px #ef444466; }
     }
 
-    /* фоны и боксы для коллекции + главного */
     .bg-rarity-common { background: #1e293b; border-color: #334155; box-shadow: none; }
     .bg-rarity-rare { background: #1a2a4a; border-color: #3b82f6; box-shadow: 0 0 20px #3b82f666, inset 0 0 20px #3b82f633; }
     .bg-rarity-epic { background: #2d1f4a; border-color: #a78bfa; box-shadow: 0 0 30px #8b5cf688, inset 0 0 30px #8b5cf644; }
@@ -374,11 +375,11 @@
 
 <script>
   (function() {
-    // ----- КОНФИГ (ЖЕСТКИЙ) -----
-    const CARD_W = 90;            // фикс
-    const VIEWPORT_W = 450;       // фикс
-    const TOTAL = 80;
-    const WIN_IDX = 69;           // 70-я карта
+    // ----- КОНФИГ (150 КАРТ) -----
+    const CARD_W = 90;
+    const VIEWPORT_W = 450;
+    const TOTAL = 150;
+    const WIN_IDX = 120;          // 121-я карта
     const OPERATORS = ['+', '−', '×', '÷'];
     const MAX_NUMBER = 99999;
     const MIN_MOD = 2, MAX_MOD = 10;
@@ -497,7 +498,6 @@
         const div = document.createElement('div');
         div.className = `collection-item ${getBgClass(r)} ${getRarityClass(r)}`;
         div.textContent = num;
-        // клик не делает ничего (трофей)
         collectionGrid.appendChild(div);
       });
     }
@@ -519,18 +519,18 @@
       if (tabId === 'collection') renderCollection();
     }
 
-    // ----- РУЛЕТКА (ФИКСИРОВАННАЯ МАТЕМАТИКА) -----
+    // ----- РУЛЕТКА 150 КАРТ (БЕЗ ПУСТОТ) -----
     function buildTrack(container, items, isOperator = false) {
       container.innerHTML = '';
-      items.forEach(val => {
+      items.forEach((val, idx) => {
         const card = document.createElement('div');
         card.className = `roulette-card ${isOperator ? 'operator' : ''}`;
+        if (idx === WIN_IDX) card.classList.add('winning-card');
         card.textContent = val;
         container.appendChild(card);
       });
     }
 
-    // ФОРМУЛА ФИКС: ИДЕАЛЬНЫЙ ЦЕНТР
     function getTranslateX() {
       return -((WIN_IDX * CARD_W) + (CARD_W / 2) - (VIEWPORT_W / 2));
     }
@@ -559,13 +559,10 @@
       return cards;
     }
 
-    function resetTracks() {
-      trackA.style.transition = 'none';
-      trackB.style.transition = 'none';
-      trackA.style.transform = 'translateX(0px)';
-      trackB.style.transform = 'translateX(0px)';
-      void trackA.offsetHeight;
-      void trackB.offsetHeight;
+    function resetTrack(reel) {
+      reel.style.transition = 'none';
+      reel.style.transform = 'translateX(0px)';
+      void reel.offsetHeight; // принудительный reflow
     }
 
     // ----- ОСНОВНОЙ СПИН (ПОСЛЕДОВАТЕЛЬНЫЙ) -----
@@ -575,13 +572,12 @@
       spinBtn.disabled = true;
       collectBtn.disabled = true;
 
-      // 1. выбрать операцию и число (2..10)
+      // 1. Выбор операции и числа (2..10)
       const op = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
       const num = Math.floor(Math.random() * (MAX_MOD - MIN_MOD + 1)) + MIN_MOD;
       pendingOp = op;
       pendingNum = num;
 
-      // вычислить результат
       let result = currentNumber;
       switch(op) {
         case '+': result = currentNumber + num; break;
@@ -602,24 +598,25 @@
       }
       pendingResult = result;
 
-      // 2. сброс (без анимации)
-      resetTracks();
+      // 2. Полный сброс лент (очистка + transform: 0)
+      resetTrack(trackA);
+      resetTrack(trackB);
 
-      // 3. генерация лент с принудительной вставкой на WIN_IDX
+      // 3. Генерация 150 карт с принудительной вставкой на WIN_IDX
       const opCards = generateOperatorCards(op);
       const numCards = generateNumberCards(num);
       buildTrack(trackA, opCards, true);
       buildTrack(trackB, numCards, false);
 
-      const offset = getTranslateX(); // фикс формула
+      const offset = getTranslateX();
 
-      // 4. анимация А
+      // 4. Запуск А
       trackA.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
       trackA.style.transform = `translateX(${offset}px)`;
 
       const onAEnd = () => {
         trackA.removeEventListener('transitionend', onAEnd);
-        // 5. анимация Б
+        // 5. Запуск Б
         trackB.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
         trackB.style.transform = `translateX(${offset}px)`;
 
@@ -642,7 +639,7 @@
       trackA.addEventListener('transitionend', onAEnd);
     }
 
-    // ----- КОЛЛЕКЦИЯ (ДОБАВЛЕНИЕ С ЗАЩИТОЙ) -----
+    // ----- КОЛЛЕКЦИЯ (ДУБЛИКАТЫ БЛОКИРУЮТСЯ) -----
     function collectNumber() {
       if (collection.includes(currentNumber)) {
         const div = document.createElement('div');
@@ -674,14 +671,15 @@
       renderCollection();
       updateCollectButton();
 
-      // начальные ленты (с корректной позицией)
+      // начальные ленты (150 карт, корректная позиция)
       const initOp = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
       const initNum = Math.floor(Math.random() * 9) + 2;
       const opCards = generateOperatorCards(initOp);
       const numCards = generateNumberCards(initNum);
       buildTrack(trackA, opCards, true);
       buildTrack(trackB, numCards, false);
-      resetTracks();
+      resetTrack(trackA);
+      resetTrack(trackB);
       const offset = getTranslateX();
       trackA.style.transition = 'none';
       trackB.style.transition = 'none';
