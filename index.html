@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Медленный спин</title>
+  <title>Рулетка · Синхронизация</title>
   <style>
     * {
       margin: 0;
@@ -127,10 +127,12 @@
       filter: drop-shadow(0 0 8px #eab308aa);
       pointer-events: none;
     }
-    .roulette-track {
+    .roulette-reel {
       display: flex;
+      padding: 0;
+      margin: 0;
       gap: 4px;
-      transition: transform 5.5s cubic-bezier(0.05, 0.7, 0.1, 1);
+      transition: transform 3.0s cubic-bezier(0.2, 0.8, 0.2, 1);
       will-change: transform;
       width: max-content;
       padding: 6px 0;
@@ -342,11 +344,11 @@
 
     <div class="roulette-container" id="rouletteA">
       <div class="arrow-pointer"></div>
-      <div class="roulette-viewport"><div class="roulette-track" id="trackA"></div></div>
+      <div class="roulette-viewport"><div class="roulette-reel" id="reelA"></div></div>
     </div>
     <div class="roulette-container" id="rouletteB">
       <div class="arrow-pointer"></div>
-      <div class="roulette-viewport"><div class="roulette-track" id="trackB"></div></div>
+      <div class="roulette-viewport"><div class="roulette-reel" id="reelB"></div></div>
     </div>
 
     <div class="controls">
@@ -382,7 +384,7 @@
     const OPERATORS = ['+', '−', '×', '÷'];
     const MAX_NUMBER = 99999;
     const MIN_MOD = 2, MAX_MOD = 10;
-    const SPIN_DURATION = 5500;   // 5.5 секунд — медленно и с нарастающим ожиданием
+    const SPIN_DURATION = 3000;   // 3.0 секунды — чётко и с гарантированной остановкой
 
     // ----- СОСТОЯНИЕ -----
     let currentNumber = 1;
@@ -397,8 +399,8 @@
     const displayNumber = document.getElementById('displayNumber');
     const rarityBadge = document.getElementById('rarityBadge');
     const mainPanel = document.getElementById('mainPanel');
-    const trackA = document.getElementById('trackA');
-    const trackB = document.getElementById('trackB');
+    const reelA = document.getElementById('reelA');
+    const reelB = document.getElementById('reelB');
     const spinBtn = document.getElementById('spinBtn');
     const collectBtn = document.getElementById('collectBtn');
     const historyLog = document.getElementById('historyLog');
@@ -520,7 +522,7 @@
     }
 
     // ----- РУЛЕТКА (3-ШАГОВАЯ АНИМАЦИЯ) -----
-    function buildTrack(container, items, isOperator = false) {
+    function buildReel(container, items, isOperator = false) {
       container.innerHTML = '';
       items.forEach((val, idx) => {
         const card = document.createElement('div');
@@ -594,40 +596,40 @@
       pendingResult = result;
 
       // 2. Шаг 1: Абсолютный сброс (без анимации)
-      trackA.style.transition = 'none';
-      trackA.style.transform = 'translateX(0px)';
-      trackB.style.transition = 'none';
-      trackB.style.transform = 'translateX(0px)';
+      reelA.style.transition = 'none';
+      reelA.style.transform = 'translateX(0px)';
+      reelB.style.transition = 'none';
+      reelB.style.transform = 'translateX(0px)';
       // принудительный reflow
-      void trackA.offsetHeight;
-      void trackB.offsetHeight;
+      void reelA.offsetHeight;
+      void reelB.offsetHeight;
 
       // 3. Генерация 50 карт
       const opCards = generateOperatorCards(op);
       const numCards = generateNumberCards(num);
-      buildTrack(trackA, opCards, true);
-      buildTrack(trackB, numCards, false);
+      buildReel(reelA, opCards, true);
+      buildReel(reelB, numCards, false);
 
       const offset = getTranslateX();
 
       // 4. Шаг 2: Отложенный запуск через setTimeout (50ms)
       setTimeout(() => {
-        // Шаг 3: применяем переход и сдвиг (5.5 сек, экстремальное замедление)
-        trackA.style.transition = 'transform 5.5s cubic-bezier(0.05, 0.7, 0.1, 1)';
-        trackA.style.transform = `translateX(${offset}px)`;
+        // Шаг 3: применяем переход и сдвиг (3.0 сек, надёжная кривая)
+        reelA.style.transition = 'transform 3.0s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        reelA.style.transform = `translateX(${offset}px)`;
 
-        // Запуск B через 5.5 сек
+        // Запуск B через 3.0 сек
         setTimeout(() => {
-          trackB.style.transition = 'transform 5.5s cubic-bezier(0.05, 0.7, 0.1, 1)';
-          trackB.style.transform = `translateX(${offset}px)`;
+          reelB.style.transition = 'transform 3.0s cubic-bezier(0.2, 0.8, 0.2, 1)';
+          reelB.style.transform = `translateX(${offset}px)`;
 
-          // Финал через ещё 5.5 сек
+          // Финал через ещё 3.0 сек
           setTimeout(() => {
             // Убираем подсветку со всех карт, затем подсвечиваем выигрышную
-            document.querySelectorAll('#trackA .roulette-card, #trackB .roulette-card')
+            document.querySelectorAll('#reelA .roulette-card, #reelB .roulette-card')
               .forEach(c => c.classList.remove('winning-card'));
             // Подсветка в B
-            const bCards = trackB.querySelectorAll('.roulette-card');
+            const bCards = reelB.querySelectorAll('.roulette-card');
             if (bCards[WIN_IDX]) bCards[WIN_IDX].classList.add('winning-card');
 
             currentNumber = pendingResult;
@@ -682,13 +684,13 @@
       const initNum = Math.floor(Math.random() * 9) + 2;
       const opCards = generateOperatorCards(initOp);
       const numCards = generateNumberCards(initNum);
-      buildTrack(trackA, opCards, true);
-      buildTrack(trackB, numCards, false);
-      trackA.style.transition = 'none';
-      trackB.style.transition = 'none';
+      buildReel(reelA, opCards, true);
+      buildReel(reelB, numCards, false);
+      reelA.style.transition = 'none';
+      reelB.style.transition = 'none';
       const offset = getTranslateX();
-      trackA.style.transform = `translateX(${offset}px)`;
-      trackB.style.transform = `translateX(${offset}px)`;
+      reelA.style.transform = `translateX(${offset}px)`;
+      reelB.style.transform = `translateX(${offset}px)`;
 
       // события
       spinBtn.addEventListener('click', spinRoulette);
