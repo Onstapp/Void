@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Идеальная остановка</title>
+  <title>Рулетка · Точная остановка</title>
   <style>
     * {
       margin: 0;
@@ -590,6 +590,7 @@
           clearHighlights();
           const aCards = reelA.querySelectorAll('.roulette-card');
           if (aCards[stopIndexA]) aCards[stopIndexA].classList.add('winner-highlight');
+          // Читаем операцию прямо из карточки под стрелкой
           const winOp = aCards[stopIndexA]?.textContent || '+';
 
           // Запуск B
@@ -604,6 +605,7 @@
               if (bCards[stopIndexB]) bCards[stopIndexB].classList.add('winner-highlight');
               if (aCards[stopIndexA]) aCards[stopIndexA].classList.add('winner-highlight');
 
+              // Читаем число прямо из карточки под стрелкой
               const winNum = parseInt(bCards[stopIndexB]?.textContent) || 2;
 
               // Вычисляем результат
