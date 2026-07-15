@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка · Новая анимация</title>
+  <title>Рулетка · Медленная анимация</title>
   <style>
     * {
       margin: 0;
@@ -131,7 +131,7 @@
     .roulette-track {
       display: flex;
       gap: 4px;
-      transition: transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1);
+      transition: transform 5s cubic-bezier(0.1, 0.8, 0.1, 1);
       will-change: transform;
       width: max-content;
       padding: 6px 0;
@@ -383,7 +383,7 @@
     const OPERATORS = ['+', '−', '×', '÷'];
     const MAX_NUMBER = 99999;
     const MIN_MOD = 2, MAX_MOD = 10;
-    const SPIN_DURATION = 3500;   // 3.5 сек
+    const SPIN_DURATION = 5000;   // 5 секунд — медленно и плавно
 
     // ----- СОСТОЯНИЕ -----
     let currentNumber = 1;
@@ -561,7 +561,7 @@
       return cards;
     }
 
-    // ----- ОСНОВНОЙ СПИН (С setTimout) -----
+    // ----- ОСНОВНОЙ СПИН (С setTimeout) -----
     function spinRoulette() {
       if (isSpinning) return;
       isSpinning = true;
@@ -614,15 +614,15 @@
       // 4. Шаг 2: Отложенный запуск через setTimeout (50ms)
       setTimeout(() => {
         // Шаг 3: применяем переход и сдвиг
-        trackA.style.transition = 'transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+        trackA.style.transition = 'transform 5s cubic-bezier(0.1, 0.8, 0.1, 1)';
         trackA.style.transform = `translateX(${offset}px)`;
 
-        // Запуск B через 3.5 сек
+        // Запуск B через 5 сек
         setTimeout(() => {
-          trackB.style.transition = 'transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+          trackB.style.transition = 'transform 5s cubic-bezier(0.1, 0.8, 0.1, 1)';
           trackB.style.transform = `translateX(${offset}px)`;
 
-          // Финал через ещё 3.5 сек
+          // Финал через ещё 5 сек
           setTimeout(() => {
             // Убираем подсветку со всех карт, затем подсвечиваем выигрышную
             document.querySelectorAll('#trackA .roulette-card, #trackB .roulette-card')
