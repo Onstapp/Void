@@ -3,696 +3,694 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Числовой Коллекционер: Двойная Рулетка</title>
+    <title>Рулетка Коллекция</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
         body {
-            background-color: #0f172a;
+            background: #0f172a;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            color: #e2e8f0;
+            padding: 16px;
         }
-        .app-container {
+        .app {
+            max-width: 500px;
             width: 100%;
-            max-width: 1000px;
             background: #1e293b;
             border-radius: 32px;
-            padding: 24px 28px 32px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
+            padding: 20px 16px 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            color: #f1f5f9;
         }
-        /* Tabs */
         .tabs {
             display: flex;
-            gap: 12px;
-            margin-bottom: 28px;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 12px;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: #0f172a;
+            border-radius: 60px;
+            padding: 6px;
         }
         .tab-btn {
+            flex: 1;
+            padding: 10px 0;
             background: transparent;
             border: none;
-            color: #94a3b8;
-            font-size: 1.2rem;
-            font-weight: 600;
-            padding: 10px 24px;
             border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #94a3b8;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: 0.2s;
         }
         .tab-btn.active {
             background: #3b82f6;
-            color: #f8fafc;
-            box-shadow: 0 4px 14px rgba(59,130,246,0.4);
-        }
-        .tab-btn:hover:not(.active) {
-            background: #334155;
-            color: #e2e8f0;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
         }
         .tab-content {
-            display: none;
-            animation: fade 0.2s ease;
-        }
-        .tab-content.active {
             display: block;
         }
-        @keyframes fade { from { opacity: 0.4; } to { opacity: 1; } }
-
-        /* Game panel */
-        .main-display {
+        .tab-content.hidden {
+            display: none;
+        }
+        .main-number-panel {
             background: #0f172a;
             border-radius: 28px;
-            padding: 24px 20px 20px;
-            margin-bottom: 24px;
+            padding: 18px 12px 16px;
             text-align: center;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .number-badge {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         .current-number {
-            font-size: 6rem;
+            font-size: 4.2rem;
             font-weight: 800;
             letter-spacing: 2px;
-            line-height: 1.1;
-            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-            color: #f1f5f9;
-        }
-        .current-number.pop {
-            transform: scale(1.18);
+            line-height: 1;
         }
         .rarity-badge {
-            display: inline-block;
-            margin-top: 4px;
-            padding: 6px 28px;
-            border-radius: 60px;
+            font-size: 0.9rem;
             font-weight: 600;
-            font-size: 1.2rem;
-            background: #1e293b;
-            border: 1px solid #334155;
-            box-shadow: 0 0 16px rgba(255,255,255,0.02);
+            padding: 4px 16px;
+            border-radius: 40px;
+            background: #334155;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .game-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            justify-content: center;
-            margin: 20px 0 18px;
-        }
-        .btn {
-            background: #2d3b52;
-            border: none;
-            color: white;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 14px 28px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-            flex: 0 1 auto;
-        }
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-            padding: 14px 42px;
-            font-size: 1.3rem;
-        }
-        .btn-primary:disabled {
-            opacity: 0.5;
-            transform: scale(0.95);
-            pointer-events: none;
-        }
-        .btn-primary:hover:not(:disabled) {
-            background: #2563eb;
-            transform: scale(1.02);
-        }
-        .btn-collect {
-            background: #8b5cf6;
-        }
-        .btn-collect:hover {
-            background: #7c3aed;
-        }
-        .btn:active { transform: scale(0.96); }
-
-        /* Roulette windows */
-        .roulette-pair {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 24px;
-            justify-content: center;
-            margin: 30px 0 16px;
-        }
-        .roulette-window {
-            flex: 1 1 220px;
-            min-width: 180px;
+        .roulette-container {
             background: #0f172a;
             border-radius: 24px;
-            padding: 16px 0 10px;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.6);
+            padding: 24px 8px 16px;
+            margin-bottom: 16px;
             position: relative;
             overflow: hidden;
         }
-        .roulette-window h4 {
-            text-align: center;
-            font-weight: 500;
-            color: #94a3b8;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
+        .roulette-wrapper {
+            position: relative;
+            overflow: hidden;
+            margin: 0 4px;
+            border-radius: 16px;
+            background: #1e293b;
+            padding: 8px 0;
+        }
+        .arrow-pointer {
+            width: 0;
+            height: 0;
+            border-top: 15px solid #eab308;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            filter: drop-shadow(0 0 6px #eab30888);
         }
         .roulette-track {
             display: flex;
-            gap: 0;
-            transition: transform 2s cubic-bezier(0.1, 0.8, 0.1, 1);
+            gap: 6px;
+            transition: transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1);
             will-change: transform;
-            padding: 8px 0;
+            width: max-content;
+            padding: 4px 0;
         }
         .roulette-card {
-            flex: 0 0 70px;
-            height: 74px;
-            background: #1e293b;
-            margin: 0 6px;
+            min-width: 70px;
+            height: 70px;
+            background: #2d3b4f;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            color: #f1f5f9;
-            border: 2px solid #334155;
-            transition: border 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            color: #f8fafc;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            flex-shrink: 0;
+            transition: 0.1s;
         }
-        .roulette-card.winner {
-            border: 3px solid #fbbf24;
-            box-shadow: 0 0 24px #fbbf24aa, 0 0 60px #fbbf2440;
+        .roulette-card.operator {
+            background: #334155;
+            font-size: 1.6rem;
         }
-        .pointer {
-            position: relative;
-            width: 0;
-            height: 0;
-            margin: 4px auto 0;
-            border-left: 16px solid transparent;
-            border-right: 16px solid transparent;
-            border-top: 22px solid #facc15;
-            filter: drop-shadow(0 0 10px #fbbf24);
-            z-index: 5;
-        }
-
-        /* History log */
-        .history-box {
-            background: #0f172a;
-            border-radius: 20px;
-            padding: 16px 18px;
-            margin: 20px 0 8px;
-            max-height: 160px;
-            overflow-y: auto;
-        }
-        .history-box div {
-            padding: 6px 8px;
-            border-left: 4px solid #475569;
-            margin-bottom: 4px;
-            font-size: 0.9rem;
-            background: #1e293b60;
-            border-radius: 4px;
-        }
-
-        /* Collection grid */
-        .collection-controls {
+        .controls {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 12px 0 20px;
-            flex-wrap: wrap;
             gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
         }
-        .collection-controls select {
-            background: #1e293b;
-            border: 1px solid #334155;
-            color: #e2e8f0;
-            padding: 10px 18px;
-            border-radius: 40px;
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
             font-size: 1rem;
             cursor: pointer;
+            background: #3b82f6;
+            color: white;
+            flex: 1;
+            transition: 0.15s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
+        .btn:active { transform: scale(0.96); }
+        .btn:disabled { opacity: 0.5; pointer-events: none; }
+        .btn-collect {
+            background: #8b5cf6;
+        }
+        .btn-collect:disabled {
+            opacity: 0.4;
+        }
+        .history-log {
+            background: #0f172a;
+            border-radius: 20px;
+            padding: 12px 14px;
+            margin-top: 16px;
+            max-height: 150px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .log-item {
+            padding: 6px 10px;
+            border-left: 4px solid #94a3b8;
+            background: #1e293b;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .log-item .log-number { font-weight: 700; }
         .collection-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
+            gap: 10px;
+            aspect-ratio: 1/1;
+            margin-top: 12px;
         }
         .collection-card {
             background: #1e293b;
-            aspect-ratio: 1;
-            border-radius: 20px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
             font-weight: 700;
-            border: 2px solid #334155;
+            font-size: 1.4rem;
+            color: #f1f5f9;
             cursor: pointer;
-            transition: all 0.15s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            text-shadow: 0 0 6px currentColor;
+            transition: 0.1s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            aspect-ratio: 1/1;
+            border: 1px solid #334155;
         }
-        .collection-card:hover {
-            transform: scale(1.04);
-            border-color: #facc15;
+        .collection-card:active { transform: scale(0.94); }
+        .filter-bar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 8px 0 4px;
         }
-
-        /* rarity colors & glow */
-        .rarity-common { color: #94a3b8; border-color: #64748b; text-shadow: 0 0 6px #94a3b880; }
-        .rarity-uncommon { color: #60a5fa; border-color: #3b82f6; text-shadow: 0 0 12px #3b82f6aa; }
-        .rarity-rare { color: #a78bfa; border-color: #8b5cf6; text-shadow: 0 0 16px #8b5cf6aa; }
-        .rarity-epic { color: #fbbf24; border-color: #f59e0b; text-shadow: 0 0 20px #fbbf24cc; }
-        .rarity-legendary { color: #f97316; border-color: #ea580c; text-shadow: 0 0 28px #f97316dd; }
-        .rarity-mythic { color: #ef4444; border-color: #dc2626; text-shadow: 0 0 40px #ef4444ee; animation: pulse-glow 2s infinite; }
-        @keyframes pulse-glow {
-            0% { text-shadow: 0 0 20px #ef4444; }
-            50% { text-shadow: 0 0 60px #ef4444, 0 0 100px #ef444466; }
-            100% { text-shadow: 0 0 20px #ef4444; }
+        .filter-btn {
+            background: #1e293b;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: 0.1s;
+            flex: 1 0 auto;
         }
-        .mythic-card {
-            animation: pulse-glow 2s infinite;
+        .filter-btn.active {
+            background: #3b82f6;
+            color: white;
         }
-        .rarity-badge.rarity-common { background: #334155; color: #94a3b8; }
-        .rarity-badge.rarity-uncommon { background: #1e3a5f; color: #60a5fa; }
-        .rarity-badge.rarity-rare { background: #2e1f4a; color: #a78bfa; }
-        .rarity-badge.rarity-epic { background: #3b2b0f; color: #fbbf24; }
-        .rarity-badge.rarity-legendary { background: #3b1f0a; color: #f97316; }
-        .rarity-badge.rarity-mythic { background: #3b0f0f; color: #ef4444; }
-
-        /* scroll */
-        .history-box::-webkit-scrollbar { width: 6px; }
-        .history-box::-webkit-scrollbar-track { background: #0f172a; border-radius: 10px; }
-        .history-box::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-
-        @media (max-width: 600px) {
-            .app-container { padding: 16px; }
-            .current-number { font-size: 4rem; }
-            .roulette-card { flex: 0 0 56px; height: 60px; font-size: 1.4rem; }
+        .empty-collection {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #64748b;
+            padding: 30px 0;
         }
+        .glow-pulse {
+            animation: mythicPulse 1.8s infinite alternate;
+        }
+        @keyframes mythicPulse {
+            0% { text-shadow: 0 0 4px #ef4444, 0 0 12px #ef444488; }
+            100% { text-shadow: 0 0 12px #ef4444, 0 0 30px #ef4444cc, 0 0 50px #ef444466; }
+        }
+        .rarity-common { color: #94a3b8; }
+        .rarity-rare { color: #60a5fa; }
+        .rarity-epic { color: #a78bfa; }
+        .rarity-legendary { color: #fbbf24; }
+        .rarity-mythic { color: #f87171; }
+        .bg-rarity-common { background: #334155; }
+        .bg-rarity-rare { background: #1e3a5f; }
+        .bg-rarity-epic { background: #3b2d5e; }
+        .bg-rarity-legendary { background: #5f4a1a; }
+        .bg-rarity-mythic { background: #5f1a1a; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0f172a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
     </style>
 </head>
 <body>
-<div class="app-container" id="app">
-    <!-- Tabs -->
+<div class="app" id="app">
     <div class="tabs">
-        <button class="tab-btn active" data-tab="game">🎮 Игра</button>
-        <button class="tab-btn" data-tab="collection">📦 Коллекция</button>
+        <button class="tab-btn active" data-tab="game">Игра</button>
+        <button class="tab-btn" data-tab="collection">Коллекция</button>
     </div>
 
-    <!-- GAME TAB -->
-    <div id="tab-game" class="tab-content active">
-        <div class="main-display">
-            <div class="current-number" id="currentNumber">1</div>
-            <div class="rarity-badge" id="rarityBadge">Обычное</div>
+    <!-- Вкладка Игра -->
+    <div id="tab-game" class="tab-content">
+        <div class="main-number-panel">
+            <div class="number-badge">
+                <span class="current-number" id="displayNumber">1</span>
+                <span class="rarity-badge" id="rarityBadge">Обычное</span>
+            </div>
         </div>
 
-        <div class="game-actions">
-            <button class="btn btn-primary" id="spinBtn">🎰 Испытать удачу</button>
+        <!-- Рулетка А (операция) -->
+        <div class="roulette-container" id="rouletteA">
+            <div class="arrow-pointer"></div>
+            <div class="roulette-wrapper">
+                <div class="roulette-track" id="trackA"></div>
+            </div>
+        </div>
+
+        <!-- Рулетка B (число) -->
+        <div class="roulette-container" id="rouletteB">
+            <div class="arrow-pointer"></div>
+            <div class="roulette-wrapper">
+                <div class="roulette-track" id="trackB"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="spinBtn">🎲 Крутить</button>
             <button class="btn btn-collect" id="collectBtn">📥 В коллекцию</button>
         </div>
 
-        <!-- Roulette pair -->
-        <div class="roulette-pair">
-            <div class="roulette-window">
-                <h4>Рулетка А · Операция</h4>
-                <div class="roulette-track" id="trackA" style="transform: translateX(0px);">
-                    <!-- cards injected by js -->
-                </div>
-                <div class="pointer"></div>
-            </div>
-            <div class="roulette-window">
-                <h4>Рулетка B · Число</h4>
-                <div class="roulette-track" id="trackB" style="transform: translateX(0px);">
-                    <!-- cards injected -->
-                </div>
-                <div class="pointer"></div>
-            </div>
-        </div>
-
-        <!-- History -->
-        <div class="history-box" id="historyLog">
-            <div style="border-left-color: #475569; opacity:0.7;">📋 История ходов</div>
+        <div class="history-log" id="historyLog">
+            <div style="color:#64748b; text-align:center; font-size:0.8rem;">— История ходов —</div>
         </div>
     </div>
 
-    <!-- COLLECTION TAB -->
-    <div id="tab-collection" class="tab-content">
-        <div class="collection-controls">
-            <span style="font-weight:500;">Сохранённые числа</span>
-            <select id="sortSelect">
-                <option value="newest">Сначала новые</option>
-                <option value="oldest">Сначала старые</option>
-                <option value="max">По убыванию (Max)</option>
-                <option value="min">По возрастанию (Min)</option>
-                <option value="rarity">По редкости</option>
-            </select>
+    <!-- Вкладка Коллекция -->
+    <div id="tab-collection" class="tab-content hidden">
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" data-filter="new">Сначала новые</button>
+            <button class="filter-btn" data-filter="old">Сначала старые</button>
+            <button class="filter-btn" data-filter="max">По убыванию (Max)</button>
+            <button class="filter-btn" data-filter="min">По возрастанию (Min)</button>
+            <button class="filter-btn" data-filter="rarity">По редкости</button>
         </div>
         <div class="collection-grid" id="collectionGrid"></div>
     </div>
 </div>
-
 <script>
-    (function(){
-        "use strict";
+    (function() {
+        // ---------- CONFIG ----------
+        const CARD_WIDTH = 70;
+        const CARD_GAP = 6;
+        const TOTAL_CARDS = 80;
+        const WIN_INDEX = 69; // 70-я позиция (индекс 69)
+        const OPERATORS = ['+', '−', '×', '÷'];
 
-        // ---------- state ----------
+        // ---------- STATE ----------
         let currentNumber = 1;
-        let history = [];            // массив строк
-        let collection = [];         // массив чисел
-        let spinInProgress = false;
+        let collection = [];
+        let history = [];
+        let isSpinning = false;
+        let spinPhase = 'idle'; // 'idle' | 'op' | 'num'
+        let pendingOp = '+';
+        let pendingNum = 1;
+        let pendingResult = 1;
 
+        // DOM refs
+        const displayNumber = document.getElementById('displayNumber');
+        const rarityBadge = document.getElementById('rarityBadge');
         const trackA = document.getElementById('trackA');
         const trackB = document.getElementById('trackB');
-        const currentNumberEl = document.getElementById('currentNumber');
-        const rarityBadge = document.getElementById('rarityBadge');
-        const historyLog = document.getElementById('historyLog');
         const spinBtn = document.getElementById('spinBtn');
         const collectBtn = document.getElementById('collectBtn');
+        const historyLog = document.getElementById('historyLog');
         const collectionGrid = document.getElementById('collectionGrid');
-        const sortSelect = document.getElementById('sortSelect');
+        const tabGame = document.getElementById('tab-game');
+        const tabCollection = document.getElementById('tab-collection');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const tabBtns = document.querySelectorAll('.tab-btn');
 
-        // ---------- helpers / rarity ----------
-        function getRarity(n) {
-            if (n === 777 || n === 666 || (n % 11 === 0 && n > 100)) return 'mythic';
-            if (n >= 500) return 'legendary';
-            if (n >= 150) return 'epic';
-            if (n >= 50) return 'rare';
-            if (n >= 20) return 'uncommon';
+        // ---------- UTILITY ----------
+        function getRarity(num) {
+            if (num === 777 || num === 666 || (num % 11 === 0 && num > 100)) return 'mythic';
+            if (num > 500 || num === 999) return 'legendary';
+            if (num > 150) return 'epic';
+            if (num > 50) return 'rare';
             return 'common';
         }
+
         function rarityLabel(r) {
-            const map = { common:'Обычное', uncommon:'Редкое', rare:'Эпическое', epic:'Легендарное', legendary:'Легендарное', mythic:'Мифическое' };
+            const map = { common:'Обычное', rare:'Редкое', epic:'Эпическое', legendary:'Легендарное', mythic:'Мифическое' };
             return map[r] || 'Обычное';
         }
-        function rarityColorClass(r) {
-            return 'rarity-'+r;
-        }
-        function getRarityInfo(n) {
-            const r = getRarity(n);
-            return { key: r, label: rarityLabel(r), class: rarityColorClass(r) };
+
+        function rarityColor(r) {
+            const map = { common:'#94a3b8', rare:'#60a5fa', epic:'#a78bfa', legendary:'#fbbf24', mythic:'#f87171' };
+            return map[r] || '#94a3b8';
         }
 
-        // ---------- update display & history ----------
-        function updateMainDisplay() {
-            const info = getRarityInfo(currentNumber);
-            currentNumberEl.textContent = currentNumber;
-            currentNumberEl.className = 'current-number ' + info.class;
-            rarityBadge.textContent = info.label;
-            rarityBadge.className = 'rarity-badge ' + info.class;
-            // pop effect
-            currentNumberEl.classList.remove('pop');
-            void currentNumberEl.offsetWidth;
-            currentNumberEl.classList.add('pop');
-            setTimeout(() => currentNumberEl.classList.remove('pop'), 200);
-            saveState();
+        function getRarityClass(r) {
+            return 'rarity-' + r;
         }
 
-        function addHistoryEntry(text, borderColor = '#475569') {
-            history.push(text);
-            if (history.length > 20) history.shift();
-            renderHistory();
-            saveState();
+        function getBgRarityClass(r) {
+            return 'bg-rarity-' + r;
         }
 
-        function renderHistory() {
-            historyLog.innerHTML = '';
-            history.forEach(line => {
-                const div = document.createElement('div');
-                div.textContent = line;
-                // пытаемся найти цвет редкости в строке (после "=")
-                const match = line.match(/=\s*(\d+)/);
-                if (match) {
-                    const num = parseInt(match[1], 10);
-                    const info = getRarityInfo(num);
-                    div.style.borderLeftColor = getComputedStyle(document.createElement('div')).color; // fallback
-                    // назначаем цвет через класс
-                    div.className = info.class;
-                } else {
-                    div.style.borderLeftColor = '#475569';
-                }
-                historyLog.appendChild(div);
-            });
-        }
+        function isMythic(r) { return r === 'mythic'; }
 
-        // ---------- collection render ----------
-        function renderCollection() {
-            const sortVal = sortSelect.value;
-            let items = [...collection];
-            if (sortVal === 'newest') items.reverse();
-            else if (sortVal === 'oldest') { /* as is */ }
-            else if (sortVal === 'max') items.sort((a,b)=>b-a);
-            else if (sortVal === 'min') items.sort((a,b)=>a-b);
-            else if (sortVal === 'rarity') {
-                const order = { mythic:0, legendary:1, epic:2, rare:3, uncommon:4, common:5 };
-                items.sort((a,b)=> (order[getRarity(a)] || 9) - (order[getRarity(b)] || 9) );
-            }
-            collectionGrid.innerHTML = '';
-            items.forEach(num => {
-                const info = getRarityInfo(num);
-                const card = document.createElement('div');
-                card.className = 'collection-card ' + info.class;
-                if (info.key === 'mythic') card.classList.add('mythic-card');
-                card.textContent = num;
-                card.dataset.value = num;
-                card.addEventListener('click', function(e) {
-                    const val = parseInt(this.dataset.value, 10);
-                    if (!isNaN(val)) {
-                        currentNumber = val;
-                        updateMainDisplay();
-                        // switch tab to game
-                        document.querySelector('[data-tab="game"]').click();
-                    }
-                });
-                collectionGrid.appendChild(card);
-            });
-            saveState();
-        }
-
-        // ---------- save / load ----------
+        // ---------- LOCAL STORAGE ----------
         function saveState() {
-            try {
-                localStorage.setItem('numCollectorState', JSON.stringify({
-                    current: currentNumber,
-                    history: history,
-                    collection: collection
-                }));
-            } catch(e) {}
+            localStorage.setItem('roulette_number', JSON.stringify(currentNumber));
+            localStorage.setItem('roulette_collection', JSON.stringify(collection));
+            localStorage.setItem('roulette_history', JSON.stringify(history.slice(0,20)));
         }
 
         function loadState() {
             try {
-                const raw = localStorage.getItem('numCollectorState');
-                if (!raw) return false;
-                const data = JSON.parse(raw);
-                if (typeof data.current === 'number' && data.current >= 1) currentNumber = data.current;
-                if (Array.isArray(data.history)) history = data.history.slice(0,20);
-                if (Array.isArray(data.collection)) collection = data.collection;
-                return true;
-            } catch(e) { return false; }
+                const n = localStorage.getItem('roulette_number');
+                if (n !== null) currentNumber = JSON.parse(n);
+                const c = localStorage.getItem('roulette_collection');
+                if (c !== null) collection = JSON.parse(c);
+                const h = localStorage.getItem('roulette_history');
+                if (h !== null) history = JSON.parse(h);
+            } catch(e) {}
+            if (!Array.isArray(collection)) collection = [];
+            if (!Array.isArray(history)) history = [];
+            if (typeof currentNumber !== 'number' || isNaN(currentNumber)) currentNumber = 1;
+            history = history.slice(0,20);
         }
 
-        // ---------- roulette cards generation ----------
-        function generateCardsA() {
-            const ops = ['+', '-', '*', '/'];
-            let html = '';
-            // повторим для длинной ленты
-            for (let i=0; i<30; i++) {
-                const op = ops[i % ops.length];
-                html += `<div class="roulette-card" data-op="${op}">${op}</div>`;
+        // ---------- RENDER UI ----------
+        function renderNumber() {
+            const r = getRarity(currentNumber);
+            displayNumber.textContent = currentNumber;
+            rarityBadge.textContent = rarityLabel(r);
+            rarityBadge.className = 'rarity-badge ' + getRarityClass(r);
+            if (isMythic(r)) {
+                displayNumber.classList.add('glow-pulse');
+            } else {
+                displayNumber.classList.remove('glow-pulse');
             }
-            trackA.innerHTML = html;
         }
 
-        function generateCardsB() {
-            // масштабируем модификаторы
-            let maxMod = 5;
-            if (currentNumber >= 100) maxMod = 20;
-            else if (currentNumber >= 50) maxMod = 12;
-            else if (currentNumber >= 20) maxMod = 8;
-            else maxMod = 5;
-            // для умножения лимит
-            let html = '';
-            const pool = [];
-            for (let i=1; i<=maxMod; i++) pool.push(i);
-            // добавим больше чисел для разнообразия
-            while (pool.length < 20) {
-                const extra = Math.floor(Math.random() * maxMod) + 1;
-                pool.push(extra);
+        function renderHistory() {
+            historyLog.innerHTML = '';
+            if (history.length === 0) {
+                historyLog.innerHTML = '<div style="color:#64748b; text-align:center; font-size:0.8rem;">— История ходов —</div>';
+                return;
             }
-            // перемешаем
-            for (let i=pool.length-1; i>0; i--) {
-                const j = Math.floor(Math.random()*(i+1));
-                [pool[i], pool[j]] = [pool[j], pool[i]];
-            }
-            // лента из 30 карточек
-            for (let i=0; i<30; i++) {
-                const val = pool[i % pool.length];
-                html += `<div class="roulette-card" data-num="${val}">${val}</div>`;
-            }
-            trackB.innerHTML = html;
+            history.slice().reverse().forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'log-item';
+                const r = getRarity(item);
+                div.style.borderLeftColor = rarityColor(r);
+                div.innerHTML = `<span>${item}</span><span class="log-number ${getRarityClass(r)}">${rarityLabel(r)}</span>`;
+                historyLog.appendChild(div);
+            });
         }
 
-        // ---------- spin logic ----------
-        function getRandomCardIndex(trackElement) {
-            const cards = trackElement.querySelectorAll('.roulette-card');
-            return Math.floor(Math.random() * cards.length);
+        function renderCollection() {
+            const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'new';
+            let sorted = [...collection];
+            if (filter === 'new') sorted = sorted.reverse();
+            else if (filter === 'old') sorted = sorted;
+            else if (filter === 'max') sorted.sort((a,b) => b - a);
+            else if (filter === 'min') sorted.sort((a,b) => a - b);
+            else if (filter === 'rarity') {
+                const order = { mythic:0, legendary:1, epic:2, rare:3, common:4 };
+                sorted.sort((a,b) => (order[getRarity(a)] || 5) - (order[getRarity(b)] || 5));
+            }
+            collectionGrid.innerHTML = '';
+            if (sorted.length === 0) {
+                collectionGrid.innerHTML = '<div class="empty-collection">Коллекция пуста</div>';
+                return;
+            }
+            sorted.forEach(num => {
+                const r = getRarity(num);
+                const card = document.createElement('div');
+                card.className = `collection-card ${getBgRarityClass(r)}`;
+                card.textContent = num;
+                card.style.color = rarityColor(r);
+                card.addEventListener('click', () => {
+                    currentNumber = num;
+                    renderNumber();
+                    saveState();
+                    switchTab('game');
+                });
+                collectionGrid.appendChild(card);
+            });
+        }
+
+        function switchTab(tabId) {
+            tabBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabId);
+            });
+            tabGame.classList.toggle('hidden', tabId !== 'game');
+            tabCollection.classList.toggle('hidden', tabId !== 'collection');
+            if (tabId === 'collection') renderCollection();
+        }
+
+        // ---------- ROULETTE LOGIC ----------
+        function buildTrack(container, items, isOperator = false) {
+            container.innerHTML = '';
+            items.forEach(val => {
+                const card = document.createElement('div');
+                card.className = `roulette-card ${isOperator ? 'operator' : ''}`;
+                card.textContent = val;
+                container.appendChild(card);
+            });
+        }
+
+        function getTranslateX(winIndex) {
+            const containerWidth = document.querySelector('.roulette-wrapper')?.offsetWidth || 300;
+            const totalWidth = (CARD_WIDTH + CARD_GAP) * winIndex + CARD_WIDTH/2;
+            const centerOffset = containerWidth / 2;
+            return - (totalWidth - centerOffset);
+        }
+
+        function generateCards(operator, num) {
+            // 80 карточек, на позиции 69 — выигрыш
+            const cards = [];
+            // операторная лента
+            if (operator) {
+                for (let i = 0; i < TOTAL_CARDS; i++) {
+                    if (i === WIN_INDEX) cards.push(operator);
+                    else {
+                        const randOp = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
+                        cards.push(randOp);
+                    }
+                }
+                return cards;
+            } else {
+                // числовая лента
+                for (let i = 0; i < TOTAL_CARDS; i++) {
+                    if (i === WIN_INDEX) cards.push(num);
+                    else {
+                        const rand = Math.floor(Math.random() * 200) + 1;
+                        cards.push(rand);
+                    }
+                }
+                return cards;
+            }
+        }
+
+        function resetTracks() {
+            trackA.style.transition = 'none';
+            trackB.style.transition = 'none';
+            trackA.style.transform = 'translateX(0px)';
+            trackB.style.transform = 'translateX(0px)';
+            // force reflow
+            void trackA.offsetHeight;
+            void trackB.offsetHeight;
         }
 
         function spinRoulette() {
-            if (spinInProgress) return;
-            spinInProgress = true;
+            if (isSpinning) return;
+            isSpinning = true;
             spinBtn.disabled = true;
-            // сброс подсветки
-            document.querySelectorAll('.roulette-card').forEach(c => c.classList.remove('winner'));
+            collectBtn.disabled = true;
+            spinPhase = 'op';
 
-            // генерируем свежие карточки для B (зависит от currentNumber)
-            generateCardsB();
+            // 1. выбрать операцию и число
+            const op = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
+            const num = Math.floor(Math.random() * 50) + 1; // 1..50
+            pendingOp = op;
+            pendingNum = num;
 
-            // Этап 1: крутим А
-            const trackAW = trackA;
-            const trackBW = trackB;
-            const cardWidth = 70 + 12; // 70px card + 12px gap (margin 0 6 => 12)
-            const totalWidth = trackAW.scrollWidth;
-            // смещение чтобы центр был примерно на карточке
-            const offsetA = - (getRandomCardIndex(trackAW) * cardWidth) - 20;
-            trackAW.style.transition = 'transform 2s cubic-bezier(0.1, 0.8, 0.1, 1)';
-            trackAW.style.transform = `translateX(${offsetA}px)`;
+            // вычислить результат
+            let result = currentNumber;
+            switch(op) {
+                case '+': result = currentNumber + num; break;
+                case '−': result = currentNumber - num; break;
+                case '×': result = currentNumber * num; break;
+                case '÷': result = Math.floor(currentNumber / num); break;
+            }
+            if (result < 1) result = 1;
+            pendingResult = result;
 
-            // после завершения А запускаем В
-            const onEndA = function() {
-                trackAW.removeEventListener('transitionend', onEndA);
-                // подсветка победителя А
-                const idxA = Math.round(Math.abs(offsetA) / cardWidth) % trackAW.querySelectorAll('.roulette-card').length;
-                const cardsA = trackAW.querySelectorAll('.roulette-card');
-                if (cardsA[idxA]) cardsA[idxA].classList.add('winner');
+            // 2. сбросить ленты без анимации
+            resetTracks();
 
-                // Этап 2: крутим B
-                const offsetB = - (getRandomCardIndex(trackBW) * cardWidth) - 20;
-                trackBW.style.transition = 'transform 2s cubic-bezier(0.1, 0.8, 0.1, 1)';
-                trackBW.style.transform = `translateX(${offsetB}px)`;
+            // 3. сгенерировать ленты с выигрышным элементом на 69
+            const opCards = generateCards(op, null);
+            const numCards = generateCards(null, num);
 
-                const onEndB = function() {
-                    trackBW.removeEventListener('transitionend', onEndB);
-                    // подсветка победителя B
-                    const idxB = Math.round(Math.abs(offsetB) / cardWidth) % trackBW.querySelectorAll('.roulette-card').length;
-                    const cardsB = trackBW.querySelectorAll('.roulette-card');
-                    if (cardsB[idxB]) cardsB[idxB].classList.add('winner');
+            buildTrack(trackA, opCards, true);
+            buildTrack(trackB, numCards, false);
 
-                    // вычисляем результат
-                    const opCard = trackAW.querySelector('.winner');
-                    const numCard = trackBW.querySelector('.winner');
-                    let op = '+';
-                    let numMod = 1;
-                    if (opCard) op = opCard.dataset.op || '+';
-                    if (numCard) numMod = parseInt(numCard.dataset.num, 10) || 1;
+            // 4. установить анимацию
+            const translateA = getTranslateX(WIN_INDEX);
+            const translateB = getTranslateX(WIN_INDEX);
 
-                    let newVal = currentNumber;
-                    let opSymbol = op;
-                    if (op === '+') newVal = currentNumber + numMod;
-                    else if (op === '-') newVal = Math.max(1, currentNumber - numMod);
-                    else if (op === '*') {
-                        let mult = Math.min(numMod, 3);
-                        if (currentNumber > 100) mult = Math.min(mult, 2);
-                        newVal = currentNumber * mult;
-                    } else if (op === '/') {
-                        newVal = Math.floor(currentNumber / Math.max(1, numMod));
-                        if (newVal < 1) newVal = 1;
-                    }
-                    // защита от переполнения
-                    if (newVal > 1e9) newVal = 1e9;
-                    if (newVal < 1) newVal = 1;
+            // Включить transition
+            trackA.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+            trackB.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
 
-                    const oldVal = currentNumber;
-                    currentNumber = newVal;
-                    updateMainDisplay();
+            // 5. анимировать А
+            trackA.style.transform = `translateX(${translateA}px)`;
 
-                    const logMsg = `${oldVal} ${opSymbol} ${numMod} = ${newVal}`;
-                    addHistoryEntry(logMsg, '#facc15');
-
-                    spinInProgress = false;
+            // по окончании А -> старт Б
+            const onAEnd = () => {
+                trackA.removeEventListener('transitionend', onAEnd);
+                spinPhase = 'num';
+                trackB.style.transform = `translateX(${translateB}px)`;
+                // по окончании Б -> финал
+                const onBEnd = () => {
+                    trackB.removeEventListener('transitionend', onBEnd);
+                    // финал
+                    currentNumber = pendingResult;
+                    renderNumber();
+                    // добавить в историю
+                    history.push(currentNumber);
+                    if (history.length > 20) history.shift();
+                    renderHistory();
+                    saveState();
+                    isSpinning = false;
                     spinBtn.disabled = false;
+                    collectBtn.disabled = false;
+                    spinPhase = 'idle';
+                    // проверить дубликат для кнопки коллекции
+                    updateCollectButton();
                 };
-                trackBW.addEventListener('transitionend', onEndB);
+                trackB.addEventListener('transitionend', onBEnd);
             };
-            trackAW.addEventListener('transitionend', onEndA);
+            trackA.addEventListener('transitionend', onAEnd);
         }
 
-        // ---------- collect ----------
+        function updateCollectButton() {
+            if (collection.includes(currentNumber)) {
+                collectBtn.disabled = true;
+                collectBtn.textContent = '⚠️ Уже в коллекции';
+            } else {
+                collectBtn.disabled = false;
+                collectBtn.textContent = '📥 В коллекцию';
+            }
+        }
+
+        // ---------- COLLECT ----------
         function collectNumber() {
             if (collection.includes(currentNumber)) {
-                addHistoryEntry(`⚠️ Число ${currentNumber} уже есть в коллекции!`, '#f87171');
+                // ошибка в лог
+                const errDiv = document.createElement('div');
+                errDiv.className = 'log-item';
+                errDiv.style.borderLeftColor = '#ef4444';
+                errDiv.innerHTML = `<span>⚠️ Число уже сохранено!</span><span>${currentNumber}</span>`;
+                historyLog.prepend(errDiv);
+                if (historyLog.children.length > 20) historyLog.removeChild(historyLog.lastChild);
                 return;
             }
             collection.push(currentNumber);
-            addHistoryEntry(`📥 Сохранено: ${currentNumber}`, '#60a5fa');
-            renderCollection();
             saveState();
+            renderCollection();
+            updateCollectButton();
+            // добавить в лог успех
+            const okDiv = document.createElement('div');
+            okDiv.className = 'log-item';
+            const r = getRarity(currentNumber);
+            okDiv.style.borderLeftColor = rarityColor(r);
+            okDiv.innerHTML = `<span>✅ Сохранено</span><span class="${getRarityClass(r)}">${currentNumber}</span>`;
+            historyLog.prepend(okDiv);
+            if (historyLog.children.length > 20) historyLog.removeChild(historyLog.lastChild);
         }
 
-        // ---------- init UI ----------
-        function initGameUI() {
-            generateCardsA();
-            generateCardsB();
-            // позиционирование по центру (смещение)
-            trackA.style.transform = 'translateX(-20px)';
-            trackB.style.transform = 'translateX(-20px)';
-            // загрузка состояния
-            const loaded = loadState();
-            if (loaded) {
-                updateMainDisplay();
-                renderHistory();
-                renderCollection();
-            } else {
-                // по умолчанию
-                currentNumber = 1;
-                history = [];
-                collection = [];
-                updateMainDisplay();
-                renderHistory();
-                renderCollection();
-            }
-        }
+        // ---------- INIT ----------
+        function init() {
+            loadState();
+            renderNumber();
+            renderHistory();
+            renderCollection();
+            updateCollectButton();
 
-        // ---------- tabs ----------
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const tabId = this.dataset.tab;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-                document.getElementById('tab-'+tabId).classList.add('active');
-                if (tabId === 'collection') renderCollection();
+            // начальные ленты (заполним)
+            const initOp = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
+            const initNum = Math.floor(Math.random() * 50) + 1;
+            const opCards = generateCards(initOp, null);
+            const numCards = generateCards(null, initNum);
+            buildTrack(trackA, opCards, true);
+            buildTrack(trackB, numCards, false);
+            resetTracks();
+            // сдвиг на 69
+            const translate = getTranslateX(WIN_INDEX);
+            trackA.style.transition = 'none';
+            trackB.style.transition = 'none';
+            trackA.style.transform = `translateX(${translate}px)`;
+            trackB.style.transform = `translateX(${translate}px)`;
+
+            // события
+            spinBtn.addEventListener('click', spinRoulette);
+            collectBtn.addEventListener('click', collectNumber);
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    switchTab(btn.dataset.tab);
+                });
             });
-        });
 
-        // ---------- event listeners ----------
-        spinBtn.addEventListener('click', spinRoulette);
-        collectBtn.addEventListener('click', collectNumber);
-        sortSelect.addEventListener('change', renderCollection);
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderCollection();
+                });
+            });
 
-        // ---------- start ----------
-        initGameUI();
+            // обновление кнопки коллекции при изменении числа
+            // уже через renderNumber
+        }
 
-        // дополнительная защита: обновляем карточки B при изменении числа (но spin генерирует заново)
-        // принудительно обновляем коллекцию при переключении
+        // переопределим renderNumber для обновления кнопки
+        const origRender = renderNumber;
+        renderNumber = function() {
+            origRender();
+            updateCollectButton();
+        };
 
-        // переключение на игру при клике на карточку коллекции уже реализовано
-
-        // переключение вкладки по коллекции
-        window.addEventListener('load', function() {
-            // небольшой фикс для отображения
-        });
-
+        init();
     })();
 </script>
 </body>
