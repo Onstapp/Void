@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Рулетка 150 карт</title>
+  <title>Рулетка · Новая анимация</title>
   <style>
     * {
       margin: 0;
@@ -131,7 +131,7 @@
     .roulette-track {
       display: flex;
       gap: 4px;
-      transition: transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1);
+      transition: transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1);
       will-change: transform;
       width: max-content;
       padding: 6px 0;
@@ -156,7 +156,7 @@
       transition: border 0.15s;
     }
     .roulette-card.operator { background: #2f3d56; font-size: 1.8rem; }
-    .roulette-card.winning-card { border: 3px solid #fbbf24; box-shadow: 0 0 20px #fbbf2488; }
+    .roulette-card.winning-card { border: 3px solid #eab308; box-shadow: 0 0 30px #eab30888; }
 
     .controls {
       display: flex;
@@ -383,6 +383,7 @@
     const OPERATORS = ['+', '−', '×', '÷'];
     const MAX_NUMBER = 99999;
     const MIN_MOD = 2, MAX_MOD = 10;
+    const SPIN_DURATION = 3500;   // 3.5 сек
 
     // ----- СОСТОЯНИЕ -----
     let currentNumber = 1;
@@ -519,7 +520,7 @@
       if (tabId === 'collection') renderCollection();
     }
 
-    // ----- РУЛЕТКА 150 КАРТ (БЕЗ ПУСТОТ) -----
+    // ----- РУЛЕТКА (3-ШАГОВАЯ АНИМАЦИЯ) -----
     function buildTrack(container, items, isOperator = false) {
       container.innerHTML = '';
       items.forEach((val, idx) => {
@@ -532,6 +533,7 @@
     }
 
     function getTranslateX() {
+      // -((120 * 90) + (90/2) - (450/2)) = -(10800 + 45 - 225) = -10620
       return -((WIN_IDX * CARD_W) + (CARD_W / 2) - (VIEWPORT_W / 2));
     }
 
@@ -559,13 +561,7 @@
       return cards;
     }
 
-    function resetTrack(reel) {
-      reel.style.transition = 'none';
-      reel.style.transform = 'translateX(0px)';
-      void reel.offsetHeight; // принудительный reflow
-    }
-
-    // ----- ОСНОВНОЙ СПИН (ПОСЛЕДОВАТЕЛЬНЫЙ) -----
+    // ----- ОСНОВНОЙ СПИН (С setTimout) -----
     function spinRoulette() {
       if (isSpinning) return;
       isSpinning = true;
@@ -598,11 +594,16 @@
       }
       pendingResult = result;
 
-      // 2. Полный сброс лент (очистка + transform: 0)
-      resetTrack(trackA);
-      resetTrack(trackB);
+      // 2. Шаг 1: Абсолютный сброс (без анимации)
+      trackA.style.transition = 'none';
+      trackA.style.transform = 'translateX(0px)';
+      trackB.style.transition = 'none';
+      trackB.style.transform = 'translateX(0px)';
+      // принудительный reflow
+      void trackA.offsetHeight;
+      void trackB.offsetHeight;
 
-      // 3. Генерация 150 карт с принудительной вставкой на WIN_IDX
+      // 3. Генерация 150 карт
       const opCards = generateOperatorCards(op);
       const numCards = generateNumberCards(num);
       buildTrack(trackA, opCards, true);
@@ -610,33 +611,39 @@
 
       const offset = getTranslateX();
 
-      // 4. Запуск А
-      trackA.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
-      trackA.style.transform = `translateX(${offset}px)`;
+      // 4. Шаг 2: Отложенный запуск через setTimeout (50ms)
+      setTimeout(() => {
+        // Шаг 3: применяем переход и сдвиг
+        trackA.style.transition = 'transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+        trackA.style.transform = `translateX(${offset}px)`;
 
-      const onAEnd = () => {
-        trackA.removeEventListener('transitionend', onAEnd);
-        // 5. Запуск Б
-        trackB.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
-        trackB.style.transform = `translateX(${offset}px)`;
+        // Запуск B через 3.5 сек
+        setTimeout(() => {
+          trackB.style.transition = 'transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1)';
+          trackB.style.transform = `translateX(${offset}px)`;
 
-        const onBEnd = () => {
-          trackB.removeEventListener('transitionend', onBEnd);
-          // финал
-          currentNumber = pendingResult;
-          renderNumber();
-          history.push(currentNumber);
-          if (history.length > 20) history.shift();
-          renderHistory();
-          saveState();
-          isSpinning = false;
-          spinBtn.disabled = false;
-          collectBtn.disabled = false;
-          updateCollectButton();
-        };
-        trackB.addEventListener('transitionend', onBEnd);
-      };
-      trackA.addEventListener('transitionend', onAEnd);
+          // Финал через ещё 3.5 сек
+          setTimeout(() => {
+            // Убираем подсветку со всех карт, затем подсвечиваем выигрышную
+            document.querySelectorAll('#trackA .roulette-card, #trackB .roulette-card')
+              .forEach(c => c.classList.remove('winning-card'));
+            // Подсветка в B
+            const bCards = trackB.querySelectorAll('.roulette-card');
+            if (bCards[WIN_IDX]) bCards[WIN_IDX].classList.add('winning-card');
+
+            currentNumber = pendingResult;
+            renderNumber();
+            history.push(currentNumber);
+            if (history.length > 20) history.shift();
+            renderHistory();
+            saveState();
+            isSpinning = false;
+            spinBtn.disabled = false;
+            collectBtn.disabled = false;
+            updateCollectButton();
+          }, SPIN_DURATION);
+        }, SPIN_DURATION);
+      }, 50);
     }
 
     // ----- КОЛЛЕКЦИЯ (ДУБЛИКАТЫ БЛОКИРУЮТСЯ) -----
@@ -678,11 +685,9 @@
       const numCards = generateNumberCards(initNum);
       buildTrack(trackA, opCards, true);
       buildTrack(trackB, numCards, false);
-      resetTrack(trackA);
-      resetTrack(trackB);
-      const offset = getTranslateX();
       trackA.style.transition = 'none';
       trackB.style.transition = 'none';
+      const offset = getTranslateX();
       trackA.style.transform = `translateX(${offset}px)`;
       trackB.style.transform = `translateX(${offset}px)`;
 
